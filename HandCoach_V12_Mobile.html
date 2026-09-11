@@ -1,0 +1,2898 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HandCoach V12 Mobile</title>
+<style>
+*{box-sizing:border-box}
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    font-family:Arial, Helvetica, sans-serif;
+    background:#edf0f4;
+    color:#20252b;
+}
+button, input, textarea, select{font:inherit}
+button{cursor:pointer}
+/* BARRE SUPÉRIEURE */
+.header{
+    height:58px;
+    background:#17202a;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    padding:0 12px;
+}
+.header h1{ margin:0 15px 0 0; font-size:19px; }
+.spacer{flex:1}
+.header button{
+    border:0;
+    border-radius:7px;
+    padding:8px 11px;
+    background:#287fe8;
+    color:#fff;
+    font-weight:bold;
+}
+.header button.secondary{ background:#3e4852; }
+
+/* Boutons compacts de la barre supérieure */
+.header-actions{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+.icon-button{
+    width:38px;
+    height:38px;
+    padding:0 !important;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:19px;
+    background:#3e4852 !important;
+    border:1px solid #56616c !important;
+    border-radius:7px;
+}
+.icon-button:hover{ background:#52606c !important; }
+
+#saveStatus{
+    min-width:38px;
+    text-align:center;
+    color:#dbeafe;
+    font-size:11px;
+    padding:6px 8px;
+    border:1px solid #3e4852;
+    border-radius:6px;
+    white-space:nowrap;
+}
+
+@media(max-width:900px){
+    .header h1{font-size:16px;}
+    .icon-button{width:34px;height:34px;font-size:17px;}
+}
+
+.app{
+    height:calc(100vh - 58px);
+    display:flex;
+}
+/* BARRE LATÉRALE & ARBORESCENCE */
+.sidebar{
+    width:320px;
+    background:#fff;
+    border-right:1px solid #d4d9df;
+    padding:12px;
+    overflow-y:auto;
+}
+.sidebar-section-title{
+    font-size:13px;
+    font-weight:bold;
+    text-transform:uppercase;
+    margin:14px 0 8px 0;
+    color:#1e293b;
+    border-bottom:2px solid #e2e8f0;
+    padding-bottom:4px;
+}
+.sidebar-section-title:first-child { margin-top:0; }
+details.tree-group{
+    margin-bottom:6px;
+    border:1px solid #e2e8f0;
+    border-radius:6px;
+}
+summary.tree-summary{
+    padding:6px 8px;
+    font-size:12px;
+    font-weight:bold;
+    background:#f8fafc;
+    cursor:pointer;
+    user-select:none;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    transition:background 0.15s ease;
+}
+.tree-actions{ display:flex; gap:4px; align-items:center; }
+.tree-actions button{
+    border:0; background:none; font-size:12px; cursor:pointer; padding:2px 4px;
+    border-radius:3px;
+}
+.tree-actions button:hover{ background:#cbd5e1; }
+.tree-content{ padding:4px 6px; background:#fff; }
+.tree-item{
+    padding:6px 8px;
+    font-size:12px;
+    border-radius:4px;
+    cursor:grab;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:3px;
+    background:#fafbfc;
+    border:1px solid #edf2f7;
+    user-select:none;
+}
+.tree-item:hover{ background:#edf6ff; border-color:#287fe8; }
+.tree-item.active{ background:#287fe8; color:#fff; font-weight:bold; }
+.tree-item .del-btn { border:0; background:none; color:#a33; font-weight:bold; }
+.tree-item.active .del-btn{ color:#fff; }
+.sub-tree-item{
+    margin-left:10px;
+    background:#f1f5f9;
+    border-left:3px solid #287fe8;
+    cursor:grab;
+    touch-action:none;
+    user-select:none;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.sub-tree-item.session-sort-dragging {
+    opacity: 0.4;
+    background: #dbeafe !important;
+}
+
+.sub-tree-item.session-sort-before {
+    border-top: 3px solid #287fe8 !important;
+}
+
+.sub-tree-item.session-sort-after {
+    border-bottom: 3px solid #287fe8 !important;
+}
+.sub-tree-item.session-sort-dragging{opacity:.45;}
+.sub-tree-item.session-sort-before{border-top:3px solid #287fe8;}
+.sub-tree-item.session-sort-after{border-bottom:3px solid #287fe8;}
+.session-remove-btn{
+    border:0;
+    background:transparent;
+    color:#a33;
+    font-weight:bold;
+    cursor:pointer;
+    padding:2px 5px;
+    border-radius:3px;
+    flex:0 0 auto;
+}
+.session-remove-btn:hover{background:#fee2e2;}
+/* ZONE DE TRAVAIL PRINCIPALE */
+.main{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    height:calc(100vh - 58px);
+    overflow:hidden;
+    padding:10px;
+}
+.exercise-toolbar{
+    display:flex;
+    gap:7px;
+    margin-bottom:8px;
+    align-items:center;
+}
+.exercise-toolbar input[type="text"]{
+    flex:1;
+    padding:9px;
+    border:1px solid #cfd5db;
+    border-radius:7px;
+    font-weight:bold;
+}
+.exercise-toolbar select{
+    border:1px solid #cfd5db;
+    background:#fff;
+    border-radius:7px;
+    padding:8px 10px;
+}
+.sheet{
+    flex:1;
+    min-height:0;
+    overflow:auto;
+    background:#fff;
+    border:1px solid #d0d6dc;
+    border-radius:9px;
+    padding:9px;
+    display:grid;
+    grid-template-columns:1fr 340px;
+    gap:10px;
+}
+.court-wrapper{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    min-height:0;
+}
+
+/* =========================================================
+   SECOND TERRAIN / ÉVOLUTION
+   ========================================================= */
+
+.court-wrapper.multi-court{
+    display:grid;
+    grid-template-rows:minmax(220px,1fr) minmax(220px,1fr) auto;
+    gap:8px;
+}
+
+.court-wrapper.multi-court .court-container{
+    min-height:220px;
+}
+
+.court-evolution-label{
+    position:absolute;
+    right:7px;
+    top:6px;
+    z-index:80;
+
+    padding:4px 7px;
+    border-radius:5px;
+
+    background:rgba(255,255,255,.94);
+    font-size:11px;
+    font-weight:bold;
+    color:#287fe8;
+}
+
+/* TERRAIN SVG ET PIONS */
+.court-container{
+    position:relative;
+    flex:1;
+    min-height:0;
+    background:#fafafa;
+    border:1px solid #d6dce2;
+    border-radius:8px;
+    overflow:hidden;
+}
+.court-title{
+    position:absolute;
+    z-index:80;
+    left:7px; top:6px;
+    padding:4px 7px;
+    border-radius:5px;
+    background:rgba(255,255,255,.94);
+    font-size:11px;
+    font-weight:bold;
+}
+.court-svg{
+    position:absolute;
+    inset:0;
+    width:100%; height:100%;
+    touch-action:none;
+}
+.floor{fill:#e5b66d}
+.court-border, .court-line, .court-strong, .court-dashed{ fill:none; stroke:#fff; }
+.court-border{stroke-width:.12}
+.court-line{stroke-width:.11}
+.court-strong{stroke-width:.15}
+.court-dashed{ stroke-width:.11; stroke-dasharray:.28 .28; }
+.draw-layer{ position:absolute; inset:0; z-index:50; pointer-events:none; }
+.object, .text-object{ pointer-events:auto; }
+.object{
+    position:absolute;
+    transform:translate(-50%,-50%);
+    user-select:none;
+    touch-action:none;
+    cursor:grab;
+}
+.player, .cone{
+    width:28px; height:28px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px; font-weight:bold;
+    border:2px solid white;
+    box-shadow:0 1px 4px rgba(0,0,0,.45);
+}
+
+/* =========================================================
+   FORMES GÉOMÉTRIQUES
+   ========================================================= */
+
+/* Cercle */
+.shape-circle{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:rgba(37,99,235,.20);
+    border:2px solid #2563eb;
+}
+
+/* Carré */
+.shape-square{
+    width:45px;
+    height:45px;
+    background:rgba(37,99,235,.20);
+    border:2px solid #2563eb;
+}
+
+/* Rectangle */
+.shape-rectangle{
+    width:80px;
+    height:45px;
+    background:rgba(37,99,235,.20);
+    border:2px solid #2563eb;
+}
+
+/* Triangle */
+.shape-triangle{
+    width:55px;
+    height:50px;
+    background:rgba(37,99,235,.30);
+    border:2px solid #2563eb;
+    clip-path:polygon(50% 0%, 100% 100%, 0% 100%);
+}
+/* =========================================================
+   ROTATION + REDIMENSIONNEMENT DES FORMES
+   ---------------------------------------------------------
+   --rotation contient l'angle en degrés.
+   La forme reste centrée grâce à translate(-50%, -50%).
+========================================================= */
+
+.object.shape-square,
+.object.shape-rectangle,
+.object.shape-triangle,
+.object.shape-circle{
+    transform:translate(-50%,-50%) rotate(var(--rotation, 0deg));
+}
+
+/* Poignée bleue : agrandir / réduire */
+.shape-resize-handle{
+    position:absolute;
+    width:11px;
+    height:11px;
+    right:-7px;
+    bottom:-7px;
+    background:#fff;
+    border:2px solid #087bd9;
+    border-radius:50%;
+    cursor:nwse-resize;
+    z-index:10;
+}
+
+/* Poignée orange : tourner la forme */
+.shape-rotate-handle{
+    position:absolute;
+    width:13px;
+    height:13px;
+    left:50%;
+    top:-23px;
+    margin-left:-6.5px;
+    background:#fff;
+    border:2px solid #e66c2e;
+    border-radius:50%;
+    cursor:grab;
+    z-index:11;
+}
+
+.shape-rotate-handle::after{
+    content:"↻";
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    color:#e66c2e;
+    font-size:9px;
+    font-weight:bold;
+}
+
+.shape-rotate-handle:active{cursor:grabbing;}
+.shape-resize-handle:hover{ background:#e0f2fe; }
+.freehand-path-selected{filter:drop-shadow(0 0 2px #00a8ff);}
+
+.player-purple{background:#783fb4;color:#fff}
+.player-orange{background:#e66c2e;color:#fff}
+.cone{background:#ffd21b;border-color:#987900;color:#665200}
+.ball{
+    width:24px; height:24px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px;
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    filter:drop-shadow(0px 2px 3px rgba(0,0,0,0.4));
+}
+.object.selected, .text-object.selected{
+    outline:3px solid #00a8ff;
+    outline-offset:2px;
+}
+.text-object{
+    position:absolute;
+    transform:translate(-50%,-50%);
+    background:rgba(255,255,245,.96);
+    border:1px solid #888;
+    border-radius:5px;
+    padding:4px 7px;
+    white-space:nowrap;
+    box-shadow:0 1px 3px rgba(0,0,0,.2);
+    cursor:move;
+    touch-action:none;
+}
+/* PALETTE D'OUTILS ET CRAYON */
+.palette{
+    margin-top:8px;
+    padding:6px 10px;
+    background:#f8fafc;
+    border:1px solid #d5dbe1;
+    border-radius:8px;
+    display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+}
+.palette-title{font-size:11px;font-weight:bold;color:#475569;}
+.tool{
+    height:32px; min-width:32px;
+    border-radius:6px;
+    border:1px solid #cbd2d9;
+    background:#fff;
+    font-weight:bold;
+    padding:0 8px;
+}
+.tool-purple{background:#783fb4;color:#fff;border:none}
+.tool-orange{background:#e66c2e;color:#fff;border:none}
+.tool-yellow{background:#ffd21b;color:#665200;border:none}
+.tool-ball{background:#fff;color:#000;border:1px solid #cbd2d9;font-size:16px;}
+.tool.active{outline:3px solid #287fe8}
+.color-picker{
+    display:flex; gap:6px; align-items:center;
+    border-left:1px solid #cbd5e1; padding-left:8px;
+}
+.color-dot{
+    width:20px; height:20px; border-radius:50%;
+    cursor:pointer; border:2px solid transparent;
+}
+.color-dot.active{ border-color:#287fe8; transform:scale(1.15); }
+/* PANNEAU DE DROITE */
+.right-panel{ display:flex; flex-direction:column; gap:8px; }
+.panel-tools{
+    border:1px solid #d7dce2; border-radius:8px;
+    padding:6px; display:flex; gap:5px;
+}
+.panel-tools button{
+    flex:1; padding:7px;
+    border:1px solid #d2d8df; border-radius:6px;
+    background:#fff; font-size:11px;
+}
+.info-field{ display:flex; flex-direction:column; flex:1; }
+.info-field label{ font-size:11px; font-weight:bold; text-transform:uppercase; margin-bottom:3px; color:#475569; }
+.info-field textarea{ flex:1; width:100%; min-height:65px; resize:none; border:1px solid #d2d8df; border-radius:7px; padding:8px; }
+/* MODALE SÉANCE */
+.modal{
+    position:fixed; inset:0; z-index:300;
+    display:none; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.65);
+}
+.modal.visible{display:flex}
+.modal-box{ width:min(720px,92vw); max-height:85vh; overflow:auto; background:#fff; border-radius:10px; padding:17px; }
+.drop-zone-area{
+    border:2px dashed #287fe8;
+    background:#f0f7ff;
+    border-radius:8px;
+    padding:10px;
+    margin-top:10px;
+    min-height:100px;
+}
+.drop-zone-area.drag-over{ background:#dbeafe; border-color:#1d4ed8; }
+.session-drop-target.drag-over{ background:#dbeafe; outline:2px dashed #1d4ed8; outline-offset:-2px; border-radius:6px; }
+.tree-group.drag-over > .tree-summary{ background:#dbeafe !important; outline:2px dashed #1d4ed8; outline-offset:-2px; border-radius:6px; }
+.session-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    border:1px solid #cbd5e1;
+    background:#fff;
+    border-radius:7px;
+    padding:7px;
+    margin-bottom:6px;
+    transition:background .15s, border-color .15s, transform .15s;
+}
+
+.session-row .sess-name{
+    flex:1;
+    font-weight:bold;
+    font-size:13px;
+}
+
+.session-row input{
+    width:70px;
+    padding:6px;
+    border:1px solid #ccc;
+    border-radius:4px;
+}
+
+/* Poignée visuelle indiquant que la ligne peut être déplacée. */
+.session-drag-handle{
+    color:#64748b;
+    font-size:18px;
+    font-weight:bold;
+    line-height:1;
+    cursor:grab;
+    user-select:none;
+    letter-spacing:-3px;
+    width:18px;
+    text-align:center;
+}
+
+.session-drag-handle:active{
+    cursor:grabbing;
+}
+
+.session-row.session-dragging{
+    opacity:.45;
+}
+
+.session-row.session-drag-over{
+    border-color:#287fe8;
+    background:#edf6ff;
+}
+#sessionPrintContainer { display: none; }
+.bottom-toolbar{display:flex;gap:7px;margin-top:8px;align-items:center;}
+.bottom-toolbar button{border:0;border-radius:7px;padding:8px 11px;background:#287fe8;color:#fff;font-weight:bold;}
+.bottom-toolbar .secondary{background:#69737e;}
+/* IMPRESSION */
+@media print {
+    body, html { background: #fff !important; color: #000 !important; height: auto !important; }
+    .header, .sidebar, .exercise-toolbar, .palette, .panel-tools, .bottom-toolbar, button, .modal { display: none !important; }
+    
+    body:not(.printing-session) .app, body:not(.printing-session) .main { height: auto !important; padding: 0 !important; overflow: visible !important; display: block !important; }
+    body:not(.printing-session) .sheet { display: block !important; border: none !important; padding: 0 !important; }
+    body:not(.printing-session) .court-wrapper { height: 420px !important; page-break-inside: avoid; margin-bottom: 20px; }
+    body:not(.printing-session) .court-container { border: 2px solid #000 !important; }
+    body:not(.printing-session) .right-panel { display: block !important; }
+    body:not(.printing-session) .info-field { margin-bottom: 12px; page-break-inside: avoid; }
+    body:not(.printing-session) .info-field textarea { border: 1px solid #aaa !important; height: auto !important; min-height: 50px !important; font-size: 12px; }
+    
+    body:not(.printing-session) .print-header { display: block !important; margin-bottom: 15px; border-bottom: 2px solid #000; padding-bottom: 5px; }
+    body:not(.printing-session) .print-header h2 { margin: 0; font-size: 22px; }
+    body:not(.printing-session) .print-header p { margin: 3px 0 0 0; font-size: 14px; color: #555; }
+
+    body.printing-session .app { display: none !important; }
+    body.printing-session #sessionPrintContainer { display: block !important; }
+
+    .session-print-page {
+        page-break-after: always;
+        break-after: page;
+        padding-top: 10px;
+    }
+    .session-print-page:last-child {
+        page-break-after: auto;
+        break-after: auto;
+    }
+}
+.print-header { display: none; }
+
+.session-exercise-picker{
+    max-height:180px;
+    overflow-y:auto;
+    border:1px solid #d7dde5;
+    border-radius:6px;
+    background:#f8fafc;
+    padding:5px;
+}
+.session-picker-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:6px 8px;
+    background:#fff;
+    border-bottom:1px solid #e5e7eb;
+    font-size:12px;
+}
+.session-picker-item:last-child{border-bottom:none;}
+.session-add-btn{
+    flex:0 0 auto;
+    width:28px;
+    height:28px;
+    border:0;
+    border-radius:5px;
+    background:#287fe8;
+    color:#fff;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.session-add-btn:hover{opacity:.85;}
+
+/* =========================================================
+   V12 — ADAPTATION MOBILE
+   Même application, interface adaptée au tactile.
+========================================================= */
+.mobile-menu-button{
+    display:none;
+    width:38px;
+    height:38px;
+    padding:0;
+    border:1px solid #56616c;
+    border-radius:7px;
+    background:#3e4852;
+    color:#fff;
+    font-size:20px;
+}
+.mobile-sidebar-overlay{display:none;}
+
+@media(max-width:900px){
+    html,body{
+        min-height:100%;
+        height:auto;
+        overflow-x:hidden;
+    }
+    .header{
+        height:54px;
+        padding:0 8px;
+        gap:6px;
+        position:sticky;
+        top:0;
+        z-index:500;
+    }
+    .mobile-menu-button{display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+    .header h1{
+        margin:0 4px;
+        font-size:16px;
+        white-space:nowrap;
+    }
+    .header-actions{
+        gap:4px;
+        overflow-x:auto;
+        scrollbar-width:none;
+        flex:0 1 auto;
+    }
+    .header-actions::-webkit-scrollbar{display:none;}
+    .icon-button{width:38px;height:38px;flex:0 0 38px;font-size:18px;}
+    #saveStatus{display:none;}
+
+    .app{
+        min-height:calc(100vh - 54px);
+        height:auto;
+        display:block;
+    }
+    .sidebar{
+        position:fixed;
+        left:0;
+        top:54px;
+        bottom:0;
+        width:min(88vw,360px);
+        z-index:450;
+        transform:translateX(-105%);
+        transition:transform .2s ease;
+        box-shadow:4px 0 18px rgba(0,0,0,.22);
+        padding:10px;
+    }
+    body.mobile-sidebar-open .sidebar{transform:translateX(0);}
+    .mobile-sidebar-overlay{
+        position:fixed;
+        inset:54px 0 0 0;
+        z-index:440;
+        background:rgba(0,0,0,.42);
+    }
+    body.mobile-sidebar-open .mobile-sidebar-overlay{display:block;}
+
+    .main{
+        width:100%;
+        height:auto;
+        min-height:calc(100vh - 54px);
+        overflow:visible;
+        padding:7px;
+    }
+    .exercise-toolbar{
+        flex-wrap:wrap;
+        gap:6px;
+    }
+    .exercise-toolbar input{
+        min-width:0;
+        flex:1 1 100%;
+        font-size:16px;
+        min-height:44px;
+    }
+    .exercise-toolbar select{
+        flex:1 1 48%;
+        min-height:44px;
+        font-size:16px;
+    }
+    .exercise-toolbar > div{
+        flex:1 1 48%;
+        min-height:44px;
+    }
+    .exercise-toolbar input[type="number"]{font-size:16px;}
+
+    .sheet{
+        display:flex;
+        flex-direction:column;
+        gap:8px;
+        overflow:visible;
+        padding:6px;
+    }
+    .court-wrapper{
+        width:100%;
+        height:auto;
+    }
+    .court-wrapper:not(.multi-court){
+        display:flex;
+    }
+    .court-wrapper:not(.multi-court) .court-container{
+        width:100%;
+        aspect-ratio:2 / 1;
+        height:auto;
+        min-height:0;
+        flex:none;
+    }
+    .court-wrapper.multi-court{
+        display:flex;
+        flex-direction:column;
+        gap:8px;
+    }
+    .court-wrapper.multi-court .court-container{
+        width:100%;
+        aspect-ratio:2 / 1;
+        height:auto;
+        min-height:0;
+        flex:none;
+    }
+
+    .palette{
+        margin-top:6px;
+        flex-wrap:nowrap;
+        overflow-x:auto;
+        overflow-y:hidden;
+        -webkit-overflow-scrolling:touch;
+        padding:7px;
+        gap:7px;
+        scrollbar-width:thin;
+        touch-action:pan-x;
+    }
+    .palette-title{flex:0 0 auto;}
+    .tool{
+        min-height:44px;
+        height:44px;
+        flex:0 0 auto;
+        padding:0 10px;
+        font-size:13px;
+    }
+    .color-picker{
+        flex:0 0 auto;
+        min-height:44px;
+    }
+    .color-dot{width:30px;height:30px;flex:0 0 30px;}
+
+    .right-panel{
+        width:100%;
+    }
+    .panel-tools{
+        position:sticky;
+        bottom:6px;
+        z-index:100;
+        background:rgba(248,250,252,.96);
+        backdrop-filter:blur(4px);
+    }
+    .panel-tools button{
+        min-height:44px;
+        font-size:13px;
+    }
+    .info-field textarea{
+        min-height:100px;
+        font-size:16px;
+    }
+
+    .modal-box{
+        width:calc(100vw - 20px);
+        max-height:90vh;
+        padding:14px;
+    }
+    .modal-box input{
+        min-height:44px;
+        font-size:16px;
+    }
+    .modal-box button{min-height:44px;}
+
+    .sub-tree-item,.tree-item,summary.tree-summary{
+        min-height:44px;
+        font-size:13px;
+    }
+    .session-remove-btn{
+        min-width:40px;
+        min-height:40px;
+        font-size:18px;
+    }
+}
+
+@media(max-width:600px){
+    .header h1{font-size:15px;}
+    .header-actions .icon-button{width:36px;height:36px;flex-basis:36px;}
+    .sheet{border-radius:7px;}
+    .court-wrapper.multi-court .court-evolution-label{font-size:10px;}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <button class="mobile-menu-button" id="mobileMenuButton" title="Ouvrir la bibliothèque" aria-label="Ouvrir la bibliothèque">☰</button>
+    <h1>🤾 HandCoach V12</h1>
+    <div class="spacer"></div>
+
+    <!-- Barre d'actions compacte : les explications apparaissent au survol -->
+    <div class="header-actions">
+    <button class="icon-button" id="addCourtButton" title="Ajouter un second terrain" aria-label="Ajouter un second terrain">＋</button>
+    <button class="icon-button" id="newExercise" title="Fiche vierge" aria-label="Fiche vierge">📄</button>
+    <button class="icon-button" id="saveExercise" title="Sauvegarder l'exercice" aria-label="Sauvegarder l'exercice">💾</button>
+    <button class="icon-button" id="chooseFolder" title="Choisir le dossier Hand" aria-label="Choisir le dossier Hand">📁</button>
+    <button class="icon-button" id="sessionButton" title="Nouvelle séance" aria-label="Nouvelle séance">📋</button>
+    <button class="icon-button" id="printButton" title="Imprimer l'exercice" aria-label="Imprimer l'exercice">🖨️</button> 
+    <button class="icon-button" id="exportButton" title="Exporter JSON" aria-label="Exporter JSON">📤</button>
+    <button class="icon-button" id="importButton" title="Importer JSON" aria-label="Importer JSON">📥</button>
+</div>
+</header>
+
+<div class="mobile-sidebar-overlay" id="mobileSidebarOverlay"></div>
+<div class="app">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-section-title">Exercices</div>
+        <div id="exercisesTree"></div>
+        <div class="sidebar-section-title">Séances</div>
+        <div id="sessionsTree"></div>
+    </aside>
+
+    <main id="main" class="main">
+        <div class="print-header">
+            <h2 id="printTitle">Titre de l'exercice</h2>
+            <p id="printMeta">Catégorie : Échauffement</p>
+        </div>
+
+        <div class="exercise-toolbar">
+            <input id="exerciseTitle" value="" placeholder="Titre de l'exercice (ex: def 1/5)">
+            <select id="exerciseCategory">
+                <option value="Attaque">Attaque</option>
+                <option value="Défense">Défense</option>
+                <option value="Échauffement">Échauffement</option>
+                <option value="Montée de balle">Montée de balle</option>
+                <option value="Jeu à thème">Jeu à thème</option>
+                <option value="Gardien">Gardien</option>
+                <option value="Physique">Physique</option>
+            </select>
+
+            <!-- CHAMP DE DURÉE -->
+            <div style="display:flex; align-items:center; gap:5px; background:#fff; padding:6px 10px; border:1px solid #cfd5db; border-radius:7px;">
+                <span style="font-size:12px; font-weight:bold; color:#475569;">Durée :</span>
+                <input id="exerciseDuration" type="number" value="15" min="1" max="180" style="width:55px; border:1px solid #ccc; border-radius:4px; padding:3px; text-align:center; font-weight:bold;" title="Durée en minutes">
+                <span style="font-size:12px; color:#475569; font-weight:bold;">min</span>
+            </div>
+        </div>
+
+        <div class="sheet">
+            <section class="court-wrapper">
+                <div class="court-container" id="courtContainer">
+                        <svg id="courtSvg" class="court-svg" viewBox="0 0 40 20" preserveAspectRatio="none">
+                        <rect class="floor" x="0" y="0" width="40" height="20"/>
+                        <rect class="court-border" x="0" y="0" width="40" height="20"/>
+                        <path class="court-strong" d="M20 0V20"/>
+                        <circle class="court-line" cx="20" cy="10" r="1.8"/>
+                        <path class="court-strong" d="M0 8.5V11.5"/>
+                        <path class="court-strong" d="M40 8.5V11.5"/>
+                        <path class="court-strong" d="M0 4 A6 6 0 0 1 6 10 A6 6 0 0 1 0 16 M40 4 A6 6 0 0 0 34 10 A6 6 0 0 0 40 16"/>
+                        <path class="court-dashed" d="M0 1 A9 9 0 0 1 9 10 A9 9 0 0 1 0 19 M40 1 A9 9 0 0 0 31 10 A9 9 0 0 0 40 19"/>
+                        <path class="court-strong" d="M7 9.5V10.5M33 9.5V10.5"/>
+                        <path class="court-strong" d="M4 9.8V10.2M36 9.8V10.2"/>
+                        <g id="pencilPathsLayer"></g>
+                    </svg>
+                    <div id="objectsLayer" class="draw-layer"></div>
+                </div>
+
+                <div class="palette">
+                    <span class="palette-title">PIONS :</span>
+                    <!-- =========================
+     PIONS
+     ========================= -->
+
+<button class="tool tool-purple" data-tool="player-purple">
+    Attaquant (A)
+</button>
+
+<button class="tool tool-orange" data-tool="player-orange">
+    Défenseur (B)
+</button>
+
+<button class="tool tool-yellow" data-tool="cone">
+    Plot
+</button>
+
+<button class="tool tool-ball" data-tool="ball">
+    ⚽
+</button>
+
+
+<!-- =========================
+     FORMES
+     Les formes peuvent maintenant être agrandies/réduites
+     avec la petite poignée bleue en bas à droite.
+     ========================= -->
+
+<button class="tool" data-tool="shape-square">
+    ◻ Carré
+</button>
+
+<button class="tool" data-tool="shape-rectangle">
+    ▭ Rectangle
+</button>
+
+<button class="tool" data-tool="shape-triangle">
+    △ Triangle
+</button>
+
+<button class="tool" data-tool="shape-circle">
+    ○ Cercle
+</button>
+
+
+<!-- =========================
+     TEXTE
+     ========================= -->
+
+<button class="tool" data-tool="text">
+    Texte
+</button>
+
+                    <div class="color-picker">
+                        <span class="palette-title">CRAYON :</span>
+                        <button class="tool" id="pencilToolBtn">Dessiner</button>
+                        <select id="pencilWidth"
+        class="tool"
+        style="padding:0 4px;"
+        title="Épaisseur du trait">
+
+    <option value="0.04">Ultra fin</option>
+    <option value="0.08" selected>Très fin</option>
+    <option value="0.15">Fin</option>
+    <option value="0.30">Moyen</option>
+    <option value="0.50">Épais</option>
+
+</select>
+                        <div class="color-dot active" style="background:#222" data-color="#222"></div>
+                        <div class="color-dot" style="background:#2563eb" data-color="#2563eb"></div>
+                        <div class="color-dot" style="background:#dc2626" data-color="#dc2626"></div>
+                        <div class="color-dot" style="background:#ca8a04" data-color="#ca8a04"></div>
+                    </div>
+                    <button class="tool" id="clearDrawingsBtn">Effacer lignes</button>
+                </div>
+            </section>
+
+            <section class="right-panel">
+                <div class="panel-tools">
+                    <button id="undo" title="Annuler la dernière action">↶</button>
+                    <button id="redo" title="Rétablir la dernière action annulée">↷</button>
+                    <button id="clearAll" title="Tout effacer sur les terrains">Tout vider</button>
+                </div>
+                <div class="info-field">
+                    <label>Mise en place</label>
+                    <textarea id="setup" placeholder="Positionnement initial, matériel..."></textarea>
+                </div>
+                <div class="info-field">
+                    <label>Consignes & Déroulement</label>
+                    <textarea id="instructions" placeholder="Règles du jeu, rotations..."></textarea>
+                </div>
+                <div class="info-field">
+                    <label>Variantes</label>
+                    <textarea id="variant" placeholder="Espaces réduits, contraintes de temps..."></textarea>
+                </div>
+                <div class="info-field">
+                    <label>Objectifs visés</label>
+                    <textarea id="objectives" placeholder="Savoir-faire tactique ou technique..."></textarea>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<!-- CONTAINER D'IMPRESSION DE SÉANCE ENTIÈRE -->
+<div id="sessionPrintContainer"></div>
+
+<!-- MODALE SÉANCE -->
+<div id="sessionModal" class="modal">
+    <div class="modal-box">
+        <h2>Créer une Séance</h2>
+        <div style="display:flex; gap:8px; margin-bottom:12px;">
+            <input id="sessionName" placeholder="Nom de la séance (ex: Séance Reprise)" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:5px;">
+            <input id="sessionCategory" placeholder="Thème (ex: Reprise)" style="width:150px; padding:8px; border:1px solid #ccc; border-radius:5px;">
+        </div>
+        <div style="margin:14px 0; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; font-size:12px; color:#475569;">
+            La séance sera créée vide. Tu pourras ensuite ajouter les exercices un par un par <strong>glisser-déposer</strong> depuis la bibliothèque.
+        </div>
+        <div style="margin-top:15px; display:flex; gap:8px;">
+            <button id="saveSessionBtn" style="background:#287fe8; color:white; border:none; padding:9px 15px; border-radius:5px; font-weight:bold;">Enregistrer la séance</button>
+            <button id="closeSessionBtn" class="secondary" style="background:#3e4852; color:white; border:none; padding:9px 15px; border-radius:5px;">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* =========================================================
+   HANDCOACH V12 MOBILE — GUIDE RAPIDE
+
+   1. CONFIGURATION / STOCKAGE
+   2. SAUVEGARDE DANS LE DOSSIER "Hand"
+   3. OUTILS DE BASE
+   4. CRAYON / TRAITS LIBRES
+   5. OBJETS ET FORMES
+   6. SÉLECTION / DÉPLACEMENT / REDIMENSIONNEMENT
+   7. UNDO / REDO
+   8. CHARGEMENT / SAUVEGARDE DES EXERCICES
+   9. IMPORT / EXPORT JSON
+   10. GESTION DES SÉANCES
+   11. IMPRESSION PDF
+   12. INITIALISATION
+
+   ASTUCE : Ctrl+F puis cherche le nom d'une fonction.
+   Exemple : cherche "createObject" pour modifier la création
+   des joueurs, plots, ballons et formes.
+========================================================= */
+
+/* =========================================================
+   1. CONFIGURATION / STOCKAGE
+========================================================= */
+
+const APP_VERSION = "V12 Mobile";
+
+const EXERCISES_KEY = "handcoach_v10.3_exercises";
+const SESSIONS_KEY = "handcoach_v10.3_sessions";
+
+/* Anciennes clés : elles permettent de récupérer ton travail. */
+const OLD_EXERCISES_KEYS = [
+    "handcoach_v10.2_exercises",
+    "handcoach_v10.1_exercises",
+    "handcoach_v9.1_exercises"
+];
+
+const OLD_SESSIONS_KEYS = [
+    "handcoach_v10.2_sessions",
+    "handcoach_v10.1_sessions",
+    "handcoach_v9.1_sessions"
+];
+
+/* Petit raccourci pour écrire $("id") au lieu de document.getElementById("id"). */
+const $ = id => document.getElementById(id);
+
+/* Crée un identifiant unique pour chaque exercice / objet / séance. */
+function uid(){
+    return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+/* Données principales de l'application. */
+let exercises = loadArrayFromStorage(EXERCISES_KEY, OLD_EXERCISES_KEYS, []);
+let sessions = loadArrayFromStorage(SESSIONS_KEY, OLD_SESSIONS_KEYS, []);
+
+/* État actuel de l'éditeur. */
+let currentId = null;
+let activeTool = null;
+let selected = null;
+let clipboard = null;
+let handCoachDirectory = null;
+
+/* État du crayon. */
+let isPencilActive = false;
+let isDrawing = false;
+let currentPath = null;
+let activeColor = "#222";
+let activeCourtIndex = 0;
+
+/*
+    Terrain 0 = terrain principal
+    Terrain 1 = terrain d'évolution
+*/
+let pathsByCourt = [
+    []
+];
+
+let pathsData = pathsByCourt[0];
+/* Historique Annuler / Rétablir. */
+let undoStack = [];
+let redoStack = [];
+let sessionSortState = null;
+let draggedExerciseId = null;
+let sessionSuppressClickUntil = 0;
+
+/* Charge un tableau depuis localStorage, avec récupération des anciennes versions. */
+function loadArrayFromStorage(newKey, oldKeys, fallback){
+    const current = JSON.parse(localStorage.getItem(newKey) || "null");
+    if(Array.isArray(current)) return current;
+
+    for(const oldKey of oldKeys){
+        const oldData = JSON.parse(localStorage.getItem(oldKey) || "null");
+        if(Array.isArray(oldData)) return oldData;
+    }
+
+    return fallback;
+}
+
+/* Sauvegarde les données dans le navigateur. */
+function saveStorage(){
+    localStorage.setItem(EXERCISES_KEY, JSON.stringify(exercises));
+    localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+    renderSidebar();
+    updateSaveStatus();
+}
+
+/* Met à jour le petit indicateur de sauvegarde en haut. */
+function updateSaveStatus(){
+    if($("saveStatus")){
+        $("saveStatus").textContent = handCoachDirectory
+            ? "💾 Dossier + navigateur"
+            : "💻 Navigateur";
+    }
+}
+
+$("chooseFolder").onclick = chooseSaveFolder;
+
+/* =========================================================
+   2. SAUVEGARDE DANS LE DOSSIER "Hand"
+
+   IMPORTANT : un navigateur ne permet pas de choisir directement
+   C:\Users\multw\Desktop\Hand sans demander l'autorisation.
+
+   Tu cliques donc sur 📁 et tu sélectionnes UNE FOIS le dossier Hand.
+========================================================= */
+
+async function chooseSaveFolder(){
+    if(!window.showDirectoryPicker){
+        alert(
+            "La sélection d'un dossier n'est pas disponible ici.\n\n" +
+            "Utilise Microsoft Edge ou Google Chrome."
+        );
+        return;
+    }
+
+    try{
+        handCoachDirectory = await window.showDirectoryPicker({ mode:"readwrite" });
+        await importFilesFromFolder();
+        renderSidebar();
+        updateSaveStatus();
+
+        alert(
+            "Dossier sélectionné : " + handCoachDirectory.name +
+            "\n\nHandCoach peut maintenant y sauvegarder tes exercices."
+        );
+    }catch(error){
+        console.log("Sélection du dossier annulée :", error);
+    }
+}
+
+/* Fusionne deux listes en utilisant l'identifiant comme clé. */
+function mergeById(existing, imported){
+    const map = new Map(existing.map(item => [item.id, item]));
+
+    imported.forEach(item => {
+        if(item && item.id) map.set(item.id, item);
+    });
+
+    return Array.from(map.values());
+}
+
+/* Récupère les fichiers JSON présents dans le dossier Hand. */
+async function importFilesFromFolder(){
+    if(!handCoachDirectory) return false;
+
+    let foundSomething = false;
+
+    try{
+        const fileHandle = await handCoachDirectory.getFileHandle("handcoach_exercices.json");
+        const file = await fileHandle.getFile();
+        const imported = JSON.parse(await file.text());
+
+        if(Array.isArray(imported)){
+            exercises = mergeById(exercises, imported);
+            localStorage.setItem(EXERCISES_KEY, JSON.stringify(exercises));
+            foundSomething = true;
+        }
+    }catch(error){
+        console.log("Aucun fichier d'exercices trouvé dans le dossier.");
+    }
+
+    try{
+        const fileHandle = await handCoachDirectory.getFileHandle("handcoach_seances.json");
+        const file = await fileHandle.getFile();
+        const imported = JSON.parse(await file.text());
+
+        if(Array.isArray(imported)){
+            sessions = mergeById(sessions, imported);
+            localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+            foundSomething = true;
+        }
+    }catch(error){
+        console.log("Aucun fichier de séances trouvé dans le dossier.");
+    }
+
+    return foundSomething;
+}
+
+/* Écrit les deux fichiers JSON dans le dossier sélectionné. */
+async function saveFilesToFolder(){
+    if(!handCoachDirectory) return;
+
+    try{
+        const exerciseHandle = await handCoachDirectory.getFileHandle(
+            "handcoach_exercices.json",
+            { create:true }
+        );
+        const exerciseWriter = await exerciseHandle.createWritable();
+        await exerciseWriter.write(JSON.stringify(exercises, null, 2));
+        await exerciseWriter.close();
+
+        const sessionHandle = await handCoachDirectory.getFileHandle(
+            "handcoach_seances.json",
+            { create:true }
+        );
+        const sessionWriter = await sessionHandle.createWritable();
+        await sessionWriter.write(JSON.stringify(sessions, null, 2));
+        await sessionWriter.close();
+
+        if($("saveStatus")) $("saveStatus").textContent = "💾 Dossier synchronisé";
+    }catch(error){
+        console.error("Erreur de sauvegarde dans le dossier :", error);
+        alert("Impossible de sauvegarder dans le dossier.\n\n" + error.message);
+    }
+}
+
+
+
+/* =========================================================
+   3. OUTILS DE BASE
+========================================================= */
+
+/* Renvoie le calque où les objets sont placés. */
+function getObjectLayer(){
+    return $(activeCourtIndex === 0
+        ? "objectsLayer"
+        : "objectsLayer2"
+    );
+}
+
+function getCourtSvg(){
+    return $(activeCourtIndex === 0
+        ? "courtSvg"
+        : "courtSvg2"
+    );
+}
+
+function getPencilLayer(){
+    return $(activeCourtIndex === 0
+        ? "pencilPathsLayer"
+        : "pencilPathsLayer2"
+    );
+}
+
+function setActiveCourt(index){
+    activeCourtIndex = index === 1 && $("courtContainer2")
+        ? 1
+        : 0;
+
+    if(!pathsByCourt[activeCourtIndex]){
+        pathsByCourt[activeCourtIndex] = [];
+    }
+
+    pathsData = pathsByCourt[activeCourtIndex];
+}
+
+function hasSecondCourt(){
+    return !!$("courtContainer2");
+}
+
+/* =========================================================
+   AJOUT / SUPPRESSION DU SECOND TERRAIN
+   ========================================================= */
+
+function addSecondCourt(){
+
+    if(hasSecondCourt()){
+        removeSecondCourt();
+        return;
+    }
+
+    const firstCourt = $("courtContainer");
+
+    if(!firstCourt){
+        console.error("Terrain principal introuvable.");
+        return;
+    }
+
+    /*
+        On clone le terrain principal pour conserver
+        exactement les mêmes dimensions et le même tracé.
+    */
+    const secondCourt = firstCourt.cloneNode(true);
+
+    secondCourt.id = "courtContainer2";
+
+    const svg = secondCourt.querySelector("#courtSvg");
+    if(svg){
+        svg.id = "courtSvg2";
+    }
+
+    const objects = secondCourt.querySelector("#objectsLayer");
+    if(objects){
+        objects.id = "objectsLayer2";
+        objects.innerHTML = "";
+    }
+
+    const pencil = secondCourt.querySelector("#pencilPathsLayer");
+    if(pencil){
+        pencil.id = "pencilPathsLayer2";
+        pencil.innerHTML = "";
+    }
+
+    /*
+        Le deuxième terrain doit être vierge.
+    */
+    secondCourt.querySelectorAll(".object, .text-object").forEach(
+        element => element.remove()
+    );
+
+    /*
+        Indication visuelle.
+    */
+    const label = document.createElement("div");
+    label.className = "court-evolution-label";
+    label.textContent = "ÉVOLUTION";
+
+    secondCourt.appendChild(label);
+
+    /*
+        On insère le deuxième terrain avant la palette.
+    */
+    const wrapper = firstCourt.parentElement;
+    const palette = wrapper.querySelector(".palette");
+
+    wrapper.insertBefore(secondCourt, palette);
+
+    /*
+        Passage en mode deux terrains.
+    */
+    wrapper.classList.add("multi-court");
+
+    pathsByCourt = [
+        pathsByCourt[0] || [],
+        []
+    ];
+
+    setActiveCourt(0);
+
+    /*
+        Les interactions du deuxième terrain
+        seront activées ici.
+    */
+    setupCourtInteractions(1);
+    setupPencilInteractions(1);
+
+    const button = $("addCourtButton");
+
+    if(button){
+        button.textContent = "−";
+        button.title = "Supprimer le second terrain";
+    }
+}
+
+
+function removeSecondCourt(){
+
+    const secondCourt = $("courtContainer2");
+
+    if(!secondCourt) return;
+
+    secondCourt.remove();
+
+    const wrapper = $("courtContainer").parentElement;
+
+    wrapper.classList.remove("multi-court");
+
+    pathsByCourt = [
+        pathsByCourt[0] || []
+    ];
+
+    setActiveCourt(0);
+
+    const button = $("addCourtButton");
+
+    if(button){
+        button.textContent = "＋";
+        button.title = "Ajouter un second terrain";
+    }
+}
+
+
+/* Supprime la sélection actuelle. */
+function deleteSelected(){
+    if(!selected) return;
+
+    saveUndoPoint();
+
+    if(selected.tagName && selected.tagName.toLowerCase() === "path") {
+        pathsData = pathsData.filter(path => path.id !== selected.dataset.pathId);
+    }
+
+    selected.remove();
+    selected = null;
+}
+
+/* Sélectionne un objet et retire la sélection précédente. */
+function selectObject(obj){
+    document.querySelectorAll(".selected").forEach(el => el.classList.remove("selected"));
+    document.querySelectorAll(".freehand-path-selected").forEach(el => el.classList.remove("freehand-path-selected"));
+
+    selected = obj;
+
+    if(obj){
+        if(obj.tagName && obj.tagName.toLowerCase() === "path") {
+            obj.classList.add("freehand-path-selected");
+        }else{
+            obj.classList.add("selected");
+        }
+    }
+}
+
+/* Nettoie complètement le terrain. */
+function clearAll(){
+    if(!confirm("Tout effacer sur les terrains ?")) return;
+
+    saveUndoPoint();
+
+    const objects1 = $("objectsLayer");
+    const objects2 = $("objectsLayer2");
+    const pencil1 = $("pencilPathsLayer");
+    const pencil2 = $("pencilPathsLayer2");
+
+    if(objects1) objects1.innerHTML = "";
+    if(objects2) objects2.innerHTML = "";
+    if(pencil1) pencil1.innerHTML = "";
+    if(pencil2) pencil2.innerHTML = "";
+
+    pathsByCourt = $("courtContainer2") ? [[], []] : [[]];
+    pathsData = pathsByCourt[activeCourtIndex] || pathsByCourt[0];
+    selected = null;
+    currentPath = null;
+    isDrawing = false;
+}
+
+/* Numérote les joueurs A et B séparément. */
+function numberPlayers(){
+    saveUndoPoint();
+
+    let numberA = 1;
+    let numberB = 1;
+
+    document.querySelectorAll(".player-purple").forEach(player => {
+        player.textContent = numberA++;
+    });
+
+    document.querySelectorAll(".player-orange").forEach(player => {
+        player.textContent = numberB++;
+    });
+}
+
+/* Duplique l'exercice actuel. */
+function duplicateCurrentExercise(){
+    const source = readCurrentExercise();
+    const copy = JSON.parse(JSON.stringify(source));
+
+    copy.id = uid();
+    copy.title = (copy.title || "Exercice") + " (Copie)";
+
+    exercises.push(copy);
+    saveStorage();
+    loadExercise(copy);
+}
+
+/* =========================================================
+   4. CRAYON / TRAITS LIBRES
+
+   Les traits sont dessinés directement dans le SVG du terrain.
+   Les épaisseurs sont volontairement petites pour les schémas tactiques.
+========================================================= */
+
+function getSvgCoords(event, svg){
+    const rect = svg.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 40;
+    const y = ((event.clientY - rect.top) / rect.height) * 20;
+    return { x: x.toFixed(2), y: y.toFixed(2) };
+}
+
+/* Active les traits libres sur un terrain donné. */
+function setupPencilInteractions(index){
+    const svg = index === 0 ? $("courtSvg") : $("courtSvg2");
+    const pencilLayer = index === 0 ? $("pencilPathsLayer") : $("pencilPathsLayer2");
+    if(!svg || !pencilLayer) return;
+
+    svg.addEventListener("pointerdown", event => {
+        if(!isPencilActive) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        setActiveCourt(index);
+        saveUndoPoint();
+        isDrawing = true;
+
+        const point = getSvgCoords(event, svg);
+        const width = parseFloat($("pencilWidth").value) || 0.08;
+
+        currentPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        currentPath.dataset.pathId = uid();
+        currentPath.dataset.courtIndex = String(index);
+        currentPath.setAttribute("fill", "none");
+        currentPath.setAttribute("stroke", activeColor);
+        currentPath.setAttribute("stroke-width", width);
+        currentPath.setAttribute("stroke-linecap", "round");
+        currentPath.setAttribute("stroke-linejoin", "round");
+        currentPath.setAttribute("d", `M ${point.x} ${point.y}`);
+        currentPath.style.pointerEvents = "stroke";
+
+        currentPath.addEventListener("pointerdown", e => {
+            e.stopPropagation();
+            selectObject(currentPath);
+        });
+
+        pencilLayer.appendChild(currentPath);
+        svg.setPointerCapture(event.pointerId);
+    });
+
+    svg.addEventListener("pointermove", event => {
+        if(!isDrawing || !currentPath) return;
+        if(currentPath.dataset.courtIndex !== String(index)) return;
+
+        const point = getSvgCoords(event, svg);
+        const oldD = currentPath.getAttribute("d");
+        currentPath.setAttribute("d", `${oldD} L ${point.x} ${point.y}`);
+    });
+
+    const finishPath = event => {
+        if(!isDrawing || !currentPath) return;
+        if(currentPath.dataset.courtIndex !== String(index)) return;
+
+        isDrawing = false;
+
+        const courtPaths = pathsByCourt[index] || (pathsByCourt[index] = []);
+        courtPaths.push({
+            id: currentPath.dataset.pathId,
+            d: currentPath.getAttribute("d"),
+            color: currentPath.getAttribute("stroke") || activeColor,
+            width: parseFloat(currentPath.getAttribute("stroke-width")) || 0.08
+        });
+        pathsData = courtPaths;
+
+        if(svg.hasPointerCapture(event.pointerId)){
+            svg.releasePointerCapture(event.pointerId);
+        }
+
+        currentPath = null;
+    };
+
+    svg.addEventListener("pointerup", finishPath);
+    svg.addEventListener("pointercancel", finishPath);
+}
+
+setupPencilInteractions(0);
+
+/* Active / désactive le crayon. */
+$("pencilToolBtn").onclick = () => {
+    isPencilActive = !isPencilActive;
+
+    $("pencilToolBtn").classList.toggle("active", isPencilActive);
+
+    document.querySelectorAll(".palette .tool[data-tool]").forEach(button => {
+        button.classList.remove("active");
+    });
+
+    activeTool = null;
+};
+
+/* Choix de la couleur du crayon. */
+document.querySelectorAll(".color-dot").forEach(dot => {
+    dot.onclick = () => {
+        document.querySelectorAll(".color-dot").forEach(d => d.classList.remove("active"));
+        dot.classList.add("active");
+        activeColor = dot.dataset.color;
+
+        if(!isPencilActive) $("pencilToolBtn").click();
+    };
+});
+
+/* Efface tous les traits libres. */
+function clearFreehandPaths(createUndo = true){
+    if(createUndo) saveUndoPoint();
+
+    const layer = getPencilLayer();
+    if(layer) layer.innerHTML = "";
+
+    pathsByCourt[activeCourtIndex] = [];
+    pathsData = pathsByCourt[activeCourtIndex];
+    selected = null;
+}
+
+$("clearDrawingsBtn").onclick = () => clearFreehandPaths(true);
+
+/* =========================================================
+   5. OBJETS ET FORMES
+
+   Types disponibles :
+   - player-purple    = joueur A
+   - player-orange    = joueur B
+   - cone             = plot
+   - ball             = ballon
+   - shape-square     = carré
+   - shape-rectangle  = rectangle
+   - shape-triangle   = triangle
+   - shape-circle     = cercle
+   - text             = texte
+========================================================= */
+
+function createObject(type, x, y, options = {}){
+    const layer = getObjectLayer();
+    const id = options.id || uid();
+    const element = document.createElement("div");
+
+    /* -----------------------------------------------------
+       TEXTE
+    ----------------------------------------------------- */
+    if(type === "text"){
+        element.className = "text-object";
+        element.textContent = options.text || prompt("Texte :", "Remarque") || "Texte";
+    }
+
+    /* -----------------------------------------------------
+       FORMES GÉOMÉTRIQUES
+    ----------------------------------------------------- */
+    else if(type === "shape-square"){
+        element.className = "object shape-square";
+    }
+    else if(type === "shape-rectangle"){
+        element.className = "object shape-rectangle";
+    }
+    else if(type === "shape-triangle"){
+        element.className = "object shape-triangle";
+    }
+    else if(type === "shape-circle"){
+        element.className = "object shape-circle";
+    }
+
+    /* -----------------------------------------------------
+       JOUEURS / PLOTS / BALLON
+    ----------------------------------------------------- */
+    else{
+        element.className =
+            "object " +
+            (
+                type === "player-purple"
+                    ? "player player-purple"
+                : type === "player-orange"
+                    ? "player player-orange"
+                : type
+            );
+
+        if(type === "ball") element.textContent = "⚽";
+        if(options.text) element.textContent = options.text;
+    }
+
+    /* -----------------------------------------------------
+       DONNÉES INTERNES
+    ----------------------------------------------------- */
+    element.dataset.id = id;
+    element.dataset.type = type;
+    element.style.left = x;
+    element.style.top = y;
+
+    /* Dimensions sauvegardées. */
+    if(options.width) element.style.width = options.width;
+    if(options.height) element.style.height = options.height;
+
+    /* Angle sauvegardé de la forme. */
+    const rotation = parseFloat(options.rotation) || 0;
+    element.dataset.rotation = rotation;
+    element.style.setProperty("--rotation", rotation + "deg");
+
+    layer.appendChild(element);
+
+    /* Rend l'objet déplaçable. */
+    makeDraggable(element);
+
+    /* Ajoute les poignées aux formes. */
+    makeShapeResizable(element);
+    makeShapeRotatable(element);
+
+    return element;
+}
+
+/* =========================================================
+   6. SÉLECTION / DÉPLACEMENT / REDIMENSIONNEMENT
+========================================================= */
+
+/* Déplace un objet avec la souris. */
+function makeDraggable(element){
+    let dragging = false;
+    let startX = 0;
+    let startY = 0;
+    let initialLeft = 0;
+    let initialTop = 0;
+
+    const layer = getObjectLayer();
+
+    element.addEventListener("pointerdown", event => {
+        if(event.target.classList.contains("shape-resize-handle")) return;
+
+        event.stopPropagation();
+        saveUndoPoint();
+        selectObject(element);
+
+        dragging = true;
+        startX = event.clientX;
+        startY = event.clientY;
+
+        const rect = layer.getBoundingClientRect();
+        initialLeft = (element.offsetLeft / rect.width) * 100;
+        initialTop = (element.offsetTop / rect.height) * 100;
+
+        element.setPointerCapture(event.pointerId);
+    });
+
+    element.addEventListener("pointermove", event => {
+        if(!dragging || !element.hasPointerCapture(event.pointerId)) return;
+
+        const rect = layer.getBoundingClientRect();
+        const dx = ((event.clientX - startX) / rect.width) * 100;
+        const dy = ((event.clientY - startY) / rect.height) * 100;
+
+        element.style.left = (initialLeft + dx) + "%";
+        element.style.top = (initialTop + dy) + "%";
+    });
+
+    element.addEventListener("pointerup", event => {
+        if(dragging && element.hasPointerCapture(event.pointerId)){
+            element.releasePointerCapture(event.pointerId);
+        }
+
+        dragging = false;
+    });
+
+    /* Double-clic = suppression rapide. */
+    element.addEventListener("dblclick", event => {
+        event.stopPropagation();
+        saveUndoPoint();
+        element.remove();
+        selected = null;
+    });
+}
+
+/* Ajoute une poignée pour agrandir / réduire les formes. */
+function makeShapeResizable(element){
+    const isShape = [
+        "shape-square",
+        "shape-rectangle",
+        "shape-triangle",
+        "shape-circle"
+    ].some(className => element.classList.contains(className));
+
+    if(!isShape) return;
+
+    const handle = document.createElement("div");
+    handle.className = "shape-resize-handle";
+    handle.title = "Agrandir / réduire";
+    element.appendChild(handle);
+
+    let resizing = false;
+    let startX = 0;
+    let startY = 0;
+    let startWidth = 0;
+    let startHeight = 0;
+
+    handle.addEventListener("pointerdown", event => {
+        event.stopPropagation();
+        saveUndoPoint();
+        selectObject(element);
+
+        resizing = true;
+        startX = event.clientX;
+        startY = event.clientY;
+        startWidth = element.offsetWidth;
+        startHeight = element.offsetHeight;
+
+        handle.setPointerCapture(event.pointerId);
+    });
+
+    handle.addEventListener("pointermove", event => {
+        if(!resizing || !handle.hasPointerCapture(event.pointerId)) return;
+
+        const dx = event.clientX - startX;
+        const dy = event.clientY - startY;
+
+        let width = Math.max(20, startWidth + dx);
+        let height = Math.max(20, startHeight + dy);
+
+        /* Carré et cercle gardent toujours leurs proportions. */
+        if(
+            element.classList.contains("shape-square") ||
+            element.classList.contains("shape-circle")
+        ){
+            const size = Math.max(width, height);
+            width = size;
+            height = size;
+        }
+
+        element.style.width = width + "px";
+        element.style.height = height + "px";
+    });
+
+    handle.addEventListener("pointerup", event => {
+        if(handle.hasPointerCapture(event.pointerId)){
+            handle.releasePointerCapture(event.pointerId);
+        }
+
+        resizing = false;
+    });
+}
+
+
+/* =========================================================
+   ROTATION DES FORMES
+   ---------------------------------------------------------
+   On clique-glisse la poignée orange située au-dessus
+   de la forme pour la faire tourner.
+========================================================= */
+
+function makeShapeRotatable(element){
+
+    const isShape = [
+        "shape-square",
+        "shape-rectangle",
+        "shape-triangle",
+        "shape-circle"
+    ].some(className => element.classList.contains(className));
+
+    if(!isShape) return;
+
+    const handle = document.createElement("div");
+    handle.className = "shape-rotate-handle";
+    handle.title = "Tourner la forme";
+    element.appendChild(handle);
+
+    let rotating = false;
+    let centerX = 0;
+    let centerY = 0;
+    let startAngle = 0;
+    let startRotation = 0;
+
+    handle.addEventListener("pointerdown", event => {
+        event.stopPropagation();
+        event.preventDefault();
+
+        saveUndoPoint();
+        selectObject(element);
+
+        const rect = element.getBoundingClientRect();
+
+        centerX = rect.left + rect.width / 2;
+        centerY = rect.top + rect.height / 2;
+
+        startAngle = Math.atan2(
+            event.clientY - centerY,
+            event.clientX - centerX
+        ) * 180 / Math.PI;
+
+        startRotation = parseFloat(element.dataset.rotation) || 0;
+        rotating = true;
+
+        handle.setPointerCapture(event.pointerId);
+    });
+
+    handle.addEventListener("pointermove", event => {
+        if(!rotating || !handle.hasPointerCapture(event.pointerId)) return;
+
+        const currentAngle = Math.atan2(
+            event.clientY - centerY,
+            event.clientX - centerX
+        ) * 180 / Math.PI;
+
+        const rotation = startRotation + (currentAngle - startAngle);
+
+        element.dataset.rotation = rotation;
+        element.style.setProperty("--rotation", rotation + "deg");
+    });
+
+    handle.addEventListener("pointerup", event => {
+        if(handle.hasPointerCapture(event.pointerId)){
+            handle.releasePointerCapture(event.pointerId);
+        }
+
+        rotating = false;
+    });
+}
+
+/* Création d'un objet sur le clic dans le terrain. */
+function setupCourtInteractions(index){
+
+    const container = index === 0
+        ? $("courtContainer")
+        : $("courtContainer2");
+
+    if(!container) return;
+
+    container.addEventListener("pointerdown", event => {
+
+        setActiveCourt(index);
+
+        if(isPencilActive || !activeTool) return;
+
+        if(event.target.closest(".object, .text-object")) return;
+
+        const rect = container.getBoundingClientRect();
+
+        const x =
+            ((event.clientX - rect.left) / rect.width) * 100 + "%";
+
+        const y =
+            ((event.clientY - rect.top) / rect.height) * 100 + "%";
+
+        saveUndoPoint();
+
+        createObject(activeTool, x, y);
+    });
+}
+
+/* Gestion des boutons de la palette. */
+document.querySelectorAll(".palette .tool[data-tool]").forEach(button => {
+    button.onclick = () => {
+        isPencilActive = false;
+        $("pencilToolBtn").classList.remove("active");
+
+        document.querySelectorAll(".palette .tool[data-tool]").forEach(b => {
+            b.classList.remove("active");
+        });
+
+        activeTool = button.dataset.tool;
+        button.classList.add("active");
+    };
+});
+
+setupCourtInteractions(0);
+
+/* =========================================================
+   7. UNDO / REDO
+========================================================= */
+
+/* Lit uniquement la partie dessinée de l'exercice. */
+function getEditorSnapshot(){
+    return JSON.stringify({
+        objects: readObjects(),
+        paths: JSON.parse(JSON.stringify(pathsByCourt[activeCourtIndex] || [])),
+        pathsByCourt: JSON.parse(JSON.stringify(pathsByCourt))
+    });
+}
+
+/* Enregistre un état avant une modification. */
+function saveUndoPoint(){
+    const state = getEditorSnapshot();
+
+    if(undoStack[undoStack.length - 1] === state) return;
+
+    undoStack.push(state);
+    if(undoStack.length > 50) undoStack.shift();
+
+    redoStack = [];
+}
+
+/* Restaure un état de dessin. */
+function restoreEditorSnapshot(snapshot){
+    const data = JSON.parse(snapshot);
+
+    getObjectLayer().innerHTML = "";
+    const layer = getPencilLayer();
+    if(layer) layer.innerHTML = "";
+    pathsByCourt[activeCourtIndex] = [];
+    pathsData = pathsByCourt[activeCourtIndex];
+    selected = null;
+
+    (data.objects || []).forEach(object => {
+        createObject(object.type, object.left, object.top, object);
+    });
+
+    (data.paths || []).forEach(pathData => {
+        addSavedPath(pathData);
+    });
+}
+
+/* Annuler. */
+function undo(){
+    if(!undoStack.length) return;
+
+    redoStack.push(getEditorSnapshot());
+    restoreEditorSnapshot(undoStack.pop());
+}
+
+/* Rétablir. */
+function redo(){
+    if(!redoStack.length) return;
+
+    undoStack.push(getEditorSnapshot());
+    restoreEditorSnapshot(redoStack.pop());
+}
+
+
+/* Raccourcis clavier. */
+document.addEventListener("keydown", event => {
+    const typing = ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName);
+
+    if(event.key === "Delete" && selected && !typing){
+        deleteSelected();
+    }
+
+    if((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z" && !typing){
+        event.preventDefault();
+        undo();
+    }
+
+    if((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "y" && !typing){
+        event.preventDefault();
+        redo();
+    }
+});
+
+/* =========================================================
+   8. CHARGEMENT / SAUVEGARDE DES EXERCICES
+========================================================= */
+
+/* Transforme les objets HTML en données JSON. */
+function readObjects(){
+    return Array.from(getObjectLayer().children).map(element => ({
+        id: element.dataset.id,
+        type: element.dataset.type,
+        left: element.style.left,
+        top: element.style.top,
+        width: element.style.width,
+        height: element.style.height,
+        rotation: element.dataset.rotation || 0,
+        text: element.classList.contains("text-object")
+            ? element.textContent
+            : element.textContent || ""
+    }));
+}
+
+/* Transforme l'exercice actuellement affiché en objet JavaScript. */
+function readCurrentExercise(){
+    return {
+        id: currentId || uid(),
+        title: $("exerciseTitle").value || "Sans titre",
+        category: $("exerciseCategory").value,
+        duration: $("exerciseDuration").value || "15",
+        setup: $("setup").value,
+        instructions: $("instructions").value,
+        variant: $("variant").value,
+        objectives: $("objectives").value,
+        objects: readObjects(),
+        paths: JSON.parse(JSON.stringify(pathsByCourt[activeCourtIndex] || [])),
+        pathsByCourt: JSON.parse(JSON.stringify(pathsByCourt))
+    };
+}
+
+/* Ajoute un trait sauvegardé au terrain. */
+function addSavedPath(pathData){
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+    path.dataset.pathId = pathData.id || uid();
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", pathData.color || "#222");
+    path.setAttribute("stroke-width", pathData.width || 0.08);
+    path.setAttribute("stroke-linecap", "round");
+    path.setAttribute("stroke-linejoin", "round");
+    path.setAttribute("d", pathData.d || "");
+    path.style.pointerEvents = "stroke";
+
+    path.addEventListener("pointerdown", event => {
+        event.stopPropagation();
+        selectObject(path);
+    });
+
+    getPencilLayer().appendChild(path);
+    pathsData.push({
+        id: path.dataset.pathId,
+        d: path.getAttribute("d"),
+        color: pathData.color || "#222",
+        width: parseFloat(pathData.width) || 0.08
+    });
+}
+
+/* Ouvre un exercice existant. */
+function loadExercise(exercise){
+    currentId = exercise.id;
+
+    $("exerciseTitle").value = exercise.title || "";
+    $("exerciseCategory").value = exercise.category || "Attaque";
+    $("exerciseDuration").value = exercise.duration || "15";
+    $("setup").value = exercise.setup || "";
+    $("instructions").value = exercise.instructions || "";
+    $("variant").value = exercise.variant || "";
+    $("objectives").value = exercise.objectives || "";
+
+    getObjectLayer().innerHTML = "";
+    getPencilLayer().innerHTML = "";
+    pathsByCourt[activeCourtIndex] = [];
+    pathsData = pathsByCourt[activeCourtIndex];
+    selected = null;
+
+    (exercise.objects || []).forEach(object => {
+        createObject(object.type, object.left, object.top, object);
+    });
+
+    const savedPaths = exercise.pathsByCourt
+        ? (exercise.pathsByCourt[activeCourtIndex] || [])
+        : (exercise.paths || []);
+
+    (savedPaths || []).forEach(path => {
+        addSavedPath(path);
+    });
+
+    undoStack = [];
+    redoStack = [];
+
+    renderSidebar();
+}
+
+/* Crée un exercice vide. */
+function resetFormToBlank(){
+    currentId = null;
+    activeTool = null;
+    isPencilActive = false;
+    selected = null;
+
+    getObjectLayer().innerHTML = "";
+    getPencilLayer().innerHTML = "";
+    pathsByCourt[activeCourtIndex] = [];
+    pathsData = pathsByCourt[activeCourtIndex];
+    undoStack = [];
+    redoStack = [];
+
+    $("exerciseTitle").value = "";
+    $("exerciseCategory").value = "Attaque";
+    $("exerciseDuration").value = "15";
+    $("setup").value = "";
+    $("instructions").value = "";
+    $("variant").value = "";
+    $("objectives").value = "";
+
+    document.querySelectorAll(".palette .tool[data-tool]").forEach(button => {
+        button.classList.remove("active");
+    });
+    $("pencilToolBtn").classList.remove("active");
+
+    renderSidebar();
+}
+
+/* Sauvegarde l'exercice actuel. */
+async function saveCurrentExercise(){
+    const data = readCurrentExercise();
+
+    const index = exercises.findIndex(exercise => exercise.id === data.id);
+
+    if(index >= 0){
+        exercises[index] = data;
+    }else{
+        exercises.push(data);
+        currentId = data.id;
+    }
+
+    saveStorage();
+
+    if(handCoachDirectory){
+        await saveFilesToFolder();
+    }
+
+    alert("Exercice sauvegardé !");
+}
+
+$("newExercise").onclick = resetFormToBlank;
+$("saveExercise").onclick = saveCurrentExercise;
+$("undo").onclick = undo;
+$("redo").onclick = redo;
+$("clearAll").onclick = clearAll;
+$("addCourtButton").onclick = addSecondCourt;
+
+/* =========================================================
+   9. IMPORT / EXPORT JSON
+========================================================= */
+
+function exportExercises(){
+    const blob = new Blob(
+        [JSON.stringify(exercises, null, 2)],
+        { type:"application/json" }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = `handcoach_exercices_${Date.now()}.json`;
+    link.click();
+
+    URL.revokeObjectURL(url);
+}
+
+/* Boutons ajoutés dynamiquement sous la zone de travail. */
+
+
+
+// Champ fichier caché pour l'import
+const importFileInput = document.createElement("input");
+importFileInput.type = "file";
+importFileInput.accept = ".json";
+importFileInput.id = "importFile";
+importFileInput.hidden = true;
+document.body.appendChild(importFileInput);
+
+$("exportButton").onclick = exportExercises;
+$("importButton").onclick = () => $("importFile").click();
+
+$("importFile").onchange = event => {
+    const file = event.target.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+    reader.onload = loadEvent => {
+        try{
+            const imported = JSON.parse(loadEvent.target.result);
+            if(!Array.isArray(imported)){
+                throw new Error("Le fichier ne contient pas une liste d'exercices.");
+            }
+            exercises = mergeById(exercises, imported);
+            saveStorage();
+            alert("Exercices importés avec succès !");
+        }catch(error){
+            alert("Fichier JSON invalide.\n\n" + error.message);
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = "";
+};
+
+/* =========================================================
+   10. GESTION DES SÉANCES
+========================================================= */
+
+$("sessionButton").onclick = () => {
+    $("sessionName").value = "";
+    $("sessionCategory").value = "";
+    $("sessionModal").classList.add("visible");
+};
+
+$("closeSessionBtn").onclick = () => {
+    $("sessionModal").classList.remove("visible");
+};
+
+$("saveSessionBtn").onclick = async () => {
+    const name = $("sessionName").value.trim() || "Nouvelle Séance";
+    const category = $("sessionCategory").value.trim() || "Général";
+
+    sessions.push({
+        id: uid(),
+        name,
+        category,
+        date: new Date().toLocaleDateString("fr-FR"),
+        items: []
+    });
+
+    saveStorage();
+
+    if(handCoachDirectory){
+        await saveFilesToFolder();
+    }
+
+    $("sessionModal").classList.remove("visible");
+};
+
+/* =========================================================
+   11. IMPRESSION PDF
+========================================================= */
+
+function printExercise(){
+    $("printTitle").textContent = $("exerciseTitle").value || "Exercice sans titre";
+    $("printMeta").textContent =
+        `Catégorie : ${$("exerciseCategory").value} | Durée : ${$("exerciseDuration").value} min`;
+
+    window.print();
+}
+
+$("printButton").onclick = printExercise;
+
+/* Impression complète d'une séance. */
+function printSession(sessionId){
+    const session = sessions.find(item => item.id === sessionId);
+    if(!session) return;
+
+    const container = $("sessionPrintContainer");
+    const totalDuration = (session.items || []).reduce(
+        (total, item) => total + (parseInt(item.duration) || 0),
+        0
+    );
+
+    container.innerHTML = `
+        <div style="border-bottom:3px solid #17202a; padding-bottom:8px; margin-bottom:20px;">
+            <h1 style="margin:0; font-size:26px;">Séance : ${session.name}</h1>
+            <p style="margin:5px 0 0 0; font-size:14px; color:#475569;">
+                Thème : <strong>${session.category || "Général"}</strong> |
+                Date : <strong>${session.date || ""}</strong> |
+                Durée : <strong>${totalDuration} min</strong> |
+                Exercices : <strong>${(session.items || []).length}</strong>
+            </p>
+        </div>
+    `;
+
+    (session.items || []).forEach((item, index) => {
+        const exercise = exercises.find(ex => ex.id === item.exerciseId);
+        if(!exercise) return;
+
+        const page = document.createElement("div");
+        page.className = "session-print-page";
+
+        const pathsSvg = (exercise.paths || []).map(path => `
+            <path
+                fill="none"
+                stroke="${path.color || "#222"}"
+                stroke-width="${path.width || 0.08}"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="${path.d || ""}"
+            />
+        `).join("");
+
+        const objectsHtml = (exercise.objects || []).map(object => {
+            if(object.type === "text"){
+                return `
+                    <div class="text-object"
+                         style="left:${object.left}; top:${object.top}; position:absolute; transform:translate(-50%,-50%);">
+                        ${object.text || ""}
+                    </div>
+                `;
+            }
+
+            const classType =
+                object.type === "player-purple"
+                    ? "player player-purple"
+                : object.type === "player-orange"
+                    ? "player player-orange"
+                : object.type;
+
+            const content = object.type === "ball" ? "⚽" : (object.text || "");
+
+            return `
+                <div class="object ${classType}"
+                     style="left:${object.left}; top:${object.top}; width:${object.width || ""}; height:${object.height || ""}; position:absolute; transform:translate(-50%,-50%);">
+                    ${content}
+                </div>
+            `;
+        }).join("");
+
+        page.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #287fe8; padding-bottom:4px; margin-bottom:12px;">
+                <h2 style="margin:0; font-size:20px;">Ex ${index + 1} : ${exercise.title}</h2>
+                <span style="font-weight:bold; font-size:13px; background:#f1f5f9; border:1px solid #cbd5e1; padding:4px 8px; border-radius:4px;">
+                    ⏱️ ${item.duration} min | ${exercise.category}
+                </span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 280px; gap:15px;">
+                <div style="height:330px; position:relative; border:2px solid #000; background:#fafafa; border-radius:6px; overflow:hidden;">
+                    <svg viewBox="0 0 40 20" preserveAspectRatio="none" style="width:100%;height:100%;">
+                        <rect x="0" y="0" width="40" height="20" fill="#e5b66d"/>
+                        <rect x="0" y="0" width="40" height="20" fill="none" stroke="#fff" stroke-width="0.12"/>
+                        <path d="M20 0V20" fill="none" stroke="#fff" stroke-width="0.15"/>
+                        <circle cx="20" cy="10" r="1.8" fill="none" stroke="#fff" stroke-width="0.11"/>
+                        <path d="M0 8.5V11.5M40 8.5V11.5" fill="none" stroke="#fff" stroke-width="0.15"/>
+                        <path d="M0 4 A6 6 0 0 1 6 10 A6 6 0 0 1 0 16 M40 4 A6 6 0 0 0 34 10 A6 6 0 0 0 40 16" fill="none" stroke="#fff" stroke-width="0.15"/>
+                        <path d="M0 1 A9 9 0 0 1 9 10 A9 9 0 0 1 0 19 M40 1 A9 9 0 0 0 31 10 A9 9 0 0 0 40 19" fill="none" stroke="#fff" stroke-width="0.11" stroke-dasharray="0.28 0.28"/>
+                        <path d="M7 9.5V10.5M33 9.5V10.5M4 9.8V10.2M36 9.8V10.2" fill="none" stroke="#fff" stroke-width="0.15"/>
+                        ${pathsSvg}
+                    </svg>
+                    <div style="position:absolute; inset:0; pointer-events:none;">
+                        ${objectsHtml}
+                    </div>
+                </div>
+
+                <div style="font-size:11px; display:flex; flex-direction:column; gap:8px;">
+                    ${printInfoBlock("Mise en place", exercise.setup)}
+                    ${printInfoBlock("Consignes", exercise.instructions)}
+                    ${printInfoBlock("Variantes", exercise.variant)}
+                    ${printInfoBlock("Objectifs", exercise.objectives)}
+                </div>
+            </div>
+        `;
+
+        container.appendChild(page);
+    });
+
+    document.body.classList.add("printing-session");
+    window.print();
+    document.body.classList.remove("printing-session");
+}
+
+function printInfoBlock(title, text){
+    return `
+        <div style="border:1px solid #ccc; padding:5px; border-radius:4px; min-height:40px;">
+            <strong style="text-transform:uppercase; color:#475569;">${title}</strong>
+            <div style="white-space:pre-wrap; margin-top:2px;">${text || "—"}</div>
+        </div>
+    `;
+}
+
+/* =========================================================
+   12. ARBORESCENCE / MENU LATÉRAL
+========================================================= */
+
+function renderSidebar(){
+    // === Sauvegarde de l'état ouvert ===
+    const openStates = {
+        exercises: {},
+        sessions: {}
+    };
+
+    // Catégories d'exercices ouvertes
+    document.querySelectorAll("#exercisesTree > details.tree-group").forEach(details => {
+        const title = details.querySelector("summary")?.textContent?.split(" (")[0];
+        if(title) openStates.exercises[title] = details.open;
+    });
+
+    // Séances ouvertes : on mémorise les IDs, pas les noms.
+    document.querySelectorAll("#sessionsTree > details.tree-group").forEach(details => {
+        if(details.dataset.category) {
+            openStates.sessions[`category:${details.dataset.category}`] = details.open;
+        }
+    });
+
+    document.querySelectorAll("#sessionsTree details.session-library-group").forEach(details => {
+        if(details.dataset.sessionId) {
+            openStates.sessions[`session:${details.dataset.sessionId}`] = details.open;
+        }
+    });
+
+    // === Rendu normal ===
+    const exerciseContainer = $("exercisesTree");
+    exerciseContainer.innerHTML = "";
+
+    const categories = [
+        "Attaque", "Défense", "Échauffement", "Montée de balle",
+        "Jeu à thème", "Gardien", "Physique"
+    ];
+
+    categories.forEach(category => {
+        const categoryExercises = exercises.filter(ex => ex.category === category);
+
+        const details = document.createElement("details");
+        details.className = "tree-group";
+        // Restaure l'état ouvert
+        details.open = openStates.exercises[category] === true; // ouvert par défaut si pas d'info
+
+        const summary = document.createElement("summary");
+        summary.className = "tree-summary";
+        summary.textContent = `${category} (${categoryExercises.length})`;
+        details.appendChild(summary);
+
+        const content = document.createElement("div");
+        content.className = "tree-content";
+
+        categoryExercises.forEach(exercise => {
+            const item = document.createElement("div");
+            item.className = "tree-item" + (exercise.id === currentId ? " active" : "");
+            item.draggable = true;
+
+            item.innerHTML = `
+                <span>📄 ${exercise.title || "Sans titre"}
+                    <small>(${exercise.duration || 15}m)</small>
+                </span>
+            `;
+
+            item.ondragstart = event => {
+                draggedExerciseId = exercise.id;
+                event.dataTransfer.effectAllowed = "copy";
+                event.dataTransfer.setData("text/plain", exercise.id);
+            };
+
+            item.ondragend = () => {
+                draggedExerciseId = null;
+            };
+
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "del-btn";
+            deleteButton.textContent = "✕";
+            deleteButton.title = "Supprimer l'exercice";
+
+            deleteButton.onclick = event => {
+                event.stopPropagation();
+                if(confirm(`Supprimer l'exercice "${exercise.title}" ?`)){
+                    exercises = exercises.filter(ex => ex.id !== exercise.id);
+                    if(currentId === exercise.id) resetFormToBlank();
+                    saveStorage();
+                }
+            };
+
+            item.appendChild(deleteButton);
+            item.onclick = () => loadExercise(exercise);
+            content.appendChild(item);
+        });
+
+        details.appendChild(content);
+        exerciseContainer.appendChild(details);
+    });
+
+    renderSessionsTree(openStates.sessions);
+}
+
+  function renderSessionsTree(savedOpenStates = {}){
+    const sessionContainer = $("sessionsTree");
+    sessionContainer.innerHTML = "";
+
+    const sessionCategories = [...new Set(
+        sessions.map(session => session.category || "Général")
+    )];
+
+    sessionCategories.forEach(category => {
+        const categorySessions = sessions.filter(
+            session => (session.category || "Général") === category
+        );
+
+        const details = document.createElement("details");
+        details.className = "tree-group";
+        details.dataset.category = category;
+        details.open = savedOpenStates[`category:${category}`] === true;
+
+        const summary = document.createElement("summary");
+        summary.className = "tree-summary";
+        summary.textContent = `${category} (${categorySessions.length})`;
+        details.appendChild(summary);
+
+        const content = document.createElement("div");
+        content.className = "tree-content";
+
+        categorySessions.forEach(session => {
+            const sessionDetails = document.createElement("details");
+            sessionDetails.className = "tree-group session-library-group";
+            sessionDetails.dataset.sessionId = session.id;
+            sessionDetails.style.margin = "4px 0";
+
+            // On garde exactement l'état ouvert/fermé de cette séance.
+            sessionDetails.open = savedOpenStates[`session:${session.id}`] === true;
+
+            const sessionSummary = document.createElement("summary");
+            sessionSummary.className = "tree-summary";
+            sessionSummary.style.background = "#edf6ff";
+
+            const totalDuration = (session.items || []).reduce(
+                (total, item) => total + (parseInt(item.duration) || 0), 0
+            );
+
+            sessionSummary.innerHTML = `
+                <span>📋 ${session.name}
+                    <small style="color:#64748b; font-weight:normal;">(${totalDuration}m)</small>
+                </span>
+            `;
+
+            const actions = document.createElement("div");
+            actions.className = "tree-actions";
+
+            const printButton = document.createElement("button");
+            printButton.textContent = "🖨️";
+            printButton.title = "Imprimer la séance";
+            printButton.onclick = event => {
+                event.stopPropagation();
+                printSession(session.id);
+            };
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "✕";
+            deleteButton.style.color = "#a33";
+            deleteButton.title = "Supprimer la séance";
+            deleteButton.onclick = event => {
+                event.stopPropagation();
+                if(confirm("Supprimer cette séance ?")){
+                    sessions = sessions.filter(item => item.id !== session.id);
+                    saveStorage();
+                }
+            };
+
+            actions.appendChild(printButton);
+            actions.appendChild(deleteButton);
+            sessionSummary.appendChild(actions);
+            sessionDetails.appendChild(sessionSummary);
+
+            const sessionContent = document.createElement("div");
+            sessionContent.className = "tree-content session-drop-target";
+
+            /* =====================================================
+               AJOUT D'UN EXERCICE DANS UNE SÉANCE
+               Le dépôt est volontairement attaché à TOUTE la séance
+               (nom + contenu), et pas seulement à la zone intérieure.
+               Ainsi ça fonctionne même si la séance est fermée.
+            ===================================================== */
+            const dropExerciseIntoSession = event => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const exerciseId = (
+                    event.dataTransfer ? event.dataTransfer.getData("text/plain") : ""
+                ) || draggedExerciseId || "";
+
+                if(!exerciseId) return;
+
+                const exercise = exercises.find(ex => ex.id === exerciseId);
+                if(!exercise) return;
+
+                if(!Array.isArray(session.items)) session.items = [];
+
+                session.items.push({
+                    exerciseId: exercise.id,
+                    duration: exercise.duration || "15"
+                });
+
+                saveStorage();
+
+                if(handCoachDirectory){
+                    saveFilesToFolder().catch(error =>
+                        console.error("Erreur de synchronisation de la séance :", error)
+                    );
+                }
+            };
+
+            const startSessionDrop = event => {
+                event.preventDefault();
+                if(event.dataTransfer){
+                    event.dataTransfer.dropEffect = "copy";
+                }
+                sessionDetails.classList.add("drag-over");
+            };
+
+            const leaveSessionDrop = event => {
+                if(!sessionDetails.contains(event.relatedTarget)){
+                    sessionDetails.classList.remove("drag-over");
+                }
+            };
+
+            /* Toute la séance accepte un exercice déposé. */
+            sessionDetails.addEventListener("dragenter", startSessionDrop);
+            sessionDetails.addEventListener("dragover", startSessionDrop);
+            sessionDetails.addEventListener("dragleave", leaveSessionDrop);
+            sessionDetails.addEventListener("drop", event => {
+                sessionDetails.classList.remove("drag-over");
+                dropExerciseIntoSession(event);
+            });
+
+            /* La zone intérieure garde aussi son indication visuelle. */
+            sessionContent.addEventListener("dragover", startSessionDrop);
+            sessionContent.addEventListener("dragleave", leaveSessionDrop);
+
+            /* Empêche le clic sur le résumé de simplement ouvrir/fermer
+               au moment où le navigateur termine un glisser-déposer. */
+            sessionSummary.addEventListener("drop", event => {
+                sessionDetails.classList.remove("drag-over");
+                dropExerciseIntoSession(event);
+            });
+
+            (session.items || []).forEach((item, itemIndex) => {
+                const exercise = exercises.find(ex => ex.id === item.exerciseId);
+                if(!exercise) return;
+
+                const subItem = document.createElement("div");
+                subItem.className = "tree-item sub-tree-item" +
+                    (exercise.id === currentId ? " active" : "");
+                subItem.dataset.sessionId = session.id;
+                subItem.dataset.itemIndex = String(itemIndex);
+                subItem.classList.add("session-sortable-row");
+
+                subItem.innerHTML = `
+                    <span>↕ &nbsp;📄 ${exercise.title}
+                        <small>(${item.duration} min)</small>
+                    </span>
+                    <button class="session-remove-btn" title="Retirer cet exercice de la séance">✕</button>
+                `;
+
+                const removeFromSessionButton = subItem.querySelector(".session-remove-btn");
+                removeFromSessionButton.addEventListener("pointerdown", event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                });
+
+                removeFromSessionButton.onclick = event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    if(!Array.isArray(session.items)) return;
+
+                    session.items.splice(itemIndex, 1);
+                    saveStorage();
+
+                    if(handCoachDirectory){
+                        saveFilesToFolder().catch(error =>
+                            console.error("Erreur de synchronisation de la séance :", error)
+                        );
+                    }
+                };
+
+                // === Drag & drop (le code que tu avais déjà) ===
+                subItem.addEventListener("pointerdown", event => {
+                    if(event.button !== 0) return;
+                    sessionSortState = {
+                        sessionId: session.id,
+                        fromIndex: itemIndex,
+                        sourceEl: subItem,
+                        startY: event.clientY,
+                        pointerId: event.pointerId,
+                        dragging: false
+                    };
+                    try{ subItem.setPointerCapture(event.pointerId); }catch(e){}
+                });
+
+                subItem.addEventListener("pointermove", event => {
+                    const state = sessionSortState;
+                    if(!state || state.sourceEl !== subItem) return;
+
+                    if(!state.dragging){
+                        if(Math.abs(event.clientY - state.startY) < 5) return;
+                        state.dragging = true;
+                        subItem.classList.add("session-sort-dragging");
+                    }
+
+                    event.preventDefault();
+
+                    const rows = Array.from(
+                        sessionContent.querySelectorAll(".session-sortable-row")
+                    );
+                    rows.forEach(row => row.classList.remove(
+                        "session-sort-before","session-sort-after"
+                    ));
+
+                    for(const row of rows){
+                        if(row === subItem) continue;
+                        const rect = row.getBoundingClientRect();
+                        if(event.clientY >= rect.top && event.clientY <= rect.bottom){
+                            row.classList.add(
+                                event.clientY < rect.top + rect.height/2
+                                    ? "session-sort-before"
+                                    : "session-sort-after"
+                            );
+                            break;
+                        }
+                    }
+                });
+
+                const finishDrag = event => {
+                    const state = sessionSortState;
+                    if(!state || state.sourceEl !== subItem) return;
+
+                    if(!state.dragging){
+                        sessionSortState = null;
+                        return;
+                    }
+
+                    event.preventDefault();
+                    sessionSuppressClickUntil = Date.now() + 400;
+
+                    const rows = Array.from(
+                        sessionContent.querySelectorAll(".session-sortable-row")
+                    );
+                    rows.forEach(row => row.classList.remove(
+                        "session-sort-before","session-sort-after","session-sort-dragging"
+                    ));
+
+                    let target = null;
+                    for(const row of rows){
+                        if(row === subItem) continue;
+                        const rect = row.getBoundingClientRect();
+                        if(event.clientY >= rect.top && event.clientY <= rect.bottom){
+                            target = row;
+                            break;
+                        }
+                    }
+
+                    if(target){
+                        const targetIndex = parseInt(target.dataset.itemIndex, 10);
+                        const rect = target.getBoundingClientRect();
+                        let toIndex = event.clientY > rect.top + rect.height/2
+                            ? targetIndex + 1
+                            : targetIndex;
+
+                        if(state.fromIndex < toIndex) toIndex--;
+
+                        if(state.fromIndex !== toIndex){
+                            const moved = session.items.splice(state.fromIndex, 1)[0];
+                            session.items.splice(toIndex, 0, moved);
+                            saveStorage(); // ← ici le rendu se relance, mais on a sauvegardé l'état ouvert
+                        }
+                    }
+
+                    sessionSortState = null;
+                };
+
+                subItem.addEventListener("pointerup", finishDrag);
+                subItem.addEventListener("pointercancel", () => {
+                    if(sessionSortState && sessionSortState.sourceEl === subItem){
+                        subItem.classList.remove(
+                            "session-sort-dragging","session-sort-before","session-sort-after"
+                        );
+                        sessionSortState = null;
+                    }
+                });
+
+                subItem.onclick = event => {
+                    event.stopPropagation();
+                    if(Date.now() < sessionSuppressClickUntil){
+                        event.preventDefault();
+                        return;
+                    }
+                    loadExercise(exercise);
+                };
+
+                sessionContent.appendChild(subItem);
+            });
+
+            sessionDetails.appendChild(sessionContent);
+            content.appendChild(sessionDetails);
+        });
+
+        details.appendChild(content);
+        sessionContainer.appendChild(details);
+    });
+}
+
+/* =========================================================
+   INTERFACE MOBILE
+========================================================= */
+function closeMobileSidebar(){
+    document.body.classList.remove("mobile-sidebar-open");
+}
+
+const mobileMenuButton = $("mobileMenuButton");
+const mobileSidebarOverlay = $("mobileSidebarOverlay");
+
+if(mobileMenuButton){
+    mobileMenuButton.addEventListener("click", event => {
+        event.stopPropagation();
+        document.body.classList.toggle("mobile-sidebar-open");
+    });
+}
+
+if(mobileSidebarOverlay){
+    mobileSidebarOverlay.addEventListener("click", closeMobileSidebar);
+}
+
+document.addEventListener("keydown", event => {
+    if(event.key === "Escape") closeMobileSidebar();
+});
+
+/* Sur mobile, ouvrir un exercice ferme automatiquement la bibliothèque. */
+const originalLoadExerciseForMobile = loadExercise;
+loadExercise = function(exercise){
+    originalLoadExerciseForMobile(exercise);
+    if(window.innerWidth <= 900) closeMobileSidebar();
+};
+
+/* =========================================================
+   INITIALISATION
+========================================================= */
+
+/* Si une ancienne version n'a pas encore été migrée, on copie ses données. */
+if(localStorage.getItem(EXERCISES_KEY) === null && exercises.length){
+    localStorage.setItem(EXERCISES_KEY, JSON.stringify(exercises));
+}
+
+if(localStorage.getItem(SESSIONS_KEY) === null && sessions.length){
+    localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+}
+
+renderSidebar();
+updateSaveStatus();
+
+</script>
+
+</body>
+</html>
