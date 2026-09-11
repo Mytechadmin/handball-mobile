@@ -834,6 +834,7 @@ summary.tree-summary{
     <button class="icon-button" id="printButton" title="Imprimer l'exercice" aria-label="Imprimer l'exercice">🖨️</button> 
     <button class="icon-button" id="exportButton" title="Exporter JSON" aria-label="Exporter JSON">📤</button>
     <button class="icon-button" id="importButton" title="Importer JSON" aria-label="Importer JSON">📥</button>
+    <button id="btn-drive" class="icon-button" onclick="handleAuthClick()" title="Google Drive">📁</button>
 </div>
 </header>
 
@@ -2894,5 +2895,94 @@ updateSaveStatus();
 
 </script>
 
+<!-- ===== GOOGLE DRIVE ===== -->
+<script>
+  const CLIENT_ID = '516564141496-7cb90ijvv2eivelbmmmivfm0ns7jhnm8.apps.googleusercontent.com';
+  const FOLDER_ID = 'COLLE_ICI_LID_DE_TON_DOSSIER_SEANCES';   // ← on le mettra après
+  const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
+  const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
+
+  let tokenClient;
+  let gapiInited = false;
+  let gisInited = false;
+
+  function gapiLoaded() {
+    gapi.load('client', initializeGapiClient);
+  }
+
+  async function initializeGapiClient() {
+    await gapi.client.init({ discoveryDocs: [DISCOVERY_DOC] });
+    gapiInited = true;
+  }
+
+  function gisLoaded() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: SCOPES,
+      callback: '',
+    });
+    gisInited = true;
+  }
+
+  function handleAuthClick() {
+    tokenClient.callback = async (resp) => {
+      if (resp.error) throw resp;
+      document.getElementById('btn-drive').innerText = 'Drive ✓';
+      await listerSeancesDrive();
+    };
+    if (gapi.client.getToken() === null) {
+      tokenClient.requestAccessToken({ prompt: 'consent' });
+    } else {
+      tokenClient.requestAccessToken({ prompt: '' });
+    }
+  }
+
+  async function listerSeancesDrive() {
+    try {
+      const response = await gapi.client.drive.files.list({
+        q: `'${FOLDER_ID}' in parents and trashed = false`,
+        fields: 'files(id, name, modifiedTime)',
+        orderBy: 'modifiedTime desc',
+        pageSize: 30
+      });
+
+      const files = response.result.files || [];
+      let html = '<div style="padding:12px;"><h3>Séances depuis Google Drive</h3>';
+
+      if (files.length === 0) {
+        html += '<p>Aucune séance trouvée</p>';
+      } else {
+        files.forEach(f => {
+          html += `<button onclick="chargerSeanceDrive('${f.id}', '${f.name}')" 
+                    style="display:block;width:100%;margin:6px 0;padding:10px;text-align:left;">
+                    ${f.name}
+                   </button>`;
+        });
+      }
+      html += '</div>';
+
+      // Affiche temporairement dans une alerte simple (on améliorera après)
+      const win = window.open('', 'Drive', 'width=400,height=600');
+      win.document.write(html);
+    } catch (err) {
+      alert('Erreur Drive : ' + err.message);
+    }
+  }
+
+  async function chargerSeanceDrive(fileId, fileName) {
+    const response = await gapi.client.drive.files.get({
+      fileId: fileId,
+      alt: 'media'
+    });
+    const seance = JSON.parse(response.body);
+    console.log('Séance chargée :', seance);
+    alert('Séance "' + fileName + '" chargée !\nRegarde la console (F12) pour voir le contenu.');
+    // Plus tard on branchera ça sur ton système de chargement de séance
+  }
+</script>
+
+<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>    
+    
 </body>
 </html>
