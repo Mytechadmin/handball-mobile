@@ -2938,47 +2938,80 @@ updateSaveStatus();
   }
 
   async function listerSeancesDrive() {
-    try {
-      const response = await gapi.client.drive.files.list({
-        q: `'${FOLDER_ID}' in parents and trashed = false`,
-        fields: 'files(id, name, modifiedTime)',
-        orderBy: 'modifiedTime desc',
-        pageSize: 30
-      });
+  try {
+    const response = await gapi.client.drive.files.list({
+      q: `'${FOLDER_ID}' in parents and trashed = false`,
+      fields: 'files(id, name, mimeType, modifiedTime)',
+      orderBy: 'modifiedTime desc',
+      pageSize: 50
+    });
 
-      const files = response.result.files || [];
-      let html = '<div style="padding:12px;"><h3>Séances depuis Google Drive</h3>';
-
-      if (files.length === 0) {
-        html += '<p>Aucune séance trouvée</p>';
-      } else {
-        files.forEach(f => {
-          html += `<button onclick="chargerSeanceDrive('${f.id}', '${f.name}')" 
-                    style="display:block;width:100%;margin:6px 0;padding:10px;text-align:left;">
-                    ${f.name}
-                   </button>`;
-        });
-      }
-      html += '</div>';
-
-      // Affiche temporairement dans une alerte simple (on améliorera après)
-      const win = window.open('', 'Drive', 'width=400,height=600');
-      win.document.write(html);
-    } catch (err) {
-      alert('Erreur Drive : ' + err.message);
+    const files = response.result.files || [];
+    
+    // On crée une zone d'affichage si elle n'existe pas
+    let zone = document.getElementById('drive-list-zone');
+    if (!zone) {
+      zone = document.createElement('div');
+      zone.id = 'drive-list-zone';
+      zone.style.cssText = 'position:fixed; top:70px; right:20px; width:320px; max-height:70vh; overflow:auto; background:#fff; border:1px solid #ccc; border-radius:10px; padding:15px; z-index:9999; box-shadow:0 4px 20px rgba(0,0,0,0.2);';
+      document.body.appendChild(zone);
     }
+
+    let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                  <h3 style="margin:0;">Séances Drive</h3>
+                  <button onclick="document.getElementById('drive-list-zone').remove()" style="border:none; background:#eee; border-radius:5px; padding:4px 8px; cursor:pointer;">✕</button>
+                </div>`;
+
+    if (files.length === 0) {
+      html += '<p>Aucune séance trouvée dans ce dossier.</p>';
+    } else {
+      files.forEach(f => {
+        const isFolder = f.mimeType === 'application/vnd.google-apps.folder';
+        html += `<button onclick="chargerSeanceDrive('${f.id}', '${f.name.replace(/'/g, "\\'")}', ${isFolder})" 
+                  style="display:block; width:100%; margin:6px 0; padding:10px; text-align:left; border:1px solid #ddd; border-radius:6px; background:${isFolder ? '#f0f7ff' : '#fff'}; cursor:pointer;">
+                  ${isFolder ? '📁 ' : '📄 '}${f.name}
+                </button>`;
+      });
+    }
+
+    zone.innerHTML = html;
+
+  } catch (err) {
+    alert('Erreur Drive : ' + err.message);
+    console.error(err);
+  }
+}
+
+  async function chargerSeanceDrive(fileId, fileName, isFolder) {
+  if (isFolder) {
+    alert('C’est un dossier. Pour l’instant on ne charge que les fichiers JSON.');
+    return;
   }
 
-  async function chargerSeanceDrive(fileId, fileName) {
+  try {
     const response = await gapi.client.drive.files.get({
       fileId: fileId,
       alt: 'media'
     });
-    const seance = JSON.parse(response.body);
-    console.log('Séance chargée :', seance);
-    alert('Séance "' + fileName + '" chargée !\nRegarde la console (F12) pour voir le contenu.');
-    // Plus tard on branchera ça sur ton système de chargement de séance
+
+    const contenu = response.body;
+    console.log('Contenu de', fileName, ':', contenu);
+
+    // On essaie de parser en JSON
+    try {
+      const seance = JSON.parse(contenu);
+      alert('Séance "' + fileName + '" chargée avec succès !\n\nRegarde la console (F12) pour voir le contenu.');
+      console.log('Objet séance :', seance);
+      
+      // Plus tard on branchera ici le vrai chargement dans HandCoach
+    } catch (e) {
+      alert('Le fichier n’est pas un JSON valide.\nNom : ' + fileName);
+    }
+
+  } catch (err) {
+    alert('Erreur lors du chargement : ' + err.message);
   }
+}
 </script>
 
 <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
