@@ -2982,9 +2982,9 @@ updateSaveStatus();
   }
 }
 
-  async function chargerSeanceDrive(fileId, fileName, isFolder) {
+ async function chargerSeanceDrive(fileId, fileName, isFolder) {
   if (isFolder) {
-    alert('C’est un dossier. Pour l’instant on ne charge que les fichiers JSON.');
+    alert('C\u2019est un dossier. Pour l\u2019instant on ne charge que les fichiers JSON.');
     return;
   }
 
@@ -2995,21 +2995,34 @@ updateSaveStatus();
     });
 
     const contenu = response.body;
-    console.log('Contenu de', fileName, ':', contenu);
-
-    // On essaie de parser en JSON
+    let imported;
     try {
-      const seance = JSON.parse(contenu);
-      alert('Séance "' + fileName + '" chargée avec succès !\n\nRegarde la console (F12) pour voir le contenu.');
-      console.log('Objet séance :', seance);
-      
-      // Plus tard on branchera ici le vrai chargement dans HandCoach
+      imported = JSON.parse(contenu);
     } catch (e) {
-      alert('Le fichier n’est pas un JSON valide.\nNom : ' + fileName);
+      alert('Le fichier n\u2019est pas un JSON valide.\nNom : ' + fileName);
+      return;
     }
+
+    if (!Array.isArray(imported)) {
+      alert('Le fichier ne contient pas une liste (tableau) exploitable.');
+      return;
+    }
+
+    if (fileName.includes('exercice')) {
+      exercises = mergeById(exercises, imported);
+    } else if (fileName.includes('seance')) {
+      sessions = mergeById(sessions, imported);
+    } else {
+      alert('Nom de fichier non reconnu, impossible de savoir s\u2019il s\u2019agit d\u2019exercices ou de séances.');
+      return;
+    }
+
+    saveStorage();
+    alert('Contenu de "' + fileName + '" importé avec succès.');
 
   } catch (err) {
     alert('Erreur lors du chargement : ' + err.message);
+    console.error(err);
   }
 }
 </script>
