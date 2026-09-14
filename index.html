@@ -2231,8 +2231,6 @@ importFileInput.id = "importFile";
 importFileInput.hidden = true;
 document.body.appendChild(importFileInput);
 
-$("exportButton").onclick = exportExercises;
-$("importButton").onclick = () => $("importFile").click();
 
 $("importFile").onchange = event => {
     const file = event.target.files[0];
