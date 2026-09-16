@@ -3023,6 +3023,82 @@ updateSaveStatus();
 
 <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
 <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>    
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://yosujqdjffuyibddquxq.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_jl0cfFR4jbQpnbxvAAbubA_Bcg-Jmx8';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  async function loadFromSupabase() {
+    try {
+      const { data: exData, error: exError } = await sb.from('Exercices').select('*');
+      if (exError) throw exError;
+      if (exData && exData.length) {
+        exercises = exData.map(row => ({
+          id: row.id,
+          title: row.title,
+          category: row.category,
+          duration: row.duration,
+          ...(row.data || {})
+        }));
+      }
+
+      const { data: seData, error: seError } = await sb.from('seances').select('*');
+      if (seError) throw seError;
+      if (seData && seData.length) {
+        sessions = seData.map(row => ({
+          id: row.id,
+          name: row.name,
+          category: row.category,
+          date: row.date,
+          items: row.items || []
+        }));
+      }
+
+      if (typeof saveStorage === 'function') saveStorage();
+      else if (typeof renderSidebar === 'function') renderSidebar();
+      console.log('Données chargées depuis Supabase');
+    } catch (err) {
+      console.error('Erreur chargement Supabase :', err);
+    }
+  }
+
+  async function saveToSupabase() {
+    try {
+      const exRows = exercises.map(ex => ({
+        id: ex.id,
+        title: ex.title || '',
+        category: ex.category || '',
+        duration: parseInt(ex.duration) || 15,
+        data: ex,
+        updated_at: new Date().toISOString()
+      }));
+      if (exRows.length) {
+        const { error } = await sb.from('Exercices').upsert(exRows, { onConflict: 'id' });
+        if (error) throw error;
+      }
+
+      const seRows = sessions.map(se => ({
+        id: se.id,
+        name: se.name || '',
+        category: se.category || '',
+        date: se.date || '',
+        items: se.items || [],
+        updated_at: new Date().toISOString()
+      }));
+      if (seRows.length) {
+        const { error } = await sb.from('seances').upsert(seRows, { onConflict: 'id' });
+        if (error) throw error;
+      }
+      console.log('Sauvegardé sur Supabase');
+    } catch (err) {
+      console.error('Erreur sauvegarde Supabase :', err);
+    }
+  }
+
+  loadFromSupabase();
+</script>
     
 </body>
 </html>
