@@ -1120,6 +1120,7 @@ function saveStorage(){
     localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
     renderSidebar();
     updateSaveStatus();
+    saveToSupabase()
 }
 
 /* Met à jour le petit indicateur de sauvegarde en haut. */
