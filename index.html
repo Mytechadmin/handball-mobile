@@ -3032,38 +3032,40 @@ updateSaveStatus();
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   async function loadFromSupabase() {
-    try {
-      const { data: exData, error: exError } = await sb.from('Exercices').select('*');
-      if (exError) throw exError;
-      if (exData && exData.length) {
-        exercises = exData.map(row => ({
-          id: row.id,
-          title: row.title,
-          category: row.category,
-          duration: row.duration,
-          ...(row.data || {})
-        }));
-      }
+  try {
+    const { data: exData, error: exError } = await sb.from('Exercices').select('*');
+    if (exError) throw exError;
 
-      const { data: seData, error: seError } = await sb.from('seances').select('*');
-      if (seError) throw seError;
-      if (seData && seData.length) {
-        sessions = seData.map(row => ({
-          id: row.id,
-          name: row.name,
-          category: row.category,
-          date: row.date,
-          items: row.items || []
-        }));
-      }
+    exercises = (exData || []).map(row => ({
+      id: row.id,
+      title: row.title,
+      category: row.category,
+      duration: row.duration,
+      ...(row.data || {})
+    }));
 
-      if (typeof saveStorage === 'function') saveStorage();
-      else if (typeof renderSidebar === 'function') renderSidebar();
-      console.log('Données chargées depuis Supabase');
-    } catch (err) {
-      console.error('Erreur chargement Supabase :', err);
-    }
+    const { data: seData, error: seError } = await sb.from('seances').select('*');
+    if (seError) throw seError;
+
+    sessions = (seData || []).map(row => ({
+      id: row.id,
+      name: row.name,
+      category: row.category,
+      date: row.date,
+      items: row.items || []
+    }));
+
+    // Mise à jour locale SANS renvoyer vers Supabase
+    localStorage.setItem(EXERCISES_KEY, JSON.stringify(exercises));
+    localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+    if (typeof renderSidebar === 'function') renderSidebar();
+    if (typeof updateSaveStatus === 'function') updateSaveStatus();
+
+    console.log('Données chargées depuis Supabase');
+  } catch (err) {
+    console.error('Erreur chargement Supabase :', err);
   }
+}
 
   async function saveToSupabase() {
     try {
