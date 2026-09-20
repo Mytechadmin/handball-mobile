@@ -831,7 +831,6 @@ summary.tree-summary{
     <button class="icon-button" id="saveExercise" title="Sauvegarder l'exercice" aria-label="Sauvegarder l'exercice">💾</button>
     <button class="icon-button" id="sessionButton" title="Nouvelle séance" aria-label="Nouvelle séance">📋</button>
     <button class="icon-button" id="printButton" title="Imprimer l'exercice" aria-label="Imprimer l'exercice">🖨️</button> 
-    <button id="btn-drive" class="icon-button" onclick="handleAuthClick()" title="Google Drive">☁️</button>
 </div>
 </header>
 
@@ -2890,58 +2889,7 @@ updateSaveStatus();
 
 </script>
 
-<!-- ===== GOOGLE DRIVE ===== -->
-<script>
-  const CLIENT_ID = '516564141496-7cb90ijvv2eivelbmmmivfm0ns7jhnm8.apps.googleusercontent.com';
-  const FOLDER_ID = '1zOhYFme5W1qmfY2rR6BoJfVgwyH_gNNB';
-  const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
-  const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
-    
-  let tokenClient;
-  let gapiInited = false;
-  let gisInited = false;
 
-  function gapiLoaded() {
-    gapi.load('client', initializeGapiClient);
-  }
-
-  async function initializeGapiClient() {
-    await gapi.client.init({ discoveryDocs: [DISCOVERY_DOC] });
-    gapiInited = true;
-  }
-
-  function gisLoaded() {
-    tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: CLIENT_ID,
-      scope: SCOPES,
-      callback: '',
-    });
-    gisInited = true;
-  }
-
-  function handleAuthClick() {
-    tokenClient.callback = async (resp) => {
-      if (resp.error) throw resp;
-      document.getElementById('btn-drive').innerText = 'Drive ✓';
-      await listerSeancesDrive();
-    };
-    if (gapi.client.getToken() === null) {
-      tokenClient.requestAccessToken({ prompt: 'consent' });
-    } else {
-      tokenClient.requestAccessToken({ prompt: '' });
-    }
-  }
-
-  async function listerSeancesDrive() {
-  try {
-    const response = await gapi.client.drive.files.list({
-      q: `'${FOLDER_ID}' in parents and trashed = false`,
-      fields: 'files(id, name, mimeType, modifiedTime)',
-      orderBy: 'modifiedTime desc',
-      pageSize: 50
-    });
-
-    const files = response.result.files || [];
     
     // On crée une zone d'affichage si elle n'existe pas
     let zone = document.getElementById('drive-list-zone');
