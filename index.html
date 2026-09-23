@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HandCoach V12 Mobile</title>
+<title>HandCoach V11.3</title>
 <style>
 *{box-sizing:border-box}
 html,body{
@@ -215,12 +215,94 @@ summary.tree-summary{
     grid-template-columns:1fr 340px;
     gap:10px;
 }
+
 .court-wrapper{
     display:flex;
     flex-direction:column;
     height:100%;
     min-height:0;
 }
+#toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #17202a;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+    box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+#toast.show {
+    opacity: 1;
+}
+
+
+
+
+#shareExerciseModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#shareExerciseModal .auth-box {
+    display: block;
+    width: 500px;
+    max-width: 90vw;
+    box-sizing: border-box;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+}
+
+#shareTeamSelect {
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+
+
+
+
+#shareSessionModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#shareSessionModal .auth-box {
+    display: block;
+    width: 500px;
+    max-width: 90vw;
+    box-sizing: border-box;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+}
+
+
+
 
 /* =========================================================
    SECOND TERRAIN / ÉVOLUTION
@@ -608,235 +690,187 @@ summary.tree-summary{
 }
 .session-add-btn:hover{opacity:.85;}
 
+
+
 /* =========================================================
-   V12 — ADAPTATION MOBILE
-   Même application, interface adaptée au tactile.
+   AUTHENTIFICATION
 ========================================================= */
-.mobile-menu-button{
-    display:none;
-    width:38px;
-    height:38px;
-    padding:0;
-    border:1px solid #56616c;
-    border-radius:7px;
-    background:#3e4852;
-    color:#fff;
-    font-size:20px;
-}
-.mobile-sidebar-overlay{display:none;}
 
-@media(max-width:900px){
-    html,body{
-        min-height:100%;
-        height:auto;
-        overflow-x:hidden;
-    }
-    .header{
-        height:54px;
-        padding:0 8px;
-        gap:6px;
-        position:sticky;
-        top:0;
-        z-index:500;
-    }
-    .mobile-menu-button{display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
-    .header h1{
-        margin:0 4px;
-        font-size:16px;
-        white-space:nowrap;
-    }
-    .header-actions{
-        gap:4px;
-        overflow-x:auto;
-        scrollbar-width:none;
-        flex:0 1 auto;
-    }
-    .header-actions::-webkit-scrollbar{display:none;}
-    .icon-button{width:38px;height:38px;flex:0 0 38px;font-size:18px;}
-    #saveStatus{display:none;}
-
-    .app{
-        min-height:calc(100vh - 54px);
-        height:auto;
-        display:block;
-    }
-    .sidebar{
-        position:fixed;
-        left:0;
-        top:54px;
-        bottom:0;
-        width:min(88vw,360px);
-        z-index:450;
-        transform:translateX(-105%);
-        transition:transform .2s ease;
-        box-shadow:4px 0 18px rgba(0,0,0,.22);
-        padding:10px;
-    }
-    body.mobile-sidebar-open .sidebar{transform:translateX(0);}
-    .mobile-sidebar-overlay{
-        position:fixed;
-        inset:54px 0 0 0;
-        z-index:440;
-        background:rgba(0,0,0,.42);
-    }
-    body.mobile-sidebar-open .mobile-sidebar-overlay{display:block;}
-
-    .main{
-        width:100%;
-        height:auto;
-        min-height:calc(100vh - 54px);
-        overflow:visible;
-        padding:7px;
-    }
-    .exercise-toolbar{
-        flex-wrap:wrap;
-        gap:6px;
-    }
-    .exercise-toolbar input{
-        min-width:0;
-        flex:1 1 100%;
-        font-size:16px;
-        min-height:44px;
-    }
-    .exercise-toolbar select{
-        flex:1 1 48%;
-        min-height:44px;
-        font-size:16px;
-    }
-    .exercise-toolbar > div{
-        flex:1 1 48%;
-        min-height:44px;
-    }
-    .exercise-toolbar input[type="number"]{font-size:16px;}
-
-    .sheet{
-        display:flex;
-        flex-direction:column;
-        gap:8px;
-        overflow:visible;
-        padding:6px;
-    }
-    .court-wrapper{
-        width:100%;
-        height:auto;
-    }
-    .court-wrapper:not(.multi-court){
-        display:flex;
-    }
-    .court-wrapper:not(.multi-court) .court-container{
-        width:100%;
-        aspect-ratio:2 / 1;
-        height:auto;
-        min-height:0;
-        flex:none;
-    }
-    .court-wrapper.multi-court{
-        display:flex;
-        flex-direction:column;
-        gap:8px;
-    }
-    .court-wrapper.multi-court .court-container{
-        width:100%;
-        aspect-ratio:2 / 1;
-        height:auto;
-        min-height:0;
-        flex:none;
-    }
-
-    .palette{
-        margin-top:6px;
-        flex-wrap:nowrap;
-        overflow-x:auto;
-        overflow-y:hidden;
-        -webkit-overflow-scrolling:touch;
-        padding:7px;
-        gap:7px;
-        scrollbar-width:thin;
-        touch-action:pan-x;
-    }
-    .palette-title{flex:0 0 auto;}
-    .tool{
-        min-height:44px;
-        height:44px;
-        flex:0 0 auto;
-        padding:0 10px;
-        font-size:13px;
-    }
-    .color-picker{
-        flex:0 0 auto;
-        min-height:44px;
-    }
-    .color-dot{width:30px;height:30px;flex:0 0 30px;}
-
-    .right-panel{
-        width:100%;
-    }
-    .panel-tools{
-        position:sticky;
-        bottom:6px;
-        z-index:100;
-        background:rgba(248,250,252,.96);
-        backdrop-filter:blur(4px);
-    }
-    .panel-tools button{
-        min-height:44px;
-        font-size:13px;
-    }
-    .info-field textarea{
-        min-height:100px;
-        font-size:16px;
-    }
-
-    .modal-box{
-        width:calc(100vw - 20px);
-        max-height:90vh;
-        padding:14px;
-    }
-    .modal-box input{
-        min-height:44px;
-        font-size:16px;
-    }
-    .modal-box button{min-height:44px;}
-
-    .sub-tree-item,.tree-item,summary.tree-summary{
-        min-height:44px;
-        font-size:13px;
-    }
-    .session-remove-btn{
-        min-width:40px;
-        min-height:40px;
-        font-size:18px;
-    }
+.user-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 12px;
 }
 
-@media(max-width:600px){
-    .header h1{font-size:15px;}
-    .header-actions .icon-button{width:36px;height:36px;flex-basis:36px;}
-    .sheet{border-radius:7px;}
-    .court-wrapper.multi-court .court-evolution-label{font-size:10px;}
+#userInfo {
+    font-size: 13px;
+    color: #666;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
+
+.auth-button {
+    border: 1px solid #ccc;
+    background: white;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.auth-button:hover {
+    background: #f2f2f2;
+}
+
+
+/* =========================================================
+   FENETRE DE CONNEXION
+========================================================= */
+
+#authModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-box {
+    width: 360px;
+    max-width: calc(100vw - 40px);
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+}
+
+.auth-box h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.auth-box input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.auth-buttons button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.auth-login {
+    background: #6c3fd1;
+    color: white;
+}
+
+.auth-register {
+    background: #eee;
+    color: #333;
+}
+
+.auth-close {
+    width: 100%;
+    margin-top: 10px;
+    padding: 9px;
+    border: none;
+    background: transparent;
+    color: #777;
+    cursor: pointer;
+}
+
+
+
+
+#teamsModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#teamsModal .auth-box {
+    display: block;
+    width: 500px;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+}
+
+
+
 </style>
 </head>
 <body>
 
 <header class="header">
-    <button class="mobile-menu-button" id="mobileMenuButton" title="Ouvrir la bibliothèque" aria-label="Ouvrir la bibliothèque">☰</button>
-    <h1>🤾 HandCoach V12</h1>
+    <h1>🤾 HandCoach V11.3</h1>
+
     <div class="spacer"></div>
 
-    <!-- Barre d'actions compacte : les explications apparaissent au survol -->
+ <div class="user-area">
+
+    <span id="userInfo"></span>
+
+    <button
+        id="teamsButton"
+        class="auth-button"
+        onclick="openTeamsModal()">
+        🤝 Bibliothèques
+    </button>
+
+    <button
+        id="authButton"
+        class="auth-button">
+        🔐 Connexion
+    </button>
+
+</div>
+
     <div class="header-actions">
     <button class="icon-button" id="addCourtButton" title="Ajouter un second terrain" aria-label="Ajouter un second terrain">＋</button>
     <button class="icon-button" id="newExercise" title="Fiche vierge" aria-label="Fiche vierge">📄</button>
     <button class="icon-button" id="saveExercise" title="Sauvegarder l'exercice" aria-label="Sauvegarder l'exercice">💾</button>
     <button class="icon-button" id="sessionButton" title="Nouvelle séance" aria-label="Nouvelle séance">📋</button>
     <button class="icon-button" id="printButton" title="Imprimer l'exercice" aria-label="Imprimer l'exercice">🖨️</button> 
+    <button class="icon-button" id="exportButton" title="Exporter JSON" aria-label="Exporter JSON">📤</button>
+    <button class="icon-button" id="importButton" title="Importer JSON" aria-label="Importer JSON">📥</button>
+    
 </div>
 </header>
 
-<div class="mobile-sidebar-overlay" id="mobileSidebarOverlay"></div>
 <div class="app">
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar">
         <div class="sidebar-section-title">Exercices</div>
         <div id="exercisesTree"></div>
         <div class="sidebar-section-title">Séances</div>
@@ -1016,7 +1050,7 @@ summary.tree-summary{
 
 <script>
 /* =========================================================
-   HANDCOACH V12 MOBILE — GUIDE RAPIDE
+   HANDCOACH V11.3 — GUIDE RAPIDE
 
    1. CONFIGURATION / STOCKAGE
    2. SAUVEGARDE DANS LE DOSSIER "Hand"
@@ -1040,7 +1074,7 @@ summary.tree-summary{
    1. CONFIGURATION / STOCKAGE
 ========================================================= */
 
-const APP_VERSION = "V12 Mobile";
+const APP_VERSION = "V11.3";
 
 const EXERCISES_KEY = "handcoach_v10.3_exercises";
 const SESSIONS_KEY = "handcoach_v10.3_sessions";
@@ -1075,7 +1109,6 @@ let currentId = null;
 let activeTool = null;
 let selected = null;
 let clipboard = null;
-let handCoachDirectory = null;
 
 /* État du crayon. */
 let isPencilActive = false;
@@ -1113,22 +1146,33 @@ function loadArrayFromStorage(newKey, oldKeys, fallback){
     return fallback;
 }
 
-/* Sauvegarde les données dans le navigateur. */
+function showToast(message){
+    const el = document.getElementById("toast");
+    if(!el) return;
+    el.textContent = message;
+    el.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => el.classList.remove("show"), 2500);
+}
+function updateSaveStatus(message){
+    const el = $("saveStatus");
+    if(!el) return;
+    el.textContent = message || "☁️ Supabase";
+}
+
 function saveStorage(){
     localStorage.setItem(EXERCISES_KEY, JSON.stringify(exercises));
     localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
     renderSidebar();
-    updateSaveStatus();
-    saveToSupabase()
-}
-
-/* Met à jour le petit indicateur de sauvegarde en haut. */
-function updateSaveStatus(){
-    if($("saveStatus")){
-        $("saveStatus").textContent = handCoachDirectory
-            ? "💾 Dossier + navigateur"
-            : "💻 Navigateur";
-    }
+    updateSaveStatus("💾 Sauvegarde…");
+    saveToSupabase().then(() => {
+        updateSaveStatus("✅ Sauvegardé");
+        showToast("✅ Sauvegardé");
+        setTimeout(() => updateSaveStatus("☁️ Supabase"), 2000);
+    }).catch(() => {
+        updateSaveStatus("❌ Erreur");
+        showToast("❌ Erreur de sauvegarde");
+    });
 }
 
 
@@ -1141,29 +1185,7 @@ function updateSaveStatus(){
    Tu cliques donc sur 📁 et tu sélectionnes UNE FOIS le dossier Hand.
 ========================================================= */
 
-async function chooseSaveFolder(){
-    if(!window.showDirectoryPicker){
-        alert(
-            "La sélection d'un dossier n'est pas disponible ici.\n\n" +
-            "Utilise Microsoft Edge ou Google Chrome."
-        );
-        return;
-    }
 
-    try{
-        handCoachDirectory = await window.showDirectoryPicker({ mode:"readwrite" });
-        await importFilesFromFolder();
-        renderSidebar();
-        updateSaveStatus();
-
-        alert(
-            "Dossier sélectionné : " + handCoachDirectory.name +
-            "\n\nHandCoach peut maintenant y sauvegarder tes exercices."
-        );
-    }catch(error){
-        console.log("Sélection du dossier annulée :", error);
-    }
-}
 
 /* Fusionne deux listes en utilisant l'identifiant comme clé. */
 function mergeById(existing, imported){
@@ -1176,70 +1198,6 @@ function mergeById(existing, imported){
     return Array.from(map.values());
 }
 
-/* Récupère les fichiers JSON présents dans le dossier Hand. */
-async function importFilesFromFolder(){
-    if(!handCoachDirectory) return false;
-
-    let foundSomething = false;
-
-    try{
-        const fileHandle = await handCoachDirectory.getFileHandle("handcoach_exercices.json");
-        const file = await fileHandle.getFile();
-        const imported = JSON.parse(await file.text());
-
-        if(Array.isArray(imported)){
-            exercises = mergeById(exercises, imported);
-            localStorage.setItem(EXERCISES_KEY, JSON.stringify(exercises));
-            foundSomething = true;
-        }
-    }catch(error){
-        console.log("Aucun fichier d'exercices trouvé dans le dossier.");
-    }
-
-    try{
-        const fileHandle = await handCoachDirectory.getFileHandle("handcoach_seances.json");
-        const file = await fileHandle.getFile();
-        const imported = JSON.parse(await file.text());
-
-        if(Array.isArray(imported)){
-            sessions = mergeById(sessions, imported);
-            localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
-            foundSomething = true;
-        }
-    }catch(error){
-        console.log("Aucun fichier de séances trouvé dans le dossier.");
-    }
-
-    return foundSomething;
-}
-
-/* Écrit les deux fichiers JSON dans le dossier sélectionné. */
-async function saveFilesToFolder(){
-    if(!handCoachDirectory) return;
-
-    try{
-        const exerciseHandle = await handCoachDirectory.getFileHandle(
-            "handcoach_exercices.json",
-            { create:true }
-        );
-        const exerciseWriter = await exerciseHandle.createWritable();
-        await exerciseWriter.write(JSON.stringify(exercises, null, 2));
-        await exerciseWriter.close();
-
-        const sessionHandle = await handCoachDirectory.getFileHandle(
-            "handcoach_seances.json",
-            { create:true }
-        );
-        const sessionWriter = await sessionHandle.createWritable();
-        await sessionWriter.write(JSON.stringify(sessions, null, 2));
-        await sessionWriter.close();
-
-        if($("saveStatus")) $("saveStatus").textContent = "💾 Dossier synchronisé";
-    }catch(error){
-        console.error("Erreur de sauvegarde dans le dossier :", error);
-        alert("Impossible de sauvegarder dans le dossier.\n\n" + error.message);
-    }
-}
 
 
 
@@ -2185,11 +2143,8 @@ async function saveCurrentExercise(){
 
     saveStorage();
 
-    if(handCoachDirectory){
-        await saveFilesToFolder();
-    }
+  
 
-    alert("Exercice sauvegardé !");
 }
 
 $("newExercise").onclick = resetFormToBlank;
@@ -2231,6 +2186,8 @@ importFileInput.id = "importFile";
 importFileInput.hidden = true;
 document.body.appendChild(importFileInput);
 
+$("exportButton").onclick = exportExercises;
+$("importButton").onclick = () => $("importFile").click();
 
 $("importFile").onchange = event => {
     const file = event.target.files[0];
@@ -2282,9 +2239,8 @@ $("saveSessionBtn").onclick = async () => {
 
     saveStorage();
 
-    if(handCoachDirectory){
-        await saveFilesToFolder();
-    }
+
+    
 
     $("sessionModal").classList.remove("visible");
 };
@@ -2499,21 +2455,51 @@ function renderSidebar(){
                 draggedExerciseId = null;
             };
 
-            const deleteButton = document.createElement("button");
-            deleteButton.className = "del-btn";
-            deleteButton.textContent = "✕";
-            deleteButton.title = "Supprimer l'exercice";
+           const shareButton = document.createElement("button");
+shareButton.className = "del-btn";
+shareButton.textContent = "🤝";
+shareButton.title = "Partager l'exercice";
 
-            deleteButton.onclick = event => {
-                event.stopPropagation();
-                if(confirm(`Supprimer l'exercice "${exercise.title}" ?`)){
-                    exercises = exercises.filter(ex => ex.id !== exercise.id);
-                    if(currentId === exercise.id) resetFormToBlank();
-                    saveStorage();
-                }
-            };
+shareButton.onclick = event => {
+    event.stopPropagation();
+    openShareExerciseModal(exercise);
+};
 
-            item.appendChild(deleteButton);
+
+const deleteButton = document.createElement("button");
+deleteButton.className = "del-btn";
+deleteButton.textContent = "✕";
+deleteButton.title = "Supprimer l'exercice";
+
+deleteButton.onclick = event => {
+    event.stopPropagation();
+
+    if(confirm(`Supprimer l'exercice "${exercise.title}" ?`)){
+        exercises = exercises.filter(ex => ex.id !== exercise.id);
+
+        if(currentId === exercise.id) {
+            resetFormToBlank();
+        }
+
+        saveStorage();
+    }
+};
+
+if (exercise.team_id) {
+    const unshareBtn = document.createElement("button");
+    unshareBtn.className = "del-btn";
+    unshareBtn.textContent = "🔗";
+    unshareBtn.title = "Retirer le partage";
+    unshareBtn.onclick = event => {
+        event.stopPropagation();
+        unshareExercise(exercise);
+    };
+    item.appendChild(unshareBtn);
+}
+
+
+item.appendChild(shareButton);
+item.appendChild(deleteButton);
             item.onclick = () => loadExercise(exercise);
             content.appendChild(item);
         });
@@ -2574,6 +2560,23 @@ function renderSidebar(){
                 </span>
             `;
 
+	    sessionSummary.addEventListener("dblclick", event => {
+    		             event.preventDefault();
+    			  event.stopPropagation();
+
+  			    const nouveauNom = prompt("Nouveau nom de la séance :", session.name || "");
+  			    if(nouveauNom === null) return;
+
+  			    const nom = nouveauNom.trim();
+ 			    if(!nom){
+  		        alert("Le nom ne peut pas être vide.");
+    		           return;
+	      }
+
+   			   session.name = nom;
+    			   saveStorage();
+	   });
+
             const actions = document.createElement("div");
             actions.className = "tree-actions";
 
@@ -2597,13 +2600,33 @@ function renderSidebar(){
                 }
             };
 
-            actions.appendChild(printButton);
-            actions.appendChild(deleteButton);
+const shareSessionButton = document.createElement("button");
+shareSessionButton.textContent = "🤝";
+shareSessionButton.title = "Partager la séance";
+shareSessionButton.onclick = event => {
+    event.stopPropagation();
+    openShareSessionModal(session);
+};
+
+actions.appendChild(printButton);
+actions.appendChild(shareSessionButton);
+actions.appendChild(deleteButton);
             sessionSummary.appendChild(actions);
             sessionDetails.appendChild(sessionSummary);
 
             const sessionContent = document.createElement("div");
             sessionContent.className = "tree-content session-drop-target";
+
+if (session.team_id) {
+    const unshareSessionBtn = document.createElement("button");
+    unshareSessionBtn.textContent = "🔗";
+    unshareSessionBtn.title = "Retirer le partage (séance + exercices)";
+    unshareSessionBtn.onclick = event => {
+        event.stopPropagation();
+        unshareSession(session);
+    };
+    actions.appendChild(unshareSessionBtn);
+}
 
             /* =====================================================
                AJOUT D'UN EXERCICE DANS UNE SÉANCE
@@ -2633,11 +2656,6 @@ function renderSidebar(){
 
                 saveStorage();
 
-                if(handCoachDirectory){
-                    saveFilesToFolder().catch(error =>
-                        console.error("Erreur de synchronisation de la séance :", error)
-                    );
-                }
             };
 
             const startSessionDrop = event => {
@@ -2706,11 +2724,7 @@ function renderSidebar(){
                     session.items.splice(itemIndex, 1);
                     saveStorage();
 
-                    if(handCoachDirectory){
-                        saveFilesToFolder().catch(error =>
-                            console.error("Erreur de synchronisation de la séance :", error)
-                        );
-                    }
+                 
                 };
 
                 // === Drag & drop (le code que tu avais déjà) ===
@@ -2840,38 +2854,6 @@ function renderSidebar(){
 }
 
 /* =========================================================
-   INTERFACE MOBILE
-========================================================= */
-function closeMobileSidebar(){
-    document.body.classList.remove("mobile-sidebar-open");
-}
-
-const mobileMenuButton = $("mobileMenuButton");
-const mobileSidebarOverlay = $("mobileSidebarOverlay");
-
-if(mobileMenuButton){
-    mobileMenuButton.addEventListener("click", event => {
-        event.stopPropagation();
-        document.body.classList.toggle("mobile-sidebar-open");
-    });
-}
-
-if(mobileSidebarOverlay){
-    mobileSidebarOverlay.addEventListener("click", closeMobileSidebar);
-}
-
-document.addEventListener("keydown", event => {
-    if(event.key === "Escape") closeMobileSidebar();
-});
-
-/* Sur mobile, ouvrir un exercice ferme automatiquement la bibliothèque. */
-const originalLoadExerciseForMobile = loadExercise;
-loadExercise = function(exercise){
-    originalLoadExerciseForMobile(exercise);
-    if(window.innerWidth <= 900) closeMobileSidebar();
-};
-
-/* =========================================================
    INITIALISATION
 ========================================================= */
 
@@ -2888,111 +2870,652 @@ renderSidebar();
 updateSaveStatus();
 
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
 
 
-    
-    // On crée une zone d'affichage si elle n'existe pas
-    let zone = document.getElementById('drive-list-zone');
-    if (!zone) {
-      zone = document.createElement('div');
-      zone.id = 'drive-list-zone';
-      zone.style.cssText = 'position:fixed; top:70px; right:20px; width:320px; max-height:70vh; overflow:auto; background:#fff; border:1px solid #ccc; border-radius:10px; padding:15px; z-index:9999; box-shadow:0 4px 20px rgba(0,0,0,0.2);';
-      document.body.appendChild(zone);
+// =========================================================
+// PARTAGE D'UN EXERCICE
+// =========================================================
+
+let exerciseToShare = null;
+
+
+async function openShareExerciseModal(exercise) {
+
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        return;
     }
 
-    let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                  <h3 style="margin:0;">Séances Drive</h3>
-                  <button onclick="document.getElementById('drive-list-zone').remove()" style="border:none; background:#eee; border-radius:5px; padding:4px 8px; cursor:pointer;">✕</button>
-                </div>`;
+    const modal = document.getElementById('shareExerciseModal');
+    const name = document.getElementById('shareExerciseName');
+    const select = document.getElementById('shareTeamSelect');
 
-    if (files.length === 0) {
-      html += '<p>Aucune séance trouvée dans ce dossier.</p>';
-    } else {
-      files.forEach(f => {
-        const isFolder = f.mimeType === 'application/vnd.google-apps.folder';
-        html += `<button onclick="chargerSeanceDrive('${f.id}', '${f.name.replace(/'/g, "\\'")}', ${isFolder})" 
-                  style="display:block; width:100%; margin:6px 0; padding:10px; text-align:left; border:1px solid #ddd; border-radius:6px; background:${isFolder ? '#f0f7ff' : '#fff'}; cursor:pointer;">
-                  ${isFolder ? '📁 ' : '📄 '}${f.name}
-                </button>`;
-      });
+    if (!modal || !name || !select) {
+        console.error('❌ Modal de partage introuvable');
+        return;
     }
 
-    zone.innerHTML = html;
+    exerciseToShare = exercise;
 
-  } catch (err) {
-    alert('Erreur Drive : ' + err.message);
-    console.error(err);
-  }
+    name.textContent =
+        'Exercice : ' + (exercise.title || 'Sans titre');
+
+    select.innerHTML = '<option value="">Chargement...</option>';
+
+    modal.style.display = 'flex';
+
+    try {
+
+        const { data, error } = await sb
+            .from('teams')
+            .select('id, name, owner_id')
+            .eq('owner_id', currentUser.id)
+            .order('created_at', {
+                ascending: true
+            });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+
+            select.innerHTML =
+                '<option value="">Aucune bibliothèque disponible</option>';
+
+            return;
+        }
+
+        select.innerHTML = `
+            <option value="">
+                Sélectionner une bibliothèque...
+            </option>
+        `;
+
+        data.forEach(team => {
+
+            const option = document.createElement('option');
+
+            option.value = team.id;
+            option.textContent = team.name;
+
+            select.appendChild(option);
+
+        });
+
+    } catch (err) {
+
+        console.error(
+            'Erreur chargement bibliothèques :',
+            err
+        );
+
+        select.innerHTML =
+            '<option value="">Erreur de chargement</option>';
+
+        showToast(
+            '❌ ' + err.message
+        );
+    }
 }
 
- async function chargerSeanceDrive(fileId, fileName, isFolder) {
-  if (isFolder) {
-    alert('C\u2019est un dossier. Pour l\u2019instant on ne charge que les fichiers JSON.');
+
+function closeShareExerciseModal() {
+
+    const modal =
+        document.getElementById('shareExerciseModal');
+
+    if (modal) {
+        modal.style.display = 'none';
+    }
+
+    exerciseToShare = null;
+}
+
+
+async function confirmShareExercise() {
+
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        return;
+    }
+
+    if (!exerciseToShare) {
+        showToast('❌ Aucun exercice sélectionné');
+        return;
+    }
+
+    const select =
+        document.getElementById('shareTeamSelect');
+
+    const teamId = select?.value;
+
+    if (!teamId) {
+        showToast(
+            '⚠️ Sélectionnez une bibliothèque'
+        );
+        return;
+    }
+
+    try {
+
+        const { data, error } = await sb.rpc(
+            'share_exercise_with_team',
+            {
+                p_exercise_id: exerciseToShare.id,
+                p_team_id: teamId
+            }
+        );
+
+        if (error) throw error;
+
+        console.log(
+            '✅ Exercice partagé :',
+            exerciseToShare.id,
+            '→',
+            teamId
+        );
+
+        showToast(
+            '🤝 Exercice partagé avec la bibliothèque'
+        );
+
+        closeShareExerciseModal();
+
+        await loadFromSupabase();
+
+    } catch (err) {
+
+        console.error(
+            'Erreur partage exercice :',
+            err
+        );
+
+        showToast(
+            '❌ ' + err.message
+        );
+    }
+}
+
+
+
+// =========================================================
+// PARTAGE D'UNE SÉANCE
+// =========================================================
+
+let sessionToShare = null;
+
+async function openShareSessionModal(session) {
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        return;
+    }
+
+    const modal = document.getElementById('shareSessionModal');
+    const name = document.getElementById('shareSessionName');
+    const select = document.getElementById('shareSessionTeamSelect');
+
+    if (!modal || !name || !select) {
+        console.error('❌ Modal partage séance introuvable');
+        return;
+    }
+
+    sessionToShare = session;
+    name.textContent = 'Séance : ' + (session.name || 'Sans titre');
+    select.innerHTML = '<option value="">Chargement...</option>';
+    modal.style.display = 'flex';
+
+    try {
+        const { data, error } = await sb
+            .from('teams')
+            .select('id, name, owner_id')
+            .eq('owner_id', currentUser.id)
+            .order('created_at', { ascending: true });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            select.innerHTML = '<option value="">Aucune bibliothèque disponible</option>';
+            return;
+        }
+
+        select.innerHTML = '<option value="">Sélectionner une bibliothèque...</option>';
+
+        data.forEach(team => {
+            const option = document.createElement('option');
+            option.value = team.id;
+            option.textContent = team.name;
+            select.appendChild(option);
+        });
+    } catch (err) {
+        console.error(err);
+        select.innerHTML = '<option value="">Erreur de chargement</option>';
+        showToast('❌ ' + err.message);
+    }
+}
+
+function closeShareSessionModal() {
+    const modal = document.getElementById('shareSessionModal');
+    if (modal) modal.style.display = 'none';
+    sessionToShare = null;
+}
+
+async function confirmShareSession() {
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        return;
+    }
+    if (!sessionToShare) {
+        showToast('❌ Aucune séance sélectionnée');
+        return;
+    }
+
+    const select = document.getElementById('shareSessionTeamSelect');
+    const teamId = select?.value;
+
+    if (!teamId) {
+        showToast('⚠️ Sélectionnez une bibliothèque');
+        return;
+    }
+
+    try {
+    // 1. Partager la séance
+    const { error } = await sb.rpc('share_session_with_team', {
+        p_session_id: sessionToShare.id,
+        p_team_id: teamId
+    });
+    if (error) throw error;
+
+    // 2. Partager aussi les exercices de la séance
+    const exerciseIds = (sessionToShare.items || [])
+        .map(item => item.exerciseId)
+        .filter(Boolean);
+
+    const uniqueIds = [...new Set(exerciseIds)];
+
+    for (const exerciseId of uniqueIds) {
+        const { error: exError } = await sb.rpc('share_exercise_with_team', {
+            p_exercise_id: exerciseId,
+            p_team_id: teamId
+        });
+        // Si déjà partagé ou pas proprio, on ignore l'erreur
+        if (exError) {
+            console.warn('Exercice non partagé :', exerciseId, exError.message);
+        }
+    }
+
+    console.log('✅ Séance + exercices partagés :', sessionToShare.id, '→', teamId);
+    showToast('🤝 Séance et exercices partagés');
+    closeShareSessionModal();
+    await loadFromSupabase();
+
+} catch (err) {
+    console.error(err);
+    showToast('❌ ' + err.message);
+}
+
+
+}
+
+// =========================================================
+// RETRAIT DE PARTAGE
+// =========================================================
+
+async function unshareExercise(exercise) {
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        return;
+    }
+    if (!exercise?.id) return;
+
+    if (!confirm('Retirer le partage de cet exercice ?\nLes autres membres de la bibliothèque ne le verront plus.')) {
+        return;
+    }
+
+    try {
+        const { error } = await sb.rpc('unshare_exercise_from_team', {
+            p_exercise_id: exercise.id
+        });
+        if (error) throw error;
+
+        showToast('🔗 Partage exercice retiré');
+        await loadFromSupabase();
+    } catch (err) {
+        console.error(err);
+        showToast('❌ ' + err.message);
+    }
+}
+
+async function unshareSession(session) {
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        return;
+    }
+    if (!session?.id) return;
+
+    if (!confirm(
+        'Retirer le partage de cette séance ET de tous ses exercices ?\n' +
+        'Les autres membres ne les verront plus.'
+    )) {
+        return;
+    }
+
+    try {
+        // 1. Séance
+        const { error } = await sb.rpc('unshare_session_from_team', {
+            p_session_id: session.id
+        });
+        if (error) throw error;
+
+        // 2. Exercices de la séance
+        const exerciseIds = [...new Set(
+            (session.items || []).map(i => i.exerciseId).filter(Boolean)
+        )];
+
+        for (const exerciseId of exerciseIds) {
+            const { error: exError } = await sb.rpc('unshare_exercise_from_team', {
+                p_exercise_id: exerciseId
+            });
+            if (exError) {
+                console.warn('Exercice non retiré :', exerciseId, exError.message);
+            }
+        }
+
+        showToast('🔗 Partage séance + exercices retiré');
+        await loadFromSupabase();
+    } catch (err) {
+        console.error(err);
+        showToast('❌ ' + err.message);
+    }
+}
+
+  // =========================================================
+  // SUPABASE
+  // =========================================================
+
+  const SUPABASE_URL = 'https://yosujqdjffuyibddquxq.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_jl0cfFR4jbQpnbxvAAbubA_Bcg-Jmx8';
+
+  const sb = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  let currentUser = null;
+
+
+  // =========================================================
+  // UTILISATEUR CONNECTÉ
+  // =========================================================
+
+  async function getCurrentUser() {
+
+    const { data, error } = await sb.auth.getUser();
+
+    if (error) {
+      console.error('Erreur utilisateur :', error);
+      return null;
+    }
+
+    return data.user || null;
+  }
+
+
+  // =========================================================
+  // CONNEXION
+  // =========================================================
+
+  async function loginUser() {
+
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+
+    if (!email || !password) {
+      showToast('⚠️ Email et mot de passe obligatoires');
+      return;
+    }
+
+    const { data, error } = await sb.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      console.error(error);
+      showToast('❌ ' + error.message);
+      return;
+    }
+
+    currentUser = data.user;
+
+    closeAuthModal();
+
+    showToast('✅ Connexion réussie');
+
+    await loadFromSupabase();
+  }
+
+
+  // =========================================================
+  // CREATION DE COMPTE
+  // =========================================================
+
+  async function registerUser() {
+
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+
+    if (!email || !password) {
+      showToast('⚠️ Email et mot de passe obligatoires');
+      return;
+    }
+
+    if (password.length < 6) {
+      showToast('⚠️ Minimum 6 caractères pour le mot de passe');
+      return;
+    }
+
+    const { data, error } = await sb.auth.signUp({
+      email,
+      password
+    });
+
+    if (error) {
+      console.error(error);
+      showToast('❌ ' + error.message);
+      return;
+    }
+
+    currentUser = data.user;
+
+    closeAuthModal();
+
+    showToast('✅ Compte créé');
+
+    await loadFromSupabase();
+  }
+
+
+  // =========================================================
+  // DECONNEXION
+  // =========================================================
+
+async function logoutUser() {
+
+    const { error } = await sb.auth.signOut();
+
+    if (error) {
+        console.error(error);
+        showToast('❌ Erreur de déconnexion');
+        return;
+    }
+
+    currentUser = null;
+
+    exercises = [];
+    sessions = [];
+
+    localStorage.setItem(
+        EXERCISES_KEY,
+        JSON.stringify([])
+    );
+
+    localStorage.setItem(
+        SESSIONS_KEY,
+        JSON.stringify([])
+    );
+
+    // Vider les champs de connexion
+   const passwordInput = document.getElementById('authPassword');
+
+if (passwordInput) {
+    passwordInput.value = '';
+}
+
+    renderSidebar();
+
+    updateAuthUI();
+
+    showToast('👋 Déconnexion réussie');
+}
+
+  // =========================================================
+  // INTERFACE AUTH
+  // =========================================================
+
+  function openAuthModal() {
+
+    const modal = document.getElementById('authModal');
+    const passwordInput = document.getElementById('authPassword');
+
+    if (passwordInput) {
+        passwordInput.value = '';
+    }
+
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+
+  function closeAuthModal() {
+
+    const modal = document.getElementById('authModal');
+
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+
+
+  function updateAuthUI() {
+
+    const authButton = document.getElementById('authButton');
+    const userInfo = document.getElementById('userInfo');
+
+    if (!authButton || !userInfo) return;
+
+    if (currentUser) {
+
+      authButton.textContent = '🚪 Déconnexion';
+      authButton.onclick = logoutUser;
+
+      userInfo.textContent = '👤 ' + currentUser.email;
+
+    } else {
+
+      authButton.textContent = '🔐 Connexion';
+      authButton.onclick = openAuthModal;
+
+      userInfo.textContent = '';
+    }
+  }
+
+
+  // =========================================================
+  // CHARGEMENT DEPUIS SUPABASE
+  // =========================================================
+
+async function loadFromSupabase() {
+  if (!currentUser) {
+    console.log('Aucun utilisateur connecté');
     return;
   }
 
   try {
-    const response = await gapi.client.drive.files.get({
-      fileId: fileId,
-      alt: 'media'
-    });
+    // =====================================================
+    // 1. Récupération des bibliothèques de l'utilisateur
+    // =====================================================
 
-    const contenu = response.body;
-    let imported;
-    try {
-      imported = JSON.parse(contenu);
-    } catch (e) {
-      alert('Le fichier n\u2019est pas un JSON valide.\nNom : ' + fileName);
-      return;
-    }
+    const { data: teamData, error: teamError } = await sb
+      .from('teams')
+      .select('id, name, owner_id')
+      .or(
+        `owner_id.eq.${currentUser.id},id.in.(${
+          (
+            await sb
+              .from('team_members')
+              .select('team_id')
+              .eq('user_id', currentUser.id)
+          ).data?.map(tm => tm.team_id).join(',') || '00000000-0000-0000-0000-000000000000'
+        })`
+      );
 
-    if (!Array.isArray(imported)) {
-      alert('Le fichier ne contient pas une liste (tableau) exploitable.');
-      return;
-    }
+    if (teamError) throw teamError;
 
-    if (fileName.includes('exercice')) {
-      exercises = mergeById(exercises, imported);
-    } else if (fileName.includes('seance')) {
-      sessions = mergeById(sessions, imported);
+    const teams = teamData || [];
+    const teamIds = teams.map(team => team.id);
+
+    console.log('🤝 Bibliothèques accessibles :', teams);
+
+    // =====================================================
+    // 2. Exercices personnels + exercices partagés
+    // =====================================================
+
+    let exQuery = sb
+      .from('Exercices')
+      .select('*');
+
+    if (teamIds.length > 0) {
+      exQuery = exQuery.or(
+        `user_id.eq.${currentUser.id},team_id.in.(${teamIds.join(',')})`
+      );
     } else {
-      alert('Nom de fichier non reconnu, impossible de savoir s\u2019il s\u2019agit d\u2019exercices ou de séances.');
-      return;
+      exQuery = exQuery.eq('user_id', currentUser.id);
     }
 
-    saveStorage();
-    alert('Contenu de "' + fileName + '" importé avec succès.');
+    const { data: exData, error: exError } = await exQuery;
 
-  } catch (err) {
-    alert('Erreur lors du chargement : ' + err.message);
-    console.error(err);
-  }
-}
-</script>
-
-<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>    
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const SUPABASE_URL = 'https://yosujqdjffuyibddquxq.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_jl0cfFR4jbQpnbxvAAbubA_Bcg-Jmx8';
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  async function loadFromSupabase() {
-  try {
-    const { data: exData, error: exError } = await sb.from('Exercices').select('*');
     if (exError) throw exError;
 
-    exercises = (exData || []).map(row => ({
-      id: row.id,
-      title: row.title,
-      category: row.category,
-      duration: row.duration,
-      ...(row.data || {})
-    }));
+   exercises = (exData || []).map(row => ({
+  id: row.id,
+  title: row.title,
+  category: row.category,
+  duration: row.duration,
+  ...(row.data || {}),
+  team_id: row.team_id || null   // ← en dernier, gagne toujours
+}));
 
-    const { data: seData, error: seError } = await sb.from('seances').select('*');
+    // =====================================================
+    // 3. Séances personnelles + séances partagées
+    // =====================================================
+
+    let seQuery = sb
+      .from('seances')
+      .select('*');
+
+    if (teamIds.length > 0) {
+      seQuery = seQuery.or(
+        `user_id.eq.${currentUser.id},team_id.in.(${teamIds.join(',')})`
+      );
+    } else {
+      seQuery = seQuery.eq('user_id', currentUser.id);
+    }
+
+    const { data: seData, error: seError } = await seQuery;
+
     if (seError) throw seError;
 
     sessions = (seData || []).map(row => ({
@@ -3000,56 +3523,774 @@ updateSaveStatus();
       name: row.name,
       category: row.category,
       date: row.date,
+      team_id: row.team_id || null,
       items: row.items || []
     }));
 
-    // Mise à jour locale SANS renvoyer vers Supabase
-    localStorage.setItem(EXERCISES_KEY, JSON.stringify(exercises));
-    localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
-    if (typeof renderSidebar === 'function') renderSidebar();
-    if (typeof updateSaveStatus === 'function') updateSaveStatus();
+    // =====================================================
+    // 4. Mise à jour du stockage local
+    // =====================================================
 
-    console.log('Données chargées depuis Supabase');
+    localStorage.setItem(
+      EXERCISES_KEY,
+      JSON.stringify(exercises)
+    );
+
+    localStorage.setItem(
+      SESSIONS_KEY,
+      JSON.stringify(sessions)
+    );
+
+    renderSidebar();
+
+    if (typeof updateSaveStatus === 'function') {
+      updateSaveStatus();
+    }
+
+    console.log(
+      '✅ Données chargées pour',
+      currentUser.email,
+      '| Bibliothèques :',
+      teams.length,
+      '| Exercices :',
+      exercises.length,
+      '| Séances :',
+      sessions.length
+    );
+
   } catch (err) {
     console.error('Erreur chargement Supabase :', err);
+    showToast('❌ Erreur de chargement : ' + err.message);
   }
 }
 
-  async function saveToSupabase() {
-    try {
-      const exRows = exercises.map(ex => ({
-        id: ex.id,
-        title: ex.title || '',
-        category: ex.category || '',
-        duration: parseInt(ex.duration) || 15,
-        data: ex,
-        updated_at: new Date().toISOString()
-      }));
-      if (exRows.length) {
-        const { error } = await sb.from('Exercices').upsert(exRows, { onConflict: 'id' });
-        if (error) throw error;
-      }
 
-      const seRows = sessions.map(se => ({
-        id: se.id,
-        name: se.name || '',
-        category: se.category || '',
-        date: se.date || '',
-        items: se.items || [],
-        updated_at: new Date().toISOString()
-      }));
-      if (seRows.length) {
-        const { error } = await sb.from('seances').upsert(seRows, { onConflict: 'id' });
-        if (error) throw error;
-      }
-      console.log('Sauvegardé sur Supabase');
-    } catch (err) {
-      console.error('Erreur sauvegarde Supabase :', err);
+  // =========================================================
+  // SAUVEGARDE VERS SUPABASE
+  // =========================================================
+
+// =========================================================
+// SAUVEGARDE VERS SUPABASE
+// =========================================================
+
+async function saveToSupabase() {
+
+    if (!currentUser) {
+        throw new Error('Aucun utilisateur connecté');
     }
+
+    try {
+
+        // -------------------------------------------------------
+        // EXERCICES
+        // -------------------------------------------------------
+
+        const exRows = [];
+
+        for (const ex of exercises) {
+
+            /*
+             * On récupère la ligne existante pour connaître
+             * son propriétaire et sa bibliothèque éventuelle.
+             *
+             * Cela évite de remplacer user_id par currentUser.id
+             * lorsqu'un exercice appartient à un autre coach.
+             */
+
+            const { data: existingExercise, error: existingError } =
+                await sb
+                    .from('Exercices')
+                    .select('id, user_id, team_id')
+                    .eq('id', ex.id)
+                    .maybeSingle();
+
+            if (existingError) {
+                throw existingError;
+            }
+
+            /*
+             * Nouvel exercice :
+             * le compte connecté devient propriétaire.
+             *
+             * Exercice existant :
+             * on conserve impérativement son propriétaire.
+             */
+
+            const ownerId =
+                existingExercise?.user_id || currentUser.id;
+
+
+            const row = {
+
+                id: ex.id,
+
+                user_id: ownerId,
+
+                title: ex.title || '',
+
+                category: ex.category || '',
+
+                duration: parseInt(ex.duration) || 15,
+
+                data: ex,
+
+                updated_at: new Date().toISOString()
+
+            };
+
+
+            /*
+             * On ne modifie jamais team_id ici.
+             *
+             * Si l'exercice est déjà partagé, sa bibliothèque
+             * reste celle enregistrée dans Supabase.
+             *
+             * Le changement de bibliothèque passe uniquement
+             * par share_exercise_with_team().
+             */
+
+            exRows.push(row);
+        }
+
+
+        if (exRows.length) {
+
+            const { error: exError } = await sb
+                .from('Exercices')
+                .upsert(
+                    exRows,
+                    { onConflict: 'id' }
+                );
+
+            if (exError) {
+                throw exError;
+            }
+        }
+
+
+        // -------------------------------------------------------
+        // SEANCES
+        // -------------------------------------------------------
+
+        const seRows = sessions.map(se => ({
+
+            id: se.id,
+
+            user_id: currentUser.id,
+
+            name: se.name || '',
+
+            category: se.category || '',
+
+            date: se.date || '',
+
+            items: se.items || [],
+
+            updated_at: new Date().toISOString()
+
+        }));
+
+
+        if (seRows.length) {
+
+            const { error: seError } = await sb
+                .from('seances')
+                .upsert(
+                    seRows,
+                    { onConflict: 'id' }
+                );
+
+            if (seError) {
+                throw seError;
+            }
+        }
+
+
+        console.log(
+            '✅ Données sauvegardées pour',
+            currentUser.email
+        );
+
+    } catch (err) {
+
+        console.error(
+            'Erreur sauvegarde Supabase :',
+            err
+        );
+
+        throw err;
+    }
+}
+
+  // =========================================================
+  // INITIALISATION AUTH
+  // =========================================================
+
+  async function initAuth() {
+
+    currentUser = await getCurrentUser();
+
+    updateAuthUI();
+
+    if (currentUser) {
+
+      console.log(
+        'Utilisateur connecté :',
+        currentUser.email
+      );
+
+      await loadFromSupabase();
+
+    } else {
+
+      console.log(
+        'Aucun utilisateur connecté'
+      );
+    }
+
+
+    sb.auth.onAuthStateChange(
+      async (event, session) => {
+
+        console.log(
+          'Auth event :',
+          event
+        );
+
+        currentUser = session?.user || null;
+
+        updateAuthUI();
+      }
+    );
   }
 
-  loadFromSupabase();
+async function testInviteCode() {
+    if (!currentUser) {
+        showToast('❌ Aucun utilisateur connecté');
+        return;
+    }
+
+    const { data, error } = await sb.rpc('create_invite_code', {
+        p_team_id: '2e6d9541-dbd1-4c23-bb14-81cce7d65fd6',
+        p_permission: 'read'
+    });
+
+    if (error) {
+        console.error('Erreur création code :', error);
+        showToast('❌ ' + error.message);
+        return;
+    }
+
+    console.log('✅ Code invitation :', data);
+    showToast('✅ Code : ' + data);
+}
+
+async function testShareExercise() {
+
+    if (!currentUser) {
+        showToast('❌ Aucun utilisateur connecté');
+        return;
+    }
+
+    // On prend le premier exercice personnel
+    const exercise = exercises.find(ex => !ex.team_id);
+
+    if (!exercise) {
+        showToast('❌ Aucun exercice personnel trouvé');
+        return;
+    }
+
+    const { data, error } = await sb.rpc('share_exercise_with_team', {
+        p_exercise_id: exercise.id,
+        p_team_id: '2e6d9541-dbd1-4c23-bb14-81cce7d65fd6'
+    });
+
+    if (error) {
+        console.error('Erreur partage exercice :', error);
+        showToast('❌ ' + error.message);
+        return;
+    }
+
+    console.log('✅ Exercice partagé :', exercise);
+    console.log('Résultat RPC :', data);
+
+    showToast('🤝 Exercice partagé avec Seniors');
+
+    await loadFromSupabase();
+}
+
+
+
+
+// =========================================================
+// DEMARRAGE
+// =========================================================
+
+
+// =========================================================
+// BIBLIOTHÈQUES PARTAGÉES
+// =========================================================
+
+async function openTeamsModal() {
+
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        return;
+    }
+
+    const modal = document.getElementById('teamsModal');
+
+    if (!modal) {
+        console.error('❌ teamsModal introuvable');
+        return;
+    }
+
+    console.log('🤝 Ouverture bibliothèques...');
+
+    await loadTeamsUI();
+
+    modal.style.display = 'flex';
+
+    console.log('🤝 Bibliothèques affichées');
+}
+
+
+function closeTeamsModal() {
+
+    const modal = document.getElementById('teamsModal');
+
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+
+async function loadTeamsUI() {
+
+    if (!currentUser) return;
+
+    const list = document.getElementById('teamsList');
+
+    if (!list) return;
+
+    list.innerHTML = 'Chargement...';
+
+    try {
+
+        const { data, error } = await sb
+            .from('teams')
+            .select('id, name, owner_id')
+            .order('created_at', { ascending: true });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+
+            list.innerHTML = `
+                <p>Aucune bibliothèque.</p>
+            `;
+
+            return;
+        }
+
+        list.innerHTML = data.map(team => {
+
+            const owner = team.owner_id === currentUser.id;
+
+            return `
+                <div style="
+                    border:1px solid #ccc;
+                    border-radius:8px;
+                    padding:12px;
+                    margin-bottom:10px;
+                ">
+
+                    <strong>
+                        📁 ${team.name}
+                    </strong>
+
+                    <div style="
+                        font-size:12px;
+                        color:#666;
+                        margin-top:4px;
+                        margin-bottom:10px;
+                    ">
+                        ${owner ? '👑 Propriétaire' : '👤 Membre'}
+                    </div>
+
+                    ${
+                        owner
+                        ? `
+                            <div style="
+                                display:flex;
+                                gap:8px;
+                                flex-wrap:wrap;
+                            ">
+
+                                <button
+                                    class="auth-login"
+                                    onclick="createInviteCodeFromUI(
+                                        '${team.id}',
+                                        'read'
+                                    )">
+                                    👁️ Code lecture
+                                </button>
+
+                                <button
+                                    class="auth-register"
+                                    onclick="createInviteCodeFromUI(
+                                        '${team.id}',
+                                        'write'
+                                    )">
+                                    ✏️ Code modification
+                                </button>
+
+                            </div>
+                        `
+                        : ''
+                    }
+
+                </div>
+            `;
+
+        }).join('');
+
+    } catch (err) {
+
+        console.error(
+            'Erreur chargement bibliothèques :',
+            err
+        );
+
+        list.innerHTML = `
+            <p style="color:red;">
+                ❌ ${err.message}
+            </p>
+        `;
+    }
+}
+
+
+async function createInviteCodeFromUI(teamId, permission) {
+
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        return;
+    }
+
+    const { data, error } = await sb.rpc(
+        'create_invite_code',
+        {
+            p_team_id: teamId,
+            p_permission: permission
+        }
+    );
+
+    if (error) {
+
+        console.error(
+            'Erreur création code :',
+            error
+        );
+
+        showToast('❌ ' + error.message);
+
+        return;
+    }
+
+    console.log(
+        '✅ Code invitation :',
+        data
+    );
+
+    const type =
+        permission === 'read'
+            ? 'lecture seule'
+            : 'modification';
+
+    alert(
+        'Code d’invitation (' +
+        type +
+        ') :\n\n' +
+        data +
+        '\n\n' +
+        'Tu peux transmettre ce code au coach.'
+    );
+
+    showToast('✅ Code généré');
+}
+
+
+
+
+  async function createTeamFromUI() {
+
+    if (!currentUser) {
+      showToast('❌ Connectez-vous d’abord');
+      return;
+    }
+
+
+    const name = prompt(
+      'Nom de la bibliothèque :'
+    );
+
+
+    if (!name || !name.trim()) {
+      return;
+    }
+
+
+    const { data, error } = await sb.rpc(
+      'create_team',
+      {
+        p_name: name.trim()
+      }
+    );
+
+
+    if (error) {
+
+      console.error(
+        'Erreur création bibliothèque :',
+        error
+      );
+
+      showToast(
+        '❌ ' + error.message
+      );
+
+      return;
+    }
+
+
+    console.log(
+      '✅ Bibliothèque créée :',
+      data
+    );
+
+    showToast(
+      '✅ Bibliothèque créée'
+    );
+
+
+    await loadTeamsUI();
+
+    await loadFromSupabase();
+  }
+
+
+  async function joinTeamFromUI() {
+
+    if (!currentUser) {
+      showToast('❌ Connectez-vous d’abord');
+      return;
+    }
+
+
+    const code = prompt(
+      'Code d’invitation :'
+    );
+
+
+    if (!code || !code.trim()) {
+      return;
+    }
+
+
+    const { data, error } = await sb.rpc(
+      'join_team_with_code',
+      {
+        p_code: code.trim()
+      }
+    );
+
+
+    if (error) {
+
+      console.error(
+        'Erreur rejoindre bibliothèque :',
+        error
+      );
+
+      showToast(
+        '❌ ' + error.message
+      );
+
+      return;
+    }
+
+
+    console.log(
+      '✅ Bibliothèque rejointe :',
+      data
+    );
+
+    showToast(
+      '🤝 Bibliothèque rejointe'
+    );
+
+
+    await loadTeamsUI();
+
+    await loadFromSupabase();
+  }
+
+
+  initAuth();
+
 </script>
-    
+<div id="authModal">
+
+    <div class="auth-box">
+
+        <h2>🔐 Connexion à HandCoach</h2>
+
+        <input
+            type="email"
+            id="authEmail"
+            placeholder="Adresse email"
+            autocomplete="email">
+
+        <input
+            type="password"
+            id="authPassword"
+            placeholder="Mot de passe"
+            autocomplete="current-password">
+
+        <div class="auth-buttons">
+
+            <button
+                class="auth-login"
+                onclick="loginUser()">
+                Se connecter
+            </button>
+
+            <button
+                class="auth-register"
+                onclick="registerUser()">
+                Créer un compte
+            </button>
+
+        </div>
+
+        <button
+            class="auth-close"
+            onclick="closeAuthModal()">
+            Fermer
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     BIBLIOTHÈQUES PARTAGÉES
+========================================================= -->
+
+<div id="teamsModal">
+
+    <div class="auth-box">
+
+        <h2>🤝 Bibliothèques</h2>
+
+        <div id="teamsList">
+            Chargement...
+        </div>
+
+        <hr>
+
+        <button
+            class="auth-login"
+            onclick="createTeamFromUI()">
+            ➕ Créer une bibliothèque
+        </button>
+
+        <button
+            class="auth-register"
+            onclick="joinTeamFromUI()">
+            🔑 Rejoindre avec un code
+        </button>
+
+        <button
+            class="auth-close"
+            onclick="closeTeamsModal()">
+            Fermer
+        </button>
+
+    </div>
+
+</div>
+
+
+<div id="toast"></div>
+
+
+<!-- =========================================================
+     MODAL PARTAGE EXERCICE
+========================================================= -->
+
+<div id="shareExerciseModal">
+
+    <div class="auth-box">
+
+        <h2>🤝 Partager l'exercice</h2>
+
+        <p id="shareExerciseName"
+           style="margin-bottom:20px;">
+        </p>
+
+        <label for="shareTeamSelect">
+            Bibliothèque :
+        </label>
+
+        <select
+            id="shareTeamSelect"
+            style="
+                width:100%;
+                padding:10px;
+                margin-top:8px;
+                margin-bottom:20px;
+                box-sizing:border-box;
+            ">
+        </select>
+
+        <div class="auth-buttons">
+
+            <button
+                class="auth-login"
+                onclick="confirmShareExercise()">
+                🤝 Partager
+            </button>
+
+            <button
+                class="auth-close"
+                onclick="closeShareExerciseModal()">
+                Fermer
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL PARTAGE SÉANCE -->
+<div id="shareSessionModal">
+    <div class="auth-box">
+        <h2>🤝 Partager la séance</h2>
+        <p id="shareSessionName" style="margin-bottom:20px;"></p>
+        <label for="shareSessionTeamSelect">Bibliothèque :</label>
+        <select id="shareSessionTeamSelect"
+            style="width:100%; padding:10px; margin-top:8px; margin-bottom:20px; box-sizing:border-box;">
+        </select>
+        <div class="auth-buttons">
+            <button class="auth-login" onclick="confirmShareSession()">🤝 Partager</button>
+            <button class="auth-close" onclick="closeShareSessionModal()">Fermer</button>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
