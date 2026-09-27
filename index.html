@@ -2,656 +2,366 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0f172a">
-<title>HandCoach Mobile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HandCoach Mobile V1</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0f172a;color:#e2e8f0}
-button,input{font:inherit}
-button{cursor:pointer;border:0}
-a{color:#93c5fd}
-
-.app{min-height:100%;display:flex;flex-direction:column}
-
-/* Top bar */
-.topbar{
-  position:sticky;top:0;z-index:50;
-  display:flex;align-items:center;gap:10px;
-  padding:12px 14px;padding-top:max(12px,env(safe-area-inset-top));
-  background:#0f172a;border-bottom:1px solid #1e293b;
-}
-.topbar h1{margin:0;font-size:17px;font-weight:700;flex:1}
-.topbar .user{font-size:12px;color:#94a3b8;max-width:40%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.icon-btn{
-  width:40px;height:40px;border-radius:10px;
-  background:#1e293b;color:#e2e8f0;font-size:18px;
-  display:flex;align-items:center;justify-content:center;
-}
-
-/* Screens */
-.screen{display:none;flex:1;flex-direction:column;min-height:0}
-.screen.active{display:flex}
-
-/* Login */
-#screen-login{
-  justify-content:center;padding:24px 20px;
-  padding-bottom:max(24px,env(safe-area-inset-bottom));
-}
-.login-card{
-  background:#1e293b;border-radius:16px;padding:22px;
-  max-width:400px;width:100%;margin:0 auto;
-}
-.login-card h2{margin:0 0 8px;font-size:22px}
-.login-card p{margin:0 0 18px;color:#94a3b8;font-size:14px}
-.login-card input{
-  width:100%;padding:14px;margin-bottom:12px;
-  border-radius:10px;border:1px solid #334155;
-  background:#0f172a;color:#e2e8f0;
-}
-.btn-primary{
-  width:100%;padding:14px;border-radius:10px;
-  background:#7c3aed;color:#fff;font-weight:700;margin-top:4px;
-}
-.btn-secondary{
-  width:100%;padding:14px;border-radius:10px;
-  background:#334155;color:#e2e8f0;font-weight:600;margin-top:10px;
-}
-.btn-link{
-  width:100%;margin-top:12px;padding:10px;
-  background:transparent;color:#a78bfa;text-decoration:underline;font-size:14px;
-}
-
-/* Tabs */
-.tabs{
-  display:flex;gap:0;border-bottom:1px solid #1e293b;
-  background:#0f172a;
-}
-.tab{
-  flex:1;padding:14px;background:transparent;color:#94a3b8;
-  font-weight:600;font-size:15px;border-bottom:2px solid transparent;
-}
-.tab.active{color:#e2e8f0;border-bottom-color:#7c3aed}
-
-/* Lists */
-.list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px}
-.card{
-  background:#1e293b;border-radius:12px;padding:14px 16px;margin-bottom:10px;
-  display:flex;align-items:center;gap:12px;
-}
-.card:active{background:#334155}
-.card-icon{font-size:22px;flex-shrink:0}
-.card-body{flex:1;min-width:0}
-.card-title{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card-meta{font-size:12px;color:#94a3b8;margin-top:3px}
-.badge{
-  font-size:11px;padding:3px 8px;border-radius:999px;
-  background:#0f172a;color:#94a3b8;flex-shrink:0;
-}
-.empty{text-align:center;color:#64748b;padding:40px 20px;font-size:15px}
-
-/* Detail */
-.detail-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px 24px}
-.section-title{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;margin:16px 0 8px;font-weight:700}
-.section-title:first-child{margin-top:4px}
-.info-block{
-  background:#1e293b;border-radius:12px;padding:12px 14px;margin-bottom:8px;
-}
-.info-block h3{margin:0 0 6px;font-size:12px;color:#94a3b8;text-transform:uppercase}
-.info-block p{margin:0;font-size:14px;line-height:1.45;white-space:pre-wrap;color:#e2e8f0}
-
-/* Court */
-.court-box{
-  background:#1e293b;border-radius:12px;overflow:hidden;
-  border:1px solid #334155;margin-bottom:12px;
-}
-.court-frame{
-  position:relative;width:100%;aspect-ratio:2/1;background:#e5b66d;
-}
-.court-svg{position:absolute;inset:0;width:100%;height:100%}
-.court-objects{position:absolute;inset:0;pointer-events:none}
-.mob-obj{
-  position:absolute;transform:translate(-50%,-50%);
-  display:flex;align-items:center;justify-content:center;
-  font-size:10px;font-weight:700;user-select:none;
-}
-.mob-player,.mob-cone{
-  width:22px;height:22px;border-radius:50%;
-  border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4);
-}
-.mob-player-purple{background:#783fb4;color:#fff}
-.mob-player-orange{background:#e66c2e;color:#fff}
-.mob-cone{background:#ffd21b;color:#665200;border-color:#987900}
-.mob-ball{font-size:16px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
-.mob-shape{
-  border:2px solid #2563eb;background:rgba(37,99,235,.22);
-}
-.mob-shape-circle{border-radius:50%}
-.mob-shape-square,.mob-shape-rectangle{}
-.mob-shape-triangle{clip-path:polygon(50% 0%,100% 100%,0% 100%)}
-.mob-text{
-  background:rgba(255,255,245,.95);color:#222;border:1px solid #888;
-  border-radius:4px;padding:2px 5px;font-size:10px;white-space:nowrap;
-}
-
-/* Session items */
-.session-item{
-  background:#1e293b;border-radius:12px;padding:12px 14px;margin-bottom:8px;
-  display:flex;align-items:center;gap:10px;
-}
-.session-item:active{background:#334155}
-.session-item .num{
-  width:28px;height:28px;border-radius:8px;background:#0f172a;
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;color:#a78bfa;flex-shrink:0;
-}
-
-/* Toast */
-#toast{
-  position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));
-  transform:translateX(-50%);
-  background:#1e293b;color:#fff;padding:12px 18px;border-radius:12px;
-  font-weight:600;font-size:14px;z-index:9999;
-  opacity:0;pointer-events:none;transition:opacity .25s;
-  box-shadow:0 8px 24px rgba(0,0,0,.35);max-width:90%;
-}
-#toast.show{opacity:1}
-
-.loading{padding:40px;text-align:center;color:#94a3b8}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#f4f5f7;color:#222}
+header{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #ddd;padding:12px 14px;display:flex;gap:8px;align-items:center}
+h1{font-size:20px;margin:0;flex:1}
+button{border:0;border-radius:10px;padding:10px 12px;font-size:14px;cursor:pointer}
+.primary{background:#333;color:#fff}
+.secondary{background:#e9eaed}
+main{padding:12px;max-width:760px;margin:auto}
+.card{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px #0001}
+.card h2{font-size:18px;margin:0 0 8px}
+.meta{font-size:13px;color:#666;margin-bottom:10px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.hidden{display:none!important}
+input,textarea,select{width:100%;padding:10px;border:1px solid #ccc;border-radius:9px;font:inherit}
+textarea{min-height:100px;resize:vertical}
+label{display:block;font-weight:600;font-size:13px;margin:10px 0 5px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.tab.active{background:#333;color:#fff}
+.list button{width:100%;text-align:left;background:#fff;border:1px solid #ddd;margin-bottom:7px}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 14px;border-radius:10px;display:none;z-index:100}
+pre{white-space:pre-wrap}
+.small{font-size:12px;color:#666}
+.readonly-note{background:#fff8d9;border:1px solid #eadb88;padding:10px;border-radius:10px;font-size:13px;margin-bottom:12px}
 </style>
 </head>
 <body>
-<div class="app">
 
-  <!-- LOGIN -->
-  <section id="screen-login" class="screen active">
-    <div class="login-card">
-      <h2>🤾 HandCoach</h2>
-      <p>Version mobile — consultation des séances</p>
-      <input type="email" id="authEmail" placeholder="Email" autocomplete="email">
-      <input type="password" id="authPassword" placeholder="Mot de passe" autocomplete="current-password">
-      <button class="btn-primary" onclick="login()">Se connecter</button>
-      <button class="btn-link" onclick="resetPassword()">Mot de passe oublié ?</button>
-    </div>
-  </section>
+<header>
+  <h1>🤾 HandCoach</h1>
+  <button id="loginBtn" class="primary" onclick="toggleAuth()">Connexion</button>
+</header>
 
-  <!-- HOME -->
-  <section id="screen-home" class="screen">
-    <div class="topbar">
-      <h1>🤾 HandCoach</h1>
-      <span class="user" id="userLabel"></span>
-      <button class="icon-btn" onclick="logout()" title="Déconnexion">🚪</button>
+<main>
+  <div id="authBox" class="card hidden">
+    <h2>Connexion</h2>
+    <label>Email</label>
+    <input id="email" type="email" autocomplete="email">
+    <label>Mot de passe</label>
+    <input id="password" type="password" autocomplete="current-password">
+    <div class="row" style="margin-top:10px">
+      <button class="primary" onclick="login()">Se connecter</button>
+      <button class="secondary" onclick="logout()">Se déconnecter</button>
     </div>
+    <div class="small" id="authStatus"></div>
+  </div>
+
+  <div id="app" class="hidden">
+    <div class="readonly-note" id="modeNote"></div>
+
     <div class="tabs">
-      <button class="tab active" data-tab="sessions" onclick="switchTab('sessions')">Séances</button>
-      <button class="tab" data-tab="exercises" onclick="switchTab('exercises')">Exercices</button>
+      <button id="tabExercises" class="tab active" onclick="showTab('exercises')">📚 Exercices</button>
+      <button id="tabSessions" class="tab" onclick="showTab('sessions')">📅 Séances</button>
     </div>
-    <div class="list" id="listSessions"></div>
-    <div class="list" id="listExercises" style="display:none"></div>
-  </section>
 
-  <!-- SESSION DETAIL -->
-  <section id="screen-session" class="screen">
-    <div class="topbar">
-      <button class="icon-btn" onclick="showScreen('home')">←</button>
-      <h1 id="sessionTitle">Séance</h1>
+    <div id="exercisesPanel">
+      <div class="card">
+        <input id="exerciseSearch" placeholder="Rechercher un exercice…" oninput="renderExercises()">
+      </div>
+      <div id="exerciseList" class="list"></div>
     </div>
-    <div class="detail-scroll" id="sessionDetail"></div>
-  </section>
 
-  <!-- EXERCISE DETAIL -->
-  <section id="screen-exercise" class="screen">
-    <div class="topbar">
-      <button class="icon-btn" onclick="backFromExercise()">←</button>
-      <h1 id="exerciseTitle">Exercice</h1>
+    <div id="sessionsPanel" class="hidden">
+      <div class="card">
+        <input id="sessionSearch" placeholder="Rechercher une séance…" oninput="renderSessions()">
+      </div>
+      <div id="sessionList" class="list"></div>
     </div>
-    <div class="detail-scroll" id="exerciseDetail"></div>
-  </section>
 
-</div>
+    <div id="detail" class="card hidden"></div>
+  </div>
+</main>
+
 <div id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* =========================================================
-   CONFIG — mêmes clés que la version PC
+   CONFIGURATION MOBILE
 ========================================================= */
-const SUPABASE_URL = 'https://yosujqdjffuyibddquxq.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_jl0cfFR4jbQpnbxvAAbubA_Bcg-Jmx8';
-const REDIRECT_URL = 'https://mytechadmin.github.io/handball-mobile/';
 
-/* Mode lecture seule pour l'instant.
-   Plus tard : passer à true pour activer l'édition. */
-const EDIT_MODE = false;
+// false = lecture seule
+// true  = active les fonctions d'écriture disponibles
+const MOBILE_EDIT_MODE = false;
+
+const SUPABASE_URL = '';
+const SUPABASE_KEY = '';
+
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  console.warn("⚠️ Identifiants Supabase absents du fichier source.");
+}
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null;
 let exercises = [];
 let sessions = [];
-let fromSessionId = null; // pour le bouton retour depuis un exo ouvert via une séance
+let currentTab = "exercises";
+
+const TEAM_ID = "2e6d9541-dbd1-4c23-bb14-81cce7d65fd6";
 
 /* =========================================================
-   UI HELPERS
+   UTILITAIRES
 ========================================================= */
-function showToast(msg){
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => el.classList.remove('show'), 2800);
+
+function showToast(message) {
+  const t = document.getElementById("toast");
+  t.textContent = message;
+  t.style.display = "block";
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => t.style.display = "none", 2500);
 }
 
-function showScreen(name){
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  const el = document.getElementById('screen-' + name);
-  if(el) el.classList.add('active');
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 }
 
-function switchTab(tab){
-  document.querySelectorAll('.tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.tab === tab);
-  });
-  document.getElementById('listSessions').style.display = tab === 'sessions' ? 'block' : 'none';
-  document.getElementById('listExercises').style.display = tab === 'exercises' ? 'block' : 'none';
+function toggleAuth() {
+  document.getElementById("authBox").classList.toggle("hidden");
 }
 
-function escapeHtml(str){
-  return String(str ?? '')
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
+function showTab(tab) {
+  currentTab = tab;
+  document.getElementById("exercisesPanel").classList.toggle("hidden", tab !== "exercises");
+  document.getElementById("sessionsPanel").classList.toggle("hidden", tab !== "sessions");
+  document.getElementById("tabExercises").classList.toggle("active", tab === "exercises");
+  document.getElementById("tabSessions").classList.toggle("active", tab === "sessions");
+  document.getElementById("detail").classList.add("hidden");
 }
 
 /* =========================================================
    AUTH
 ========================================================= */
-async function login(){
-  const email = document.getElementById('authEmail').value.trim();
-  const password = document.getElementById('authPassword').value;
-  if(!email || !password){
-    showToast('⚠️ Email et mot de passe requis');
-    return;
-  }
+
+async function login() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if(error){
-    showToast('❌ ' + error.message);
+  if (error) {
+    document.getElementById("authStatus").textContent = "❌ " + error.message;
     return;
   }
   currentUser = data.user;
-  showToast('✅ Connecté');
-  await afterLogin();
+  await initApp();
 }
 
-async function resetPassword(){
-  const email = document.getElementById('authEmail').value.trim();
-  if(!email){
-    showToast('⚠️ Entre ton email d’abord');
-    return;
-  }
-  const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: REDIRECT_URL
-  });
-  if(error){
-    showToast('❌ ' + error.message);
-    return;
-  }
-  showToast('📧 Email de réinitialisation envoyé');
-}
-
-async function logout(){
+async function logout() {
   await sb.auth.signOut();
   currentUser = null;
   exercises = [];
   sessions = [];
-  document.getElementById('userLabel').textContent = '';
-  showScreen('login');
-  showToast('👋 Déconnecté');
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("loginBtn").textContent = "Connexion";
+  showToast("Déconnecté");
 }
 
-async function afterLogin(){
-  document.getElementById('userLabel').textContent = currentUser?.email || '';
-  showScreen('home');
-  switchTab('sessions');
-  await loadData();
-}
+sb.auth.onAuthStateChange(async (_event, session) => {
+  currentUser = session?.user ?? null;
+  if (currentUser) await initApp();
+});
 
 /* =========================================================
-   DATA
+   CHARGEMENT SUPABASE
 ========================================================= */
-async function loadData(){
-  if(!currentUser) return;
 
-  document.getElementById('listSessions').innerHTML = '<div class="loading">Chargement…</div>';
-  document.getElementById('listExercises').innerHTML = '<div class="loading">Chargement…</div>';
+async function initApp() {
+  if (!currentUser) return;
 
-  try{
-    // Teams accessibles
-    const { data: memberRows } = await sb
-      .from('team_members')
-      .select('team_id')
-      .eq('user_id', currentUser.id);
+  document.getElementById("app").classList.remove("hidden");
+  document.getElementById("authBox").classList.add("hidden");
+  document.getElementById("loginBtn").textContent = "✓ Connecté";
+  document.getElementById("modeNote").textContent =
+    MOBILE_EDIT_MODE
+      ? "✏️ Mode écriture activé. Les droits restent contrôlés par Supabase."
+      : "👁️ Mode lecture seule. Pour activer l'écriture, passe MOBILE_EDIT_MODE à true dans le code.";
 
-    const memberTeamIds = (memberRows || []).map(r => r.team_id);
-
-    const { data: ownedTeams } = await sb
-      .from('teams')
-      .select('id')
-      .eq('owner_id', currentUser.id);
-
-    const teamIds = [...new Set([
-      ...(ownedTeams || []).map(t => t.id),
-      ...memberTeamIds
-    ])];
-
-    // Exercices
-    let exQuery = sb.from('Exercices').select('*');
-    if(teamIds.length){
-      exQuery = exQuery.or(
-        `user_id.eq.${currentUser.id},team_id.in.(${teamIds.join(',')})`
-      );
-    } else {
-      exQuery = exQuery.eq('user_id', currentUser.id);
-    }
-    const { data: exData, error: exError } = await exQuery;
-    if(exError) throw exError;
-
-    exercises = (exData || []).map(row => ({
-      id: row.id,
-      title: row.title,
-      category: row.category,
-      duration: row.duration,
-      ...(row.data || {}),
-      team_id: row.team_id || null
-    }));
-
-    // Séances
-    let seQuery = sb.from('seances').select('*');
-    if(teamIds.length){
-      seQuery = seQuery.or(
-        `user_id.eq.${currentUser.id},team_id.in.(${teamIds.join(',')})`
-      );
-    } else {
-      seQuery = seQuery.eq('user_id', currentUser.id);
-    }
-    const { data: seData, error: seError } = await seQuery;
-    if(seError) throw seError;
-
-    sessions = (seData || []).map(row => ({
-      id: row.id,
-      name: row.name,
-      category: row.category,
-      date: row.date,
-      team_id: row.team_id || null,
-      items: row.items || []
-    }));
-
-    renderLists();
-  } catch(err){
-    console.error(err);
-    showToast('❌ ' + err.message);
-    document.getElementById('listSessions').innerHTML =
-      '<div class="empty">Erreur de chargement</div>';
-  }
+  await Promise.all([loadExercises(), loadSessions()]);
+  renderExercises();
+  renderSessions();
 }
 
-function sessionDuration(session){
-  return (session.items || []).reduce((t, it) => t + (parseInt(it.duration) || 0), 0);
-}
+async function loadExercises() {
+  const { data, error } = await sb
+    .from("Exercices")
+    .select("id,user_id,team_id,title,category,duration,data,updated_at")
+    .order("updated_at", { ascending:false });
 
-function renderLists(){
-  const sessEl = document.getElementById('listSessions');
-  const exEl = document.getElementById('listExercises');
-
-  if(!sessions.length){
-    sessEl.innerHTML = '<div class="empty">Aucune séance</div>';
-  } else {
-    const sorted = [...sessions].sort((a,b) =>
-      (a.name || '').localeCompare(b.name || '', 'fr')
-    );
-    sessEl.innerHTML = sorted.map(s => {
-      const dur = sessionDuration(s);
-      const n = (s.items || []).length;
-      return `
-        <div class="card" onclick="openSession('${escapeHtml(s.id)}')">
-          <div class="card-icon">📋</div>
-          <div class="card-body">
-            <div class="card-title">${escapeHtml(s.name || 'Sans titre')}</div>
-            <div class="card-meta">${escapeHtml(s.category || 'Général')} · ${n} exo · ${dur} min</div>
-          </div>
-          ${s.team_id ? '<span class="badge">🤝</span>' : ''}
-        </div>`;
-    }).join('');
-  }
-
-  if(!exercises.length){
-    exEl.innerHTML = '<div class="empty">Aucun exercice</div>';
-  } else {
-    const sorted = [...exercises].sort((a,b) =>
-      (a.title || '').localeCompare(b.title || '', 'fr')
-    );
-    exEl.innerHTML = sorted.map(ex => `
-      <div class="card" onclick="openExercise('${escapeHtml(ex.id)}', null)">
-        <div class="card-icon">📄</div>
-        <div class="card-body">
-          <div class="card-title">${escapeHtml(ex.title || 'Sans titre')}</div>
-          <div class="card-meta">${escapeHtml(ex.category || '')} · ${ex.duration || 15} min</div>
-        </div>
-        ${ex.team_id ? '<span class="badge">🤝</span>' : ''}
-      </div>
-    `).join('');
-  }
-}
-
-/* =========================================================
-   SESSION DETAIL
-========================================================= */
-function openSession(id){
-  const session = sessions.find(s => s.id === id);
-  if(!session) return;
-
-  document.getElementById('sessionTitle').textContent = session.name || 'Séance';
-  const box = document.getElementById('sessionDetail');
-
-  const items = session.items || [];
-  if(!items.length){
-    box.innerHTML = '<div class="empty">Aucun exercice dans cette séance</div>';
-    showScreen('session');
+  if (error) {
+    console.error(error);
+    showToast("❌ Chargement exercices : " + error.message);
     return;
   }
 
-  let html = `<div class="card-meta" style="margin-bottom:12px">
-    ${escapeHtml(session.category || '')} · ${sessionDuration(session)} min · ${items.length} exercice(s)
-  </div>`;
-
-  items.forEach((item, i) => {
-    const ex = exercises.find(e => e.id === item.exerciseId);
-    const title = ex ? (ex.title || 'Sans titre') : 'Exercice manquant';
-    const dur = item.duration || (ex && ex.duration) || 15;
-    const click = ex
-      ? `onclick="openExercise('${escapeHtml(ex.id)}', '${escapeHtml(session.id)}')"`
-      : '';
-    html += `
-      <div class="session-item" ${click}>
-        <div class="num">${i + 1}</div>
-        <div class="card-body">
-          <div class="card-title">${escapeHtml(title)}</div>
-          <div class="card-meta">${dur} min${ex ? ' · ' + escapeHtml(ex.category || '') : ''}</div>
-        </div>
-      </div>`;
-  });
-
-  box.innerHTML = html;
-  showScreen('session');
+  exercises = data || [];
 }
 
-/* =========================================================
-   EXERCISE DETAIL + COURT
-========================================================= */
-function backFromExercise(){
-  if(fromSessionId){
-    openSession(fromSessionId);
-  } else {
-    showScreen('home');
-  }
-}
+async function loadSessions() {
+  const { data, error } = await sb
+    .from("seances")
+    .select("id,user_id,team_id,name,category,date,items,updated_at")
+    .order("updated_at", { ascending:false });
 
-function openExercise(id, sessionId){
-  fromSessionId = sessionId;
-  const ex = exercises.find(e => e.id === id);
-  if(!ex){
-    showToast('Exercice introuvable');
+  if (error) {
+    console.error(error);
+    showToast("❌ Chargement séances : " + error.message);
     return;
   }
 
-  document.getElementById('exerciseTitle').textContent = ex.title || 'Exercice';
-  const box = document.getElementById('exerciseDetail');
-
-  const courtHtml = renderCourt(ex);
-
-  box.innerHTML = `
-    <div class="card-meta" style="margin-bottom:10px">
-      ${escapeHtml(ex.category || '')} · ${ex.duration || 15} min
-    </div>
-    <div class="court-box">${courtHtml}</div>
-    ${infoBlock('Mise en place', ex.setup)}
-    ${infoBlock('Consignes', ex.instructions)}
-    ${infoBlock('Variantes', ex.variant)}
-    ${infoBlock('Objectifs', ex.objectives)}
-  `;
-
-  showScreen('exercise');
-}
-
-function infoBlock(title, text){
-  if(!text || !String(text).trim()) return '';
-  return `
-    <div class="info-block">
-      <h3>${escapeHtml(title)}</h3>
-      <p>${escapeHtml(text)}</p>
-    </div>`;
-}
-
-function renderCourt(ex){
-  // Terrain de base (même proportions que le PC)
-  const lines = `
-    <rect class="floor" x="0" y="0" width="40" height="20" fill="#e5b66d"/>
-    <rect x="0" y="0" width="40" height="20" fill="none" stroke="#fff" stroke-width="0.12"/>
-    <path d="M20 0V20" fill="none" stroke="#fff" stroke-width="0.15"/>
-    <circle cx="20" cy="10" r="1.8" fill="none" stroke="#fff" stroke-width="0.11"/>
-    <path d="M0 8.5V11.5M40 8.5V11.5" fill="none" stroke="#fff" stroke-width="0.15"/>
-    <path d="M0 4 A6 6 0 0 1 6 10 A6 6 0 0 1 0 16 M40 4 A6 6 0 0 0 34 10 A6 6 0 0 0 40 16" fill="none" stroke="#fff" stroke-width="0.15"/>
-    <path d="M0 1 A9 9 0 0 1 9 10 A9 9 0 0 1 0 19 M40 1 A9 9 0 0 0 31 10 A9 9 0 0 0 40 19" fill="none" stroke="#fff" stroke-width="0.11" stroke-dasharray="0.28 0.28"/>
-    <path d="M7 9.5V10.5M33 9.5V10.5M4 9.8V10.2M36 9.8V10.2" fill="none" stroke="#fff" stroke-width="0.15"/>
-  `;
-
-  // Traits crayon (si stockés dans paths / freehand / pencilPaths)
-  const paths = ex.paths || ex.freehandPaths || ex.pencilPaths || [];
-  let pathsSvg = '';
-  if(Array.isArray(paths)){
-    pathsSvg = paths.map(p => {
-      if(typeof p === 'string'){
-        return `<path d="${escapeHtml(p)}" fill="none" stroke="#1e293b" stroke-width="0.12"/>`;
-      }
-      if(p && p.d){
-        const stroke = p.color || p.stroke || '#1e293b';
-        const w = p.width || p.strokeWidth || 0.12;
-        return `<path d="${escapeHtml(p.d)}" fill="none" stroke="${escapeHtml(stroke)}" stroke-width="${w}"/>`;
-      }
-      return '';
-    }).join('');
-  }
-
-  // Objets (joueurs, plots, formes…)
-  const objects = ex.objects || ex.elements || [];
-  let objectsHtml = '';
-  if(Array.isArray(objects)){
-    objects.forEach(obj => {
-      if(!obj) return;
-      // Coordonnées : souvent en % du terrain (0–100) ou en unités viewBox (0–40 / 0–20)
-      let left, top;
-      if(obj.x != null && obj.y != null){
-        // Si valeurs > 40, on suppose des pourcentages 0–100
-        if(obj.x > 40 || obj.y > 20){
-          left = obj.x;
-          top = obj.y;
-        } else {
-          left = (obj.x / 40) * 100;
-          top = (obj.y / 20) * 100;
-        }
-      } else {
-        return;
-      }
-
-      const type = obj.type || obj.kind || '';
-      const label = obj.label || obj.number || obj.text || '';
-
-      if(type.includes('player-purple') || type === 'player-purple'){
-        objectsHtml += `<div class="mob-obj mob-player mob-player-purple" style="left:${left}%;top:${top}%">${escapeHtml(label || 'A')}</div>`;
-      } else if(type.includes('player-orange') || type === 'player-orange'){
-        objectsHtml += `<div class="mob-obj mob-player mob-player-orange" style="left:${left}%;top:${top}%">${escapeHtml(label || 'B')}</div>`;
-      } else if(type.includes('cone') || type === 'cone'){
-        objectsHtml += `<div class="mob-obj mob-cone" style="left:${left}%;top:${top}%">▲</div>`;
-      } else if(type.includes('ball') || type === 'ball'){
-        objectsHtml += `<div class="mob-obj mob-ball" style="left:${left}%;top:${top}%">⚽</div>`;
-      } else if(type.includes('text') || type === 'text'){
-        objectsHtml += `<div class="mob-obj mob-text" style="left:${left}%;top:${top}%">${escapeHtml(obj.text || label || '')}</div>`;
-      } else if(type.includes('shape') || type.includes('circle') || type.includes('square') || type.includes('rectangle') || type.includes('triangle')){
-        const w = obj.w || obj.width || 12;
-        const h = obj.h || obj.height || 12;
-        // tailles en % approximatifs
-        const ww = Math.max(6, Math.min(30, (typeof w === 'number' && w < 50) ? w : 12));
-        const hh = Math.max(6, Math.min(30, (typeof h === 'number' && h < 50) ? h : 12));
-        let shapeClass = 'mob-shape';
-        if(type.includes('circle')) shapeClass += ' mob-shape-circle';
-        else if(type.includes('triangle')) shapeClass += ' mob-shape-triangle';
-        else if(type.includes('rectangle')) shapeClass += ' mob-shape-rectangle';
-        else shapeClass += ' mob-shape-square';
-        const rot = obj.rotation || obj.angle || 0;
-        objectsHtml += `<div class="mob-obj ${shapeClass}" style="left:${left}%;top:${top}%;width:${ww}%;height:${hh}%;transform:translate(-50%,-50%) rotate(${rot}deg)"></div>`;
-      }
-    });
-  }
-
-  return `
-    <div class="court-frame">
-      <svg class="court-svg" viewBox="0 0 40 20" preserveAspectRatio="none">
-        ${lines}
-        ${pathsSvg}
-      </svg>
-      <div class="court-objects">${objectsHtml}</div>
-    </div>
-  `;
+  sessions = data || [];
 }
 
 /* =========================================================
-   START
+   EXERCICES
 ========================================================= */
-async function init(){
-  const { data: { session } } = await sb.auth.getSession();
-  currentUser = session?.user || null;
 
-  if(currentUser){
-    await afterLogin();
-  } else {
-    showScreen('login');
+function renderExercises() {
+  const q = document.getElementById("exerciseSearch").value.toLowerCase().trim();
+  const list = document.getElementById("exerciseList");
+
+  const rows = exercises.filter(ex =>
+    !q ||
+    String(ex.title || "").toLowerCase().includes(q) ||
+    String(ex.category || "").toLowerCase().includes(q)
+  );
+
+  if (!rows.length) {
+    list.innerHTML = '<div class="card">Aucun exercice trouvé.</div>';
+    return;
   }
 
-  sb.auth.onAuthStateChange(async (event, session) => {
-    currentUser = session?.user || null;
-    if(event === 'SIGNED_OUT'){
-      showScreen('login');
-    }
-    // Recovery / lien mail : déjà connecté → on affiche l'app
-    if(event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN'){
-      if(currentUser) await afterLogin();
-    }
-  });
+  list.innerHTML = rows.map(ex => `
+    <button onclick="openExercise('${esc(ex.id)}')">
+      <strong>📄 ${esc(ex.title || "Sans titre")}</strong><br>
+      <span class="small">${esc(ex.category || "")} · ${Number(ex.duration) || 15} min
+      ${ex.team_id ? " · 🤝 partagé" : ""}</span>
+    </button>
+  `).join("");
 }
 
-init();
+function openExercise(id) {
+  const ex = exercises.find(x => x.id === id);
+  if (!ex) return;
+
+  const d = ex.data || {};
+  const detail = document.getElementById("detail");
+
+  detail.innerHTML = `
+    <h2>📄 ${esc(ex.title || "Sans titre")}</h2>
+    <div class="meta">${esc(ex.category || "")} · ${Number(ex.duration) || 15} min</div>
+
+    ${field("Mise en place", d.setup || d.miseEnPlace)}
+    ${field("Consignes", d.instructions || d.consignes)}
+    ${field("Variante", d.variant || d.variante)}
+    ${field("Objectifs", d.objectives || d.objectifs)}
+
+    ${MOBILE_EDIT_MODE ? `
+      <button class="primary" onclick="editExercise('${esc(ex.id)}')">✏️ Modifier</button>
+    ` : ""}
+  `;
+
+  detail.classList.remove("hidden");
+  detail.scrollIntoView({behavior:"smooth"});
+}
+
+function field(label, value) {
+  if (!value) return "";
+  return `<h3>${label}</h3><div>${esc(value).replace(/\\n/g,"<br>")}</div>`;
+}
+
+/* =========================================================
+   SÉANCES
+========================================================= */
+
+function renderSessions() {
+  const q = document.getElementById("sessionSearch").value.toLowerCase().trim();
+  const list = document.getElementById("sessionList");
+
+  const rows = sessions.filter(se =>
+    !q ||
+    String(se.name || "").toLowerCase().includes(q) ||
+    String(se.category || "").toLowerCase().includes(q)
+  );
+
+  if (!rows.length) {
+    list.innerHTML = '<div class="card">Aucune séance trouvée.</div>';
+    return;
+  }
+
+  list.innerHTML = rows.map(se => `
+    <button onclick="openSession('${esc(se.id)}')">
+      <strong>📅 ${esc(se.name || "Sans nom")}</strong><br>
+      <span class="small">${esc(se.date || "")} · ${esc(se.category || "")}
+      ${se.team_id ? " · 🤝 partagé" : ""}</span>
+    </button>
+  `).join("");
+}
+
+function openSession(id) {
+  const se = sessions.find(x => x.id === id);
+  if (!se) return;
+
+  const detail = document.getElementById("detail");
+  const items = Array.isArray(se.items) ? se.items : [];
+
+  detail.innerHTML = `
+    <h2>📅 ${esc(se.name || "Sans nom")}</h2>
+    <div class="meta">${esc(se.date || "")} · ${esc(se.category || "")}</div>
+
+    <h3>Exercices</h3>
+    ${items.length
+      ? `<ol>${items.map(item => `<li>${esc(item.title || item.name || item.exerciseTitle || item.id || "Exercice")}</li>`).join("")}</ol>`
+      : "<div>Aucun exercice dans cette séance.</div>"
+    }
+
+    ${MOBILE_EDIT_MODE ? `
+      <button class="primary" onclick="editSession('${esc(se.id)}')">✏️ Modifier</button>
+    ` : ""}
+  `;
+
+  detail.classList.remove("hidden");
+  detail.scrollIntoView({behavior:"smooth"});
+}
+
+/* =========================================================
+   ÉCRITURE
+========================================================= */
+
+function requireEditMode() {
+  if (!MOBILE_EDIT_MODE) {
+    showToast("👁️ Mode lecture seule");
+    return false;
+  }
+  return true;
+}
+
+async function editExercise(id) {
+  if (!requireEditMode()) return;
+  showToast("Édition mobile à compléter selon les champs souhaités.");
+}
+
+async function editSession(id) {
+  if (!requireEditMode()) return;
+  showToast("Édition mobile à compléter selon les champs souhaités.");
+}
+
+/* =========================================================
+   DÉMARRAGE
+========================================================= */
+
+(async function start() {
+  const { data } = await sb.auth.getSession();
+  currentUser = data.session?.user ?? null;
+
+  if (currentUser) {
+    await initApp();
+  }
+})();
 </script>
 </body>
 </html>
