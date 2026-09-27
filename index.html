@@ -89,21 +89,34 @@ pre{white-space:pre-wrap}
 // true  = active les fonctions d'écriture disponibles
 const MOBILE_EDIT_MODE = false;
 
-const SUPABASE_URL = '';
-const SUPABASE_KEY = '';
+// =========================================================
+// SUPABASE
+// =========================================================
+
+const SUPABASE_URL = 'https://yosujqdjffuyibddquxq.supabase.co';
+
+const SUPABASE_KEY =
+  'sb_publishable_jl0cfFR4jbQpnbxvAAbubA_Bcg-Jmx8';
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.warn("⚠️ Identifiants Supabase absents du fichier source.");
+  console.error("❌ Configuration Supabase absente.");
 }
 
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+if (!window.supabase) {
+  console.error("❌ La librairie Supabase n'est pas chargée.");
+}
+
+const sb = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 let currentUser = null;
 let exercises = [];
 let sessions = [];
 let currentTab = "exercises";
 
-const TEAM_ID = "2e6d9541-dbd1-4c23-bb14-81cce7d65fd6";
+const TEAM_ID = "2e6d9541-dbd1-4c23-bb14-81cce7d65fd6";;
 
 /* =========================================================
    UTILITAIRES
@@ -138,52 +151,262 @@ function showTab(tab) {
    AUTH
 ========================================================= */
 
-async function login() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+/* =========================================================
+   AUTH
+========================================================= */
 
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) {
-    document.getElementById("authStatus").textContent = "❌ " + error.message;
+async function login() {
+
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const status = document.getElementById("authStatus");
+
+  const email = emailInput?.value.trim() || "";
+  const password = passwordInput?.value || "";
+
+  if (!email || !password) {
+    status.textContent = "⚠️ Email et mot de passe obligatoires.";
     return;
   }
-  currentUser = data.user;
-  await initApp();
+
+  status.textContent = "Connexion…";
+
+  try {
+
+    const { data, error } =
+      await sb.auth.signInWithPassword({
+        email,
+        password
+      });
+
+    if (error) {
+      console.error("❌ Erreur connexion Supabase :", error);
+
+      status.textContent =
+        "❌ " + error.message;
+
+      return;
+    }
+
+    currentUser = data.user;
+
+    console.log(
+      "✅ Utilisateur connecté :",
+      currentUser.email
+    );
+
+    status.textContent = "✅ Connexion réussie";
+
+    await initApp();
+
+  } catch (err) {
+
+    console.error(
+      "❌ Erreur inattendue connexion :",
+      err
+    );
+
+    status.textContent =
+      "❌ " + (err.message || err);
+
+  }
 }
+
 
 async function logout() {
-  await sb.auth.signOut();
-  currentUser = null;
-  exercises = [];
-  sessions = [];
-  document.getElementById("app").classList.add("hidden");
-  document.getElementById("loginBtn").textContent = "Connexion";
-  showToast("Déconnecté");
+
+  try {
+
+    const { error } = await sb.auth.signOut();
+
+    if (error) {
+      console.error(
+        "❌ Erreur déconnexion :",
+        error
+      );
+
+      showToast(
+        "❌ " + error.message
+      );
+
+      return;
+    }
+
+    currentUser = null;
+    exercises = [];
+    sessions = [];
+
+    document
+      .getElementById("app")
+      ?.classList.add("hidden");
+
+    document
+      .getElementById("authBox")
+      ?.classList.remove("hidden");
+
+    const loginBtn =
+      document.getElementById("loginBtn");
+
+    if (loginBtn) {
+      loginBtn.textContent = "Connexion";
+    }
+
+    const status =
+      document.getElementById("authStatus");
+
+    if (status) {
+      status.textContent = "";
+    }
+
+    showToast("👋 Déconnecté");
+
+  } catch (err) {
+
+    console.error(
+      "❌ Erreur déconnexion :",
+      err
+    );
+
+  }
 }
 
-sb.auth.onAuthStateChange(async (_event, session) => {
-  currentUser = session?.user ?? null;
-  if (currentUser) await initApp();
-});
+
+/*
+ * Supabase nous informe automatiquement
+ * lorsqu'une session est créée ou supprimée.
+ */
+sb.auth.onAuthStateChange(
+  async (event, session) => {
+
+    console.log(
+      "🔐 Auth event :",
+      event
+    );
+
+    currentUser =
+      session?.user ?? null;
+
+    if (!currentUser) {
+
+      document
+        .getElementById("app")
+        ?.classList.add("hidden");
+
+      return;
+    }
+
+    /*
+     * On ne recharge pas ici pour PASSWORD_RECOVERY
+     * ou d'autres événements particuliers.
+     */
+    if (
+      event === "SIGNED_IN" ||
+      event === "INITIAL_SESSION"
+    ) {
+
+      await initApp();
+
+    }
+
+  }
+);
 
 /* =========================================================
    CHARGEMENT SUPABASE
 ========================================================= */
 
+/* =========================================================
+   INITIALISATION DE L'APPLICATION
+========================================================= */
+
+let appInitializing = false;
+
 async function initApp() {
-  if (!currentUser) return;
 
-  document.getElementById("app").classList.remove("hidden");
-  document.getElementById("authBox").classList.add("hidden");
-  document.getElementById("loginBtn").textContent = "✓ Connecté";
-  document.getElementById("modeNote").textContent =
-    MOBILE_EDIT_MODE
-      ? "✏️ Mode écriture activé. Les droits restent contrôlés par Supabase."
-      : "👁️ Mode lecture seule. Pour activer l'écriture, passe MOBILE_EDIT_MODE à true dans le code.";
+  if (!currentUser) {
+    return;
+  }
 
-  await Promise.all([loadExercises(), loadSessions()]);
-  renderExercises();
-  renderSessions();
+  /*
+   * Évite que plusieurs événements Supabase
+   * lancent initApp() en même temps.
+   */
+  if (appInitializing) {
+    return;
+  }
+
+  appInitializing = true;
+
+  try {
+
+    console.log(
+      "🚀 Initialisation HandCoach pour :",
+      currentUser.email
+    );
+
+    document
+      .getElementById("app")
+      ?.classList.remove("hidden");
+
+    document
+      .getElementById("authBox")
+      ?.classList.add("hidden");
+
+    const loginBtn =
+      document.getElementById("loginBtn");
+
+    if (loginBtn) {
+      loginBtn.textContent = "✓ Connecté";
+    }
+
+    const modeNote =
+      document.getElementById("modeNote");
+
+    if (modeNote) {
+
+      modeNote.textContent =
+        MOBILE_EDIT_MODE
+          ? "✏️ Mode écriture activé. Les droits restent contrôlés par Supabase."
+          : "👁️ Mode lecture seule. Pour activer l'écriture, passe MOBILE_EDIT_MODE à true dans le code.";
+    }
+
+    /*
+     * Chargement des deux bibliothèques
+     * en parallèle.
+     */
+    await Promise.all([
+      loadExercises(),
+      loadSessions()
+    ]);
+
+    renderExercises();
+    renderSessions();
+
+    console.log(
+      "✅ Application mobile initialisée :",
+      exercises.length,
+      "exercices /",
+      sessions.length,
+      "séances"
+    );
+
+  } catch (err) {
+
+    console.error(
+      "❌ Erreur initialisation application :",
+      err
+    );
+
+    showToast(
+      "❌ Erreur de chargement : " +
+      (err.message || err)
+    );
+
+  } finally {
+
+    appInitializing = false;
+
+  }
 }
 
 async function loadExercises() {
@@ -354,13 +577,60 @@ async function editSession(id) {
    DÉMARRAGE
 ========================================================= */
 
-(async function start() {
-  const { data } = await sb.auth.getSession();
-  currentUser = data.session?.user ?? null;
+/* =========================================================
+   DÉMARRAGE
+========================================================= */
 
-  if (currentUser) {
-    await initApp();
+(async function start() {
+
+  try {
+
+    console.log("🚀 Démarrage HandCoach mobile...");
+
+    const {
+      data,
+      error
+    } = await sb.auth.getSession();
+
+    if (error) {
+
+      console.error(
+        "❌ Impossible de récupérer la session :",
+        error
+      );
+
+      return;
+    }
+
+    currentUser =
+      data.session?.user ?? null;
+
+    if (currentUser) {
+
+      console.log(
+        "✅ Session existante :",
+        currentUser.email
+      );
+
+      await initApp();
+
+    } else {
+
+      console.log(
+        "ℹ️ Aucun utilisateur connecté."
+      );
+
+    }
+
+  } catch (err) {
+
+    console.error(
+      "❌ Erreur au démarrage :",
+      err
+    );
+
   }
+
 })();
 </script>
 </body>
