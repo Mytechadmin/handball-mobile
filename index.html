@@ -2866,8 +2866,10 @@ if(localStorage.getItem(SESSIONS_KEY) === null && sessions.length){
     localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
 }
 
+exercises = [];
+sessions = [];
 renderSidebar();
-updateSaveStatus();
+if (typeof updateSaveStatus === 'function') updateSaveStatus();
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -3296,6 +3298,31 @@ async function unshareSession(session) {
     await loadFromSupabase();
   }
 
+
+async function resetPassword() {
+    const email = document.getElementById('authEmail')?.value.trim();
+
+    if (!email) {
+        showToast('⚠️ Entre ton email d’abord');
+        return;
+    }
+
+    // URL de ton app en ligne (pas file:// ni localhost)
+    const redirectTo = 'https://mytechadmin.github.io/handball-mobile/';
+
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo
+    });
+
+    if (error) {
+        console.error(error);
+        showToast('❌ ' + error.message);
+        return;
+    }
+
+    showToast('📧 Email de réinitialisation envoyé');
+    closeAuthModal();
+}
 
   // =========================================================
   // CREATION DE COMPTE
@@ -3743,9 +3770,14 @@ async function saveToSupabase() {
 
     } else {
 
-      console.log(
-        'Aucun utilisateur connecté'
-      );
+      console.log('Aucun utilisateur connecté');
+
+      exercises = [];
+      sessions = [];
+      localStorage.setItem(EXERCISES_KEY, JSON.stringify([]));
+      localStorage.setItem(SESSIONS_KEY, JSON.stringify([]));
+      renderSidebar();
+
     }
 
 
@@ -4141,9 +4173,7 @@ async function createInviteCodeFromUI(teamId, permission) {
 
 </script>
 <div id="authModal">
-
     <div class="auth-box">
-
         <h2>🔐 Connexion à HandCoach</h2>
 
         <input
@@ -4158,30 +4188,36 @@ async function createInviteCodeFromUI(teamId, permission) {
             placeholder="Mot de passe"
             autocomplete="current-password">
 
-        <div class="auth-buttons">
-
-            <button
-                class="auth-login"
-                onclick="loginUser()">
-                Se connecter
-            </button>
-
-            <button
-                class="auth-register"
-                onclick="registerUser()">
-                Créer un compte
-            </button>
-
-        </div>
-
         <button
-            class="auth-close"
-            onclick="closeAuthModal()">
-            Fermer
+            type="button"
+            onclick="resetPassword()"
+            style="
+                width:100%;
+                margin: 4px 0 10px 0;
+                padding: 8px;
+                border: none;
+                background: transparent;
+                color: #6c3fd1;
+                text-decoration: underline;
+                cursor: pointer;
+                font-size: 13px;
+            ">
+            Mot de passe oublié ?
         </button>
 
-    </div>
+        <div class="auth-buttons">
+            <button class="auth-login" onclick="loginUser()">
+                Se connecter
+            </button>
+            <button class="auth-register" onclick="registerUser()">
+                Créer un compte
+            </button>
+        </div>
 
+        <button class="auth-close" onclick="closeAuthModal()">
+            Fermer
+        </button>
+    </div>
 </div>
 
 
