@@ -2,3548 +2,382 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HandCoach V11.3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f172a">
+<title>HandCoach Mobile</title>
 <style>
-*{box-sizing:border-box}
-html,body{
-    margin:0;
-    width:100%;
-    height:100%;
-    font-family:Arial, Helvetica, sans-serif;
-    background:#edf0f4;
-    color:#20252b;
-}
-button, input, textarea, select{font:inherit}
-button{cursor:pointer}
-/* BARRE SUPÉRIEURE */
-.header{
-    height:58px;
-    background:#17202a;
-    color:#fff;
-    display:flex;
-    align-items:center;
-    gap:7px;
-    padding:0 12px;
-}
-.header h1{ margin:0 15px 0 0; font-size:19px; }
-.spacer{flex:1}
-.header button{
-    border:0;
-    border-radius:7px;
-    padding:8px 11px;
-    background:#287fe8;
-    color:#fff;
-    font-weight:bold;
-}
-.header button.secondary{ background:#3e4852; }
-
-/* Boutons compacts de la barre supérieure */
-.header-actions{
-    display:flex;
-    align-items:center;
-    gap:6px;
-}
-.icon-button{
-    width:38px;
-    height:38px;
-    padding:0 !important;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:19px;
-    background:#3e4852 !important;
-    border:1px solid #56616c !important;
-    border-radius:7px;
-}
-.icon-button:hover{ background:#52606c !important; }
-
-#saveStatus{
-    min-width:38px;
-    text-align:center;
-    color:#dbeafe;
-    font-size:11px;
-    padding:6px 8px;
-    border:1px solid #3e4852;
-    border-radius:6px;
-    white-space:nowrap;
-}
-
-@media(max-width:900px){
-    .header h1{font-size:16px;}
-    .icon-button{width:34px;height:34px;font-size:17px;}
-}
-
-.app{
-    height:calc(100vh - 58px);
-    display:flex;
-}
-/* BARRE LATÉRALE & ARBORESCENCE */
-.sidebar{
-    width:320px;
-    background:#fff;
-    border-right:1px solid #d4d9df;
-    padding:12px;
-    overflow-y:auto;
-}
-.sidebar-section-title{
-    font-size:13px;
-    font-weight:bold;
-    text-transform:uppercase;
-    margin:14px 0 8px 0;
-    color:#1e293b;
-    border-bottom:2px solid #e2e8f0;
-    padding-bottom:4px;
-}
-.sidebar-section-title:first-child { margin-top:0; }
-details.tree-group{
-    margin-bottom:6px;
-    border:1px solid #e2e8f0;
-    border-radius:6px;
-}
-summary.tree-summary{
-    padding:6px 8px;
-    font-size:12px;
-    font-weight:bold;
-    background:#f8fafc;
-    cursor:pointer;
-    user-select:none;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    transition:background 0.15s ease;
-}
-.tree-actions{ display:flex; gap:4px; align-items:center; }
-.tree-actions button{
-    border:0; background:none; font-size:12px; cursor:pointer; padding:2px 4px;
-    border-radius:3px;
-}
-.tree-actions button:hover{ background:#cbd5e1; }
-.tree-content{ padding:4px 6px; background:#fff; }
-.tree-item{
-    padding:6px 8px;
-    font-size:12px;
-    border-radius:4px;
-    cursor:grab;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:3px;
-    background:#fafbfc;
-    border:1px solid #edf2f7;
-    user-select:none;
-}
-.tree-item:hover{ background:#edf6ff; border-color:#287fe8; }
-.tree-item.active{ background:#287fe8; color:#fff; font-weight:bold; }
-.tree-item .del-btn { border:0; background:none; color:#a33; font-weight:bold; }
-.tree-item.active .del-btn{ color:#fff; }
-.sub-tree-item{
-    margin-left:10px;
-    background:#f1f5f9;
-    border-left:3px solid #287fe8;
-    cursor:grab;
-    touch-action:none;
-    user-select:none;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-.sub-tree-item.session-sort-dragging {
-    opacity: 0.4;
-    background: #dbeafe !important;
-}
-
-.sub-tree-item.session-sort-before {
-    border-top: 3px solid #287fe8 !important;
-}
-
-.sub-tree-item.session-sort-after {
-    border-bottom: 3px solid #287fe8 !important;
-}
-.sub-tree-item.session-sort-dragging{opacity:.45;}
-.sub-tree-item.session-sort-before{border-top:3px solid #287fe8;}
-.sub-tree-item.session-sort-after{border-bottom:3px solid #287fe8;}
-.session-remove-btn{
-    border:0;
-    background:transparent;
-    color:#a33;
-    font-weight:bold;
-    cursor:pointer;
-    padding:2px 5px;
-    border-radius:3px;
-    flex:0 0 auto;
-}
-.session-remove-btn:hover{background:#fee2e2;}
-/* ZONE DE TRAVAIL PRINCIPALE */
-.main{
-    flex:1;
-    min-width:0;
-    display:flex;
-    flex-direction:column;
-    height:calc(100vh - 58px);
-    overflow:hidden;
-    padding:10px;
-}
-.exercise-toolbar{
-    display:flex;
-    gap:7px;
-    margin-bottom:8px;
-    align-items:center;
-}
-.exercise-toolbar input[type="text"]{
-    flex:1;
-    padding:9px;
-    border:1px solid #cfd5db;
-    border-radius:7px;
-    font-weight:bold;
-}
-.exercise-toolbar select{
-    border:1px solid #cfd5db;
-    background:#fff;
-    border-radius:7px;
-    padding:8px 10px;
-}
-.sheet{
-    flex:1;
-    min-height:0;
-    overflow:auto;
-    background:#fff;
-    border:1px solid #d0d6dc;
-    border-radius:9px;
-    padding:9px;
-    display:grid;
-    grid-template-columns:1fr 340px;
-    gap:10px;
-}
-
-.court-wrapper{
-    display:flex;
-    flex-direction:column;
-    height:100%;
-    min-height:0;
-}
-#toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #17202a;
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: 10px;
-    font-weight: bold;
-    z-index: 9999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .25s ease;
-    box-shadow: 0 8px 24px rgba(0,0,0,.25);
-}
-#toast.show {
-    opacity: 1;
-}
-
-
-
-
-#shareExerciseModal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 99999;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.5);
-}
-
-#shareExerciseModal .auth-box {
-    display: block;
-    width: 500px;
-    max-width: 90vw;
-    box-sizing: border-box;
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-}
-
-#shareTeamSelect {
-    font-size: 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-}
-
-
-
-
-
-#shareSessionModal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 99999;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.5);
-}
-
-#shareSessionModal .auth-box {
-    display: block;
-    width: 500px;
-    max-width: 90vw;
-    box-sizing: border-box;
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-}
-
-
-
-
-/* =========================================================
-   SECOND TERRAIN / ÉVOLUTION
-   ========================================================= */
-
-.court-wrapper.multi-court{
-    display:grid;
-    grid-template-rows:minmax(220px,1fr) minmax(220px,1fr) auto;
-    gap:8px;
-}
-
-.court-wrapper.multi-court .court-container{
-    min-height:220px;
-}
-
-.court-evolution-label{
-    position:absolute;
-    right:7px;
-    top:6px;
-    z-index:80;
-
-    padding:4px 7px;
-    border-radius:5px;
-
-    background:rgba(255,255,255,.94);
-    font-size:11px;
-    font-weight:bold;
-    color:#287fe8;
-}
-
-/* TERRAIN SVG ET PIONS */
-.court-container{
-    position:relative;
-    flex:1;
-    min-height:0;
-    background:#fafafa;
-    border:1px solid #d6dce2;
-    border-radius:8px;
-    overflow:hidden;
-}
-.court-title{
-    position:absolute;
-    z-index:80;
-    left:7px; top:6px;
-    padding:4px 7px;
-    border-radius:5px;
-    background:rgba(255,255,255,.94);
-    font-size:11px;
-    font-weight:bold;
-}
-.court-svg{
-    position:absolute;
-    inset:0;
-    width:100%; height:100%;
-    touch-action:none;
-}
-.floor{fill:#e5b66d}
-.court-border, .court-line, .court-strong, .court-dashed{ fill:none; stroke:#fff; }
-.court-border{stroke-width:.12}
-.court-line{stroke-width:.11}
-.court-strong{stroke-width:.15}
-.court-dashed{ stroke-width:.11; stroke-dasharray:.28 .28; }
-.draw-layer{ position:absolute; inset:0; z-index:50; pointer-events:none; }
-.object, .text-object{ pointer-events:auto; }
-.object{
-    position:absolute;
-    transform:translate(-50%,-50%);
-    user-select:none;
-    touch-action:none;
-    cursor:grab;
-}
-.player, .cone{
-    width:28px; height:28px;
-    border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    font-size:11px; font-weight:bold;
-    border:2px solid white;
-    box-shadow:0 1px 4px rgba(0,0,0,.45);
-}
-
-/* =========================================================
-   FORMES GÉOMÉTRIQUES
-   ========================================================= */
-
-/* Cercle */
-.shape-circle{
-    width:45px;
-    height:45px;
-    border-radius:50%;
-    background:rgba(37,99,235,.20);
-    border:2px solid #2563eb;
-}
-
-/* Carré */
-.shape-square{
-    width:45px;
-    height:45px;
-    background:rgba(37,99,235,.20);
-    border:2px solid #2563eb;
-}
-
-/* Rectangle */
-.shape-rectangle{
-    width:80px;
-    height:45px;
-    background:rgba(37,99,235,.20);
-    border:2px solid #2563eb;
-}
-
-/* Triangle */
-.shape-triangle{
-    width:55px;
-    height:50px;
-    background:rgba(37,99,235,.30);
-    border:2px solid #2563eb;
-    clip-path:polygon(50% 0%, 100% 100%, 0% 100%);
-}
-/* =========================================================
-   ROTATION + REDIMENSIONNEMENT DES FORMES
-   ---------------------------------------------------------
-   --rotation contient l'angle en degrés.
-   La forme reste centrée grâce à translate(-50%, -50%).
-========================================================= */
-
-.object.shape-square,
-.object.shape-rectangle,
-.object.shape-triangle,
-.object.shape-circle{
-    transform:translate(-50%,-50%) rotate(var(--rotation, 0deg));
-}
-
-/* Poignée bleue : agrandir / réduire */
-.shape-resize-handle{
-    position:absolute;
-    width:11px;
-    height:11px;
-    right:-7px;
-    bottom:-7px;
-    background:#fff;
-    border:2px solid #087bd9;
-    border-radius:50%;
-    cursor:nwse-resize;
-    z-index:10;
-}
-
-/* Poignée orange : tourner la forme */
-.shape-rotate-handle{
-    position:absolute;
-    width:13px;
-    height:13px;
-    left:50%;
-    top:-23px;
-    margin-left:-6.5px;
-    background:#fff;
-    border:2px solid #e66c2e;
-    border-radius:50%;
-    cursor:grab;
-    z-index:11;
-}
-
-.shape-rotate-handle::after{
-    content:"↻";
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    color:#e66c2e;
-    font-size:9px;
-    font-weight:bold;
-}
-
-.shape-rotate-handle:active{cursor:grabbing;}
-.shape-resize-handle:hover{ background:#e0f2fe; }
-.freehand-path-selected{filter:drop-shadow(0 0 2px #00a8ff);}
-
-.player-purple{background:#783fb4;color:#fff}
-.player-orange{background:#e66c2e;color:#fff}
-.cone{background:#ffd21b;border-color:#987900;color:#665200}
-.ball{
-    width:24px; height:24px;
-    display:flex; align-items:center; justify-content:center;
-    font-size:20px;
-    background:transparent;
-    border:none;
-    box-shadow:none;
-    filter:drop-shadow(0px 2px 3px rgba(0,0,0,0.4));
-}
-.object.selected, .text-object.selected{
-    outline:3px solid #00a8ff;
-    outline-offset:2px;
-}
-.text-object{
-    position:absolute;
-    transform:translate(-50%,-50%);
-    background:rgba(255,255,245,.96);
-    border:1px solid #888;
-    border-radius:5px;
-    padding:4px 7px;
-    white-space:nowrap;
-    box-shadow:0 1px 3px rgba(0,0,0,.2);
-    cursor:move;
-    touch-action:none;
-}
-/* PALETTE D'OUTILS ET CRAYON */
-.palette{
-    margin-top:8px;
-    padding:6px 10px;
-    background:#f8fafc;
-    border:1px solid #d5dbe1;
-    border-radius:8px;
-    display:flex; gap:8px; align-items:center; flex-wrap:wrap;
-}
-.palette-title{font-size:11px;font-weight:bold;color:#475569;}
-.tool{
-    height:32px; min-width:32px;
-    border-radius:6px;
-    border:1px solid #cbd2d9;
-    background:#fff;
-    font-weight:bold;
-    padding:0 8px;
-}
-.tool-purple{background:#783fb4;color:#fff;border:none}
-.tool-orange{background:#e66c2e;color:#fff;border:none}
-.tool-yellow{background:#ffd21b;color:#665200;border:none}
-.tool-ball{background:#fff;color:#000;border:1px solid #cbd2d9;font-size:16px;}
-.tool.active{outline:3px solid #287fe8}
-.color-picker{
-    display:flex; gap:6px; align-items:center;
-    border-left:1px solid #cbd5e1; padding-left:8px;
-}
-.color-dot{
-    width:20px; height:20px; border-radius:50%;
-    cursor:pointer; border:2px solid transparent;
-}
-.color-dot.active{ border-color:#287fe8; transform:scale(1.15); }
-/* PANNEAU DE DROITE */
-.right-panel{ display:flex; flex-direction:column; gap:8px; }
-.panel-tools{
-    border:1px solid #d7dce2; border-radius:8px;
-    padding:6px; display:flex; gap:5px;
-}
-.panel-tools button{
-    flex:1; padding:7px;
-    border:1px solid #d2d8df; border-radius:6px;
-    background:#fff; font-size:11px;
-}
-.info-field{ display:flex; flex-direction:column; flex:1; }
-.info-field label{ font-size:11px; font-weight:bold; text-transform:uppercase; margin-bottom:3px; color:#475569; }
-.info-field textarea{ flex:1; width:100%; min-height:65px; resize:none; border:1px solid #d2d8df; border-radius:7px; padding:8px; }
-/* MODALE SÉANCE */
-.modal{
-    position:fixed; inset:0; z-index:300;
-    display:none; align-items:center; justify-content:center;
-    background:rgba(0,0,0,.65);
-}
-.modal.visible{display:flex}
-.modal-box{ width:min(720px,92vw); max-height:85vh; overflow:auto; background:#fff; border-radius:10px; padding:17px; }
-.drop-zone-area{
-    border:2px dashed #287fe8;
-    background:#f0f7ff;
-    border-radius:8px;
-    padding:10px;
-    margin-top:10px;
-    min-height:100px;
-}
-.drop-zone-area.drag-over{ background:#dbeafe; border-color:#1d4ed8; }
-.session-drop-target.drag-over{ background:#dbeafe; outline:2px dashed #1d4ed8; outline-offset:-2px; border-radius:6px; }
-.tree-group.drag-over > .tree-summary{ background:#dbeafe !important; outline:2px dashed #1d4ed8; outline-offset:-2px; border-radius:6px; }
-.session-row{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    border:1px solid #cbd5e1;
-    background:#fff;
-    border-radius:7px;
-    padding:7px;
-    margin-bottom:6px;
-    transition:background .15s, border-color .15s, transform .15s;
-}
-
-.session-row .sess-name{
-    flex:1;
-    font-weight:bold;
-    font-size:13px;
-}
-
-.session-row input{
-    width:70px;
-    padding:6px;
-    border:1px solid #ccc;
-    border-radius:4px;
-}
-
-/* Poignée visuelle indiquant que la ligne peut être déplacée. */
-.session-drag-handle{
-    color:#64748b;
-    font-size:18px;
-    font-weight:bold;
-    line-height:1;
-    cursor:grab;
-    user-select:none;
-    letter-spacing:-3px;
-    width:18px;
-    text-align:center;
-}
-
-.session-drag-handle:active{
-    cursor:grabbing;
-}
-
-.session-row.session-dragging{
-    opacity:.45;
-}
-
-.session-row.session-drag-over{
-    border-color:#287fe8;
-    background:#edf6ff;
-}
-#sessionPrintContainer { display: none; }
-.bottom-toolbar{display:flex;gap:7px;margin-top:8px;align-items:center;}
-.bottom-toolbar button{border:0;border-radius:7px;padding:8px 11px;background:#287fe8;color:#fff;font-weight:bold;}
-.bottom-toolbar .secondary{background:#69737e;}
-/* IMPRESSION */
-@media print {
-    body, html { background: #fff !important; color: #000 !important; height: auto !important; }
-    .header, .sidebar, .exercise-toolbar, .palette, .panel-tools, .bottom-toolbar, button, .modal { display: none !important; }
-    
-    body:not(.printing-session) .app, body:not(.printing-session) .main { height: auto !important; padding: 0 !important; overflow: visible !important; display: block !important; }
-    body:not(.printing-session) .sheet { display: block !important; border: none !important; padding: 0 !important; }
-    body:not(.printing-session) .court-wrapper { height: 420px !important; page-break-inside: avoid; margin-bottom: 20px; }
-    body:not(.printing-session) .court-container { border: 2px solid #000 !important; }
-    body:not(.printing-session) .right-panel { display: block !important; }
-    body:not(.printing-session) .info-field { margin-bottom: 12px; page-break-inside: avoid; }
-    body:not(.printing-session) .info-field textarea { border: 1px solid #aaa !important; height: auto !important; min-height: 50px !important; font-size: 12px; }
-    
-    body:not(.printing-session) .print-header { display: block !important; margin-bottom: 15px; border-bottom: 2px solid #000; padding-bottom: 5px; }
-    body:not(.printing-session) .print-header h2 { margin: 0; font-size: 22px; }
-    body:not(.printing-session) .print-header p { margin: 3px 0 0 0; font-size: 14px; color: #555; }
-
-    body.printing-session .app { display: none !important; }
-    body.printing-session #sessionPrintContainer { display: block !important; }
-
-    .session-print-page {
-        page-break-after: always;
-        break-after: page;
-        padding-top: 10px;
-    }
-    .session-print-page:last-child {
-        page-break-after: auto;
-        break-after: auto;
-    }
-}
-.print-header { display: none; }
-
-.session-exercise-picker{
-    max-height:180px;
-    overflow-y:auto;
-    border:1px solid #d7dde5;
-    border-radius:6px;
-    background:#f8fafc;
-    padding:5px;
-}
-.session-picker-item{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-    padding:6px 8px;
-    background:#fff;
-    border-bottom:1px solid #e5e7eb;
-    font-size:12px;
-}
-.session-picker-item:last-child{border-bottom:none;}
-.session-add-btn{
-    flex:0 0 auto;
-    width:28px;
-    height:28px;
-    border:0;
-    border-radius:5px;
-    background:#287fe8;
-    color:#fff;
-    font-size:18px;
-    font-weight:bold;
-    cursor:pointer;
-}
-.session-add-btn:hover{opacity:.85;}
-
-
-
-/* =========================================================
-   AUTHENTIFICATION
-========================================================= */
-
-.user-area {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-right: 12px;
-}
-
-#userInfo {
-    font-size: 13px;
-    color: #666;
-    max-width: 220px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.auth-button {
-    border: 1px solid #ccc;
-    background: white;
-    border-radius: 8px;
-    padding: 8px 12px;
-    cursor: pointer;
-    font-size: 13px;
-}
-
-.auth-button:hover {
-    background: #f2f2f2;
-}
-
-
-/* =========================================================
-   FENETRE DE CONNEXION
-========================================================= */
-
-#authModal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.45);
-    z-index: 10000;
-    align-items: center;
-    justify-content: center;
-}
-
-.auth-box {
-    width: 360px;
-    max-width: calc(100vw - 40px);
-    background: white;
-    border-radius: 14px;
-    padding: 24px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
-}
-
-.auth-box h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
-}
-
-.auth-box input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 11px;
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 14px;
-}
-
-.auth-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 8px;
-}
-
-.auth-buttons button {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.auth-login {
-    background: #6c3fd1;
-    color: white;
-}
-
-.auth-register {
-    background: #eee;
-    color: #333;
-}
-
-.auth-close {
-    width: 100%;
-    margin-top: 10px;
-    padding: 9px;
-    border: none;
-    background: transparent;
-    color: #777;
-    cursor: pointer;
-}
-
-
-
-
-#teamsModal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 99999;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.5);
-}
-
-#teamsModal .auth-box {
-    display: block;
-    width: 500px;
-    max-width: 90vw;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-sizing: border-box;
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-}
-
-
-
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0f172a;color:#e2e8f0}
+button,input{font:inherit}
+button{cursor:pointer;border:0}
+a{color:#93c5fd}
+
+.app{min-height:100%;display:flex;flex-direction:column}
+
+/* Top bar */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;gap:10px;
+  padding:12px 14px;padding-top:max(12px,env(safe-area-inset-top));
+  background:#0f172a;border-bottom:1px solid #1e293b;
+}
+.topbar h1{margin:0;font-size:17px;font-weight:700;flex:1}
+.topbar .user{font-size:12px;color:#94a3b8;max-width:40%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.icon-btn{
+  width:40px;height:40px;border-radius:10px;
+  background:#1e293b;color:#e2e8f0;font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* Screens */
+.screen{display:none;flex:1;flex-direction:column;min-height:0}
+.screen.active{display:flex}
+
+/* Login */
+#screen-login{
+  justify-content:center;padding:24px 20px;
+  padding-bottom:max(24px,env(safe-area-inset-bottom));
+}
+.login-card{
+  background:#1e293b;border-radius:16px;padding:22px;
+  max-width:400px;width:100%;margin:0 auto;
+}
+.login-card h2{margin:0 0 8px;font-size:22px}
+.login-card p{margin:0 0 18px;color:#94a3b8;font-size:14px}
+.login-card input{
+  width:100%;padding:14px;margin-bottom:12px;
+  border-radius:10px;border:1px solid #334155;
+  background:#0f172a;color:#e2e8f0;
+}
+.btn-primary{
+  width:100%;padding:14px;border-radius:10px;
+  background:#7c3aed;color:#fff;font-weight:700;margin-top:4px;
+}
+.btn-secondary{
+  width:100%;padding:14px;border-radius:10px;
+  background:#334155;color:#e2e8f0;font-weight:600;margin-top:10px;
+}
+.btn-link{
+  width:100%;margin-top:12px;padding:10px;
+  background:transparent;color:#a78bfa;text-decoration:underline;font-size:14px;
+}
+
+/* Tabs */
+.tabs{
+  display:flex;gap:0;border-bottom:1px solid #1e293b;
+  background:#0f172a;
+}
+.tab{
+  flex:1;padding:14px;background:transparent;color:#94a3b8;
+  font-weight:600;font-size:15px;border-bottom:2px solid transparent;
+}
+.tab.active{color:#e2e8f0;border-bottom-color:#7c3aed}
+
+/* Lists */
+.list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px}
+.card{
+  background:#1e293b;border-radius:12px;padding:14px 16px;margin-bottom:10px;
+  display:flex;align-items:center;gap:12px;
+}
+.card:active{background:#334155}
+.card-icon{font-size:22px;flex-shrink:0}
+.card-body{flex:1;min-width:0}
+.card-title{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-meta{font-size:12px;color:#94a3b8;margin-top:3px}
+.badge{
+  font-size:11px;padding:3px 8px;border-radius:999px;
+  background:#0f172a;color:#94a3b8;flex-shrink:0;
+}
+.empty{text-align:center;color:#64748b;padding:40px 20px;font-size:15px}
+
+/* Detail */
+.detail-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px 24px}
+.section-title{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;margin:16px 0 8px;font-weight:700}
+.section-title:first-child{margin-top:4px}
+.info-block{
+  background:#1e293b;border-radius:12px;padding:12px 14px;margin-bottom:8px;
+}
+.info-block h3{margin:0 0 6px;font-size:12px;color:#94a3b8;text-transform:uppercase}
+.info-block p{margin:0;font-size:14px;line-height:1.45;white-space:pre-wrap;color:#e2e8f0}
+
+/* Court */
+.court-box{
+  background:#1e293b;border-radius:12px;overflow:hidden;
+  border:1px solid #334155;margin-bottom:12px;
+}
+.court-frame{
+  position:relative;width:100%;aspect-ratio:2/1;background:#e5b66d;
+}
+.court-svg{position:absolute;inset:0;width:100%;height:100%}
+.court-objects{position:absolute;inset:0;pointer-events:none}
+.mob-obj{
+  position:absolute;transform:translate(-50%,-50%);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;user-select:none;
+}
+.mob-player,.mob-cone{
+  width:22px;height:22px;border-radius:50%;
+  border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4);
+}
+.mob-player-purple{background:#783fb4;color:#fff}
+.mob-player-orange{background:#e66c2e;color:#fff}
+.mob-cone{background:#ffd21b;color:#665200;border-color:#987900}
+.mob-ball{font-size:16px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
+.mob-shape{
+  border:2px solid #2563eb;background:rgba(37,99,235,.22);
+}
+.mob-shape-circle{border-radius:50%}
+.mob-shape-square,.mob-shape-rectangle{}
+.mob-shape-triangle{clip-path:polygon(50% 0%,100% 100%,0% 100%)}
+.mob-text{
+  background:rgba(255,255,245,.95);color:#222;border:1px solid #888;
+  border-radius:4px;padding:2px 5px;font-size:10px;white-space:nowrap;
+}
+
+/* Session items */
+.session-item{
+  background:#1e293b;border-radius:12px;padding:12px 14px;margin-bottom:8px;
+  display:flex;align-items:center;gap:10px;
+}
+.session-item:active{background:#334155}
+.session-item .num{
+  width:28px;height:28px;border-radius:8px;background:#0f172a;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#a78bfa;flex-shrink:0;
+}
+
+/* Toast */
+#toast{
+  position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));
+  transform:translateX(-50%);
+  background:#1e293b;color:#fff;padding:12px 18px;border-radius:12px;
+  font-weight:600;font-size:14px;z-index:9999;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+  box-shadow:0 8px 24px rgba(0,0,0,.35);max-width:90%;
+}
+#toast.show{opacity:1}
+
+.loading{padding:40px;text-align:center;color:#94a3b8}
 </style>
 </head>
 <body>
-
-<header class="header">
-    <h1>🤾 HandCoach V11.3</h1>
-
-    <div class="spacer"></div>
-
- <div class="user-area">
-
-    <span id="userInfo"></span>
-
-    <button
-        id="teamsButton"
-        class="auth-button"
-        onclick="openTeamsModal()">
-        🤝 Bibliothèques
-    </button>
-
-    <button
-        id="authButton"
-        class="auth-button">
-        🔐 Connexion
-    </button>
-
-</div>
-
-    <div class="header-actions">
-    <button class="icon-button" id="addCourtButton" title="Ajouter un second terrain" aria-label="Ajouter un second terrain">＋</button>
-    <button class="icon-button" id="newExercise" title="Fiche vierge" aria-label="Fiche vierge">📄</button>
-    <button class="icon-button" id="saveExercise" title="Sauvegarder l'exercice" aria-label="Sauvegarder l'exercice">💾</button>
-    <button class="icon-button" id="sessionButton" title="Nouvelle séance" aria-label="Nouvelle séance">📋</button>
-    <button class="icon-button" id="printButton" title="Imprimer l'exercice" aria-label="Imprimer l'exercice">🖨️</button> 
-    <button class="icon-button" id="exportButton" title="Exporter JSON" aria-label="Exporter JSON">📤</button>
-    <button class="icon-button" id="importButton" title="Importer JSON" aria-label="Importer JSON">📥</button>
-    
-</div>
-</header>
-
 <div class="app">
-    <aside class="sidebar">
-        <div class="sidebar-section-title">Exercices</div>
-        <div id="exercisesTree"></div>
-        <div class="sidebar-section-title">Séances</div>
-        <div id="sessionsTree"></div>
-    </aside>
 
-    <main id="main" class="main">
-        <div class="print-header">
-            <h2 id="printTitle">Titre de l'exercice</h2>
-            <p id="printMeta">Catégorie : Échauffement</p>
-        </div>
-
-        <div class="exercise-toolbar">
-            <input id="exerciseTitle" value="" placeholder="Titre de l'exercice (ex: def 1/5)">
-            <select id="exerciseCategory">
-                <option value="Attaque">Attaque</option>
-                <option value="Défense">Défense</option>
-                <option value="Échauffement">Échauffement</option>
-                <option value="Montée de balle">Montée de balle</option>
-                <option value="Jeu à thème">Jeu à thème</option>
-                <option value="Gardien">Gardien</option>
-                <option value="Physique">Physique</option>
-            </select>
-
-            <!-- CHAMP DE DURÉE -->
-            <div style="display:flex; align-items:center; gap:5px; background:#fff; padding:6px 10px; border:1px solid #cfd5db; border-radius:7px;">
-                <span style="font-size:12px; font-weight:bold; color:#475569;">Durée :</span>
-                <input id="exerciseDuration" type="number" value="15" min="1" max="180" style="width:55px; border:1px solid #ccc; border-radius:4px; padding:3px; text-align:center; font-weight:bold;" title="Durée en minutes">
-                <span style="font-size:12px; color:#475569; font-weight:bold;">min</span>
-            </div>
-        </div>
-
-        <div class="sheet">
-            <section class="court-wrapper">
-                <div class="court-container" id="courtContainer">
-                        <svg id="courtSvg" class="court-svg" viewBox="0 0 40 20" preserveAspectRatio="none">
-                        <rect class="floor" x="0" y="0" width="40" height="20"/>
-                        <rect class="court-border" x="0" y="0" width="40" height="20"/>
-                        <path class="court-strong" d="M20 0V20"/>
-                        <circle class="court-line" cx="20" cy="10" r="1.8"/>
-                        <path class="court-strong" d="M0 8.5V11.5"/>
-                        <path class="court-strong" d="M40 8.5V11.5"/>
-                        <path class="court-strong" d="M0 4 A6 6 0 0 1 6 10 A6 6 0 0 1 0 16 M40 4 A6 6 0 0 0 34 10 A6 6 0 0 0 40 16"/>
-                        <path class="court-dashed" d="M0 1 A9 9 0 0 1 9 10 A9 9 0 0 1 0 19 M40 1 A9 9 0 0 0 31 10 A9 9 0 0 0 40 19"/>
-                        <path class="court-strong" d="M7 9.5V10.5M33 9.5V10.5"/>
-                        <path class="court-strong" d="M4 9.8V10.2M36 9.8V10.2"/>
-                        <g id="pencilPathsLayer"></g>
-                    </svg>
-                    <div id="objectsLayer" class="draw-layer"></div>
-                </div>
-
-                <div class="palette">
-                    <span class="palette-title">PIONS :</span>
-                    <!-- =========================
-     PIONS
-     ========================= -->
-
-<button class="tool tool-purple" data-tool="player-purple">
-    Attaquant (A)
-</button>
-
-<button class="tool tool-orange" data-tool="player-orange">
-    Défenseur (B)
-</button>
-
-<button class="tool tool-yellow" data-tool="cone">
-    Plot
-</button>
-
-<button class="tool tool-ball" data-tool="ball">
-    ⚽
-</button>
-
-
-<!-- =========================
-     FORMES
-     Les formes peuvent maintenant être agrandies/réduites
-     avec la petite poignée bleue en bas à droite.
-     ========================= -->
-
-<button class="tool" data-tool="shape-square">
-    ◻ Carré
-</button>
-
-<button class="tool" data-tool="shape-rectangle">
-    ▭ Rectangle
-</button>
-
-<button class="tool" data-tool="shape-triangle">
-    △ Triangle
-</button>
-
-<button class="tool" data-tool="shape-circle">
-    ○ Cercle
-</button>
-
-
-<!-- =========================
-     TEXTE
-     ========================= -->
-
-<button class="tool" data-tool="text">
-    Texte
-</button>
-
-                    <div class="color-picker">
-                        <span class="palette-title">CRAYON :</span>
-                        <button class="tool" id="pencilToolBtn">Dessiner</button>
-                        <select id="pencilWidth"
-        class="tool"
-        style="padding:0 4px;"
-        title="Épaisseur du trait">
-
-    <option value="0.04">Ultra fin</option>
-    <option value="0.08" selected>Très fin</option>
-    <option value="0.15">Fin</option>
-    <option value="0.30">Moyen</option>
-    <option value="0.50">Épais</option>
-
-</select>
-                        <div class="color-dot active" style="background:#222" data-color="#222"></div>
-                        <div class="color-dot" style="background:#2563eb" data-color="#2563eb"></div>
-                        <div class="color-dot" style="background:#dc2626" data-color="#dc2626"></div>
-                        <div class="color-dot" style="background:#ca8a04" data-color="#ca8a04"></div>
-                    </div>
-                    <button class="tool" id="clearDrawingsBtn">Effacer lignes</button>
-                </div>
-            </section>
-
-            <section class="right-panel">
-                <div class="panel-tools">
-                    <button id="undo" title="Annuler la dernière action">↶</button>
-                    <button id="redo" title="Rétablir la dernière action annulée">↷</button>
-                    <button id="clearAll" title="Tout effacer sur les terrains">Tout vider</button>
-                </div>
-                <div class="info-field">
-                    <label>Mise en place</label>
-                    <textarea id="setup" placeholder="Positionnement initial, matériel..."></textarea>
-                </div>
-                <div class="info-field">
-                    <label>Consignes & Déroulement</label>
-                    <textarea id="instructions" placeholder="Règles du jeu, rotations..."></textarea>
-                </div>
-                <div class="info-field">
-                    <label>Variantes</label>
-                    <textarea id="variant" placeholder="Espaces réduits, contraintes de temps..."></textarea>
-                </div>
-                <div class="info-field">
-                    <label>Objectifs visés</label>
-                    <textarea id="objectives" placeholder="Savoir-faire tactique ou technique..."></textarea>
-                </div>
-            </section>
-        </div>
-    </main>
-</div>
-
-<!-- CONTAINER D'IMPRESSION DE SÉANCE ENTIÈRE -->
-<div id="sessionPrintContainer"></div>
-
-<!-- MODALE SÉANCE -->
-<div id="sessionModal" class="modal">
-    <div class="modal-box">
-        <h2>Créer une Séance</h2>
-        <div style="display:flex; gap:8px; margin-bottom:12px;">
-            <input id="sessionName" placeholder="Nom de la séance (ex: Séance Reprise)" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:5px;">
-            <input id="sessionCategory" placeholder="Thème (ex: Reprise)" style="width:150px; padding:8px; border:1px solid #ccc; border-radius:5px;">
-        </div>
-        <div style="margin:14px 0; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; font-size:12px; color:#475569;">
-            La séance sera créée vide. Tu pourras ensuite ajouter les exercices un par un par <strong>glisser-déposer</strong> depuis la bibliothèque.
-        </div>
-        <div style="margin-top:15px; display:flex; gap:8px;">
-            <button id="saveSessionBtn" style="background:#287fe8; color:white; border:none; padding:9px 15px; border-radius:5px; font-weight:bold;">Enregistrer la séance</button>
-            <button id="closeSessionBtn" class="secondary" style="background:#3e4852; color:white; border:none; padding:9px 15px; border-radius:5px;">Fermer</button>
-        </div>
+  <!-- LOGIN -->
+  <section id="screen-login" class="screen active">
+    <div class="login-card">
+      <h2>🤾 HandCoach</h2>
+      <p>Version mobile — consultation des séances</p>
+      <input type="email" id="authEmail" placeholder="Email" autocomplete="email">
+      <input type="password" id="authPassword" placeholder="Mot de passe" autocomplete="current-password">
+      <button class="btn-primary" onclick="login()">Se connecter</button>
+      <button class="btn-link" onclick="resetPassword()">Mot de passe oublié ?</button>
     </div>
+  </section>
+
+  <!-- HOME -->
+  <section id="screen-home" class="screen">
+    <div class="topbar">
+      <h1>🤾 HandCoach</h1>
+      <span class="user" id="userLabel"></span>
+      <button class="icon-btn" onclick="logout()" title="Déconnexion">🚪</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="sessions" onclick="switchTab('sessions')">Séances</button>
+      <button class="tab" data-tab="exercises" onclick="switchTab('exercises')">Exercices</button>
+    </div>
+    <div class="list" id="listSessions"></div>
+    <div class="list" id="listExercises" style="display:none"></div>
+  </section>
+
+  <!-- SESSION DETAIL -->
+  <section id="screen-session" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" onclick="showScreen('home')">←</button>
+      <h1 id="sessionTitle">Séance</h1>
+    </div>
+    <div class="detail-scroll" id="sessionDetail"></div>
+  </section>
+
+  <!-- EXERCISE DETAIL -->
+  <section id="screen-exercise" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" onclick="backFromExercise()">←</button>
+      <h1 id="exerciseTitle">Exercice</h1>
+    </div>
+    <div class="detail-scroll" id="exerciseDetail"></div>
+  </section>
+
 </div>
+<div id="toast"></div>
 
-<script>
-/* =========================================================
-   HANDCOACH V11.3 — GUIDE RAPIDE
-
-   1. CONFIGURATION / STOCKAGE
-   2. SAUVEGARDE DANS LE DOSSIER "Hand"
-   3. OUTILS DE BASE
-   4. CRAYON / TRAITS LIBRES
-   5. OBJETS ET FORMES
-   6. SÉLECTION / DÉPLACEMENT / REDIMENSIONNEMENT
-   7. UNDO / REDO
-   8. CHARGEMENT / SAUVEGARDE DES EXERCICES
-   9. IMPORT / EXPORT JSON
-   10. GESTION DES SÉANCES
-   11. IMPRESSION PDF
-   12. INITIALISATION
-
-   ASTUCE : Ctrl+F puis cherche le nom d'une fonction.
-   Exemple : cherche "createObject" pour modifier la création
-   des joueurs, plots, ballons et formes.
-========================================================= */
-
-/* =========================================================
-   1. CONFIGURATION / STOCKAGE
-========================================================= */
-
-const APP_VERSION = "V11.3";
-
-const EXERCISES_KEY = "handcoach_v10.3_exercises";
-const SESSIONS_KEY = "handcoach_v10.3_sessions";
-
-/* Anciennes clés : elles permettent de récupérer ton travail. */
-const OLD_EXERCISES_KEYS = [
-    "handcoach_v10.2_exercises",
-    "handcoach_v10.1_exercises",
-    "handcoach_v9.1_exercises"
-];
-
-const OLD_SESSIONS_KEYS = [
-    "handcoach_v10.2_sessions",
-    "handcoach_v10.1_sessions",
-    "handcoach_v9.1_sessions"
-];
-
-/* Petit raccourci pour écrire $("id") au lieu de document.getElementById("id"). */
-const $ = id => document.getElementById(id);
-
-/* Crée un identifiant unique pour chaque exercice / objet / séance. */
-function uid(){
-    return Date.now().toString(36) + Math.random().toString(36).slice(2);
-}
-
-/* Données principales de l'application. */
-let exercises = loadArrayFromStorage(EXERCISES_KEY, OLD_EXERCISES_KEYS, []);
-let sessions = loadArrayFromStorage(SESSIONS_KEY, OLD_SESSIONS_KEYS, []);
-
-/* État actuel de l'éditeur. */
-let currentId = null;
-let activeTool = null;
-let selected = null;
-let clipboard = null;
-
-/* État du crayon. */
-let isPencilActive = false;
-let isDrawing = false;
-let currentPath = null;
-let activeColor = "#222";
-let activeCourtIndex = 0;
-
-/*
-    Terrain 0 = terrain principal
-    Terrain 1 = terrain d'évolution
-*/
-let pathsByCourt = [
-    []
-];
-
-let pathsData = pathsByCourt[0];
-/* Historique Annuler / Rétablir. */
-let undoStack = [];
-let redoStack = [];
-let sessionSortState = null;
-let draggedExerciseId = null;
-let sessionSuppressClickUntil = 0;
-
-/* Charge un tableau depuis localStorage, avec récupération des anciennes versions. */
-function loadArrayFromStorage(newKey, oldKeys, fallback){
-    const current = JSON.parse(localStorage.getItem(newKey) || "null");
-    if(Array.isArray(current)) return current;
-
-    for(const oldKey of oldKeys){
-        const oldData = JSON.parse(localStorage.getItem(oldKey) || "null");
-        if(Array.isArray(oldData)) return oldData;
-    }
-
-    return fallback;
-}
-
-function showToast(message){
-    const el = document.getElementById("toast");
-    if(!el) return;
-    el.textContent = message;
-    el.classList.add("show");
-    clearTimeout(showToast._t);
-    showToast._t = setTimeout(() => el.classList.remove("show"), 2500);
-}
-function updateSaveStatus(message){
-    const el = $("saveStatus");
-    if(!el) return;
-    el.textContent = message || "☁️ Supabase";
-}
-
-function saveStorage(){
-    localStorage.setItem(EXERCISES_KEY, JSON.stringify(exercises));
-    localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
-    renderSidebar();
-    updateSaveStatus("💾 Sauvegarde…");
-    saveToSupabase().then(() => {
-        updateSaveStatus("✅ Sauvegardé");
-        showToast("✅ Sauvegardé");
-        setTimeout(() => updateSaveStatus("☁️ Supabase"), 2000);
-    }).catch(() => {
-        updateSaveStatus("❌ Erreur");
-        showToast("❌ Erreur de sauvegarde");
-    });
-}
-
-
-/* =========================================================
-   2. SAUVEGARDE DANS LE DOSSIER "Hand"
-
-   IMPORTANT : un navigateur ne permet pas de choisir directement
-   C:\Users\multw\Desktop\Hand sans demander l'autorisation.
-
-   Tu cliques donc sur 📁 et tu sélectionnes UNE FOIS le dossier Hand.
-========================================================= */
-
-
-
-/* Fusionne deux listes en utilisant l'identifiant comme clé. */
-function mergeById(existing, imported){
-    const map = new Map(existing.map(item => [item.id, item]));
-
-    imported.forEach(item => {
-        if(item && item.id) map.set(item.id, item);
-    });
-
-    return Array.from(map.values());
-}
-
-
-
-
-/* =========================================================
-   3. OUTILS DE BASE
-========================================================= */
-
-/* Renvoie le calque où les objets sont placés. */
-function getObjectLayer(){
-    return $(activeCourtIndex === 0
-        ? "objectsLayer"
-        : "objectsLayer2"
-    );
-}
-
-function getCourtSvg(){
-    return $(activeCourtIndex === 0
-        ? "courtSvg"
-        : "courtSvg2"
-    );
-}
-
-function getPencilLayer(){
-    return $(activeCourtIndex === 0
-        ? "pencilPathsLayer"
-        : "pencilPathsLayer2"
-    );
-}
-
-function setActiveCourt(index){
-    activeCourtIndex = index === 1 && $("courtContainer2")
-        ? 1
-        : 0;
-
-    if(!pathsByCourt[activeCourtIndex]){
-        pathsByCourt[activeCourtIndex] = [];
-    }
-
-    pathsData = pathsByCourt[activeCourtIndex];
-}
-
-function hasSecondCourt(){
-    return !!$("courtContainer2");
-}
-
-/* =========================================================
-   AJOUT / SUPPRESSION DU SECOND TERRAIN
-   ========================================================= */
-
-function addSecondCourt(){
-
-    if(hasSecondCourt()){
-        removeSecondCourt();
-        return;
-    }
-
-    const firstCourt = $("courtContainer");
-
-    if(!firstCourt){
-        console.error("Terrain principal introuvable.");
-        return;
-    }
-
-    /*
-        On clone le terrain principal pour conserver
-        exactement les mêmes dimensions et le même tracé.
-    */
-    const secondCourt = firstCourt.cloneNode(true);
-
-    secondCourt.id = "courtContainer2";
-
-    const svg = secondCourt.querySelector("#courtSvg");
-    if(svg){
-        svg.id = "courtSvg2";
-    }
-
-    const objects = secondCourt.querySelector("#objectsLayer");
-    if(objects){
-        objects.id = "objectsLayer2";
-        objects.innerHTML = "";
-    }
-
-    const pencil = secondCourt.querySelector("#pencilPathsLayer");
-    if(pencil){
-        pencil.id = "pencilPathsLayer2";
-        pencil.innerHTML = "";
-    }
-
-    /*
-        Le deuxième terrain doit être vierge.
-    */
-    secondCourt.querySelectorAll(".object, .text-object").forEach(
-        element => element.remove()
-    );
-
-    /*
-        Indication visuelle.
-    */
-    const label = document.createElement("div");
-    label.className = "court-evolution-label";
-    label.textContent = "ÉVOLUTION";
-
-    secondCourt.appendChild(label);
-
-    /*
-        On insère le deuxième terrain avant la palette.
-    */
-    const wrapper = firstCourt.parentElement;
-    const palette = wrapper.querySelector(".palette");
-
-    wrapper.insertBefore(secondCourt, palette);
-
-    /*
-        Passage en mode deux terrains.
-    */
-    wrapper.classList.add("multi-court");
-
-    pathsByCourt = [
-        pathsByCourt[0] || [],
-        []
-    ];
-
-    setActiveCourt(0);
-
-    /*
-        Les interactions du deuxième terrain
-        seront activées ici.
-    */
-    setupCourtInteractions(1);
-    setupPencilInteractions(1);
-
-    const button = $("addCourtButton");
-
-    if(button){
-        button.textContent = "−";
-        button.title = "Supprimer le second terrain";
-    }
-}
-
-
-function removeSecondCourt(){
-
-    const secondCourt = $("courtContainer2");
-
-    if(!secondCourt) return;
-
-    secondCourt.remove();
-
-    const wrapper = $("courtContainer").parentElement;
-
-    wrapper.classList.remove("multi-court");
-
-    pathsByCourt = [
-        pathsByCourt[0] || []
-    ];
-
-    setActiveCourt(0);
-
-    const button = $("addCourtButton");
-
-    if(button){
-        button.textContent = "＋";
-        button.title = "Ajouter un second terrain";
-    }
-}
-
-
-/* Supprime la sélection actuelle. */
-function deleteSelected(){
-    if(!selected) return;
-
-    saveUndoPoint();
-
-    if(selected.tagName && selected.tagName.toLowerCase() === "path") {
-        pathsData = pathsData.filter(path => path.id !== selected.dataset.pathId);
-    }
-
-    selected.remove();
-    selected = null;
-}
-
-/* Sélectionne un objet et retire la sélection précédente. */
-function selectObject(obj){
-    document.querySelectorAll(".selected").forEach(el => el.classList.remove("selected"));
-    document.querySelectorAll(".freehand-path-selected").forEach(el => el.classList.remove("freehand-path-selected"));
-
-    selected = obj;
-
-    if(obj){
-        if(obj.tagName && obj.tagName.toLowerCase() === "path") {
-            obj.classList.add("freehand-path-selected");
-        }else{
-            obj.classList.add("selected");
-        }
-    }
-}
-
-/* Nettoie complètement le terrain. */
-function clearAll(){
-    if(!confirm("Tout effacer sur les terrains ?")) return;
-
-    saveUndoPoint();
-
-    const objects1 = $("objectsLayer");
-    const objects2 = $("objectsLayer2");
-    const pencil1 = $("pencilPathsLayer");
-    const pencil2 = $("pencilPathsLayer2");
-
-    if(objects1) objects1.innerHTML = "";
-    if(objects2) objects2.innerHTML = "";
-    if(pencil1) pencil1.innerHTML = "";
-    if(pencil2) pencil2.innerHTML = "";
-
-    pathsByCourt = $("courtContainer2") ? [[], []] : [[]];
-    pathsData = pathsByCourt[activeCourtIndex] || pathsByCourt[0];
-    selected = null;
-    currentPath = null;
-    isDrawing = false;
-}
-
-/* Numérote les joueurs A et B séparément. */
-function numberPlayers(){
-    saveUndoPoint();
-
-    let numberA = 1;
-    let numberB = 1;
-
-    document.querySelectorAll(".player-purple").forEach(player => {
-        player.textContent = numberA++;
-    });
-
-    document.querySelectorAll(".player-orange").forEach(player => {
-        player.textContent = numberB++;
-    });
-}
-
-/* Duplique l'exercice actuel. */
-function duplicateCurrentExercise(){
-    const source = readCurrentExercise();
-    const copy = JSON.parse(JSON.stringify(source));
-
-    copy.id = uid();
-    copy.title = (copy.title || "Exercice") + " (Copie)";
-
-    exercises.push(copy);
-    saveStorage();
-    loadExercise(copy);
-}
-
-/* =========================================================
-   4. CRAYON / TRAITS LIBRES
-
-   Les traits sont dessinés directement dans le SVG du terrain.
-   Les épaisseurs sont volontairement petites pour les schémas tactiques.
-========================================================= */
-
-function getSvgCoords(event, svg){
-    const rect = svg.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width) * 40;
-    const y = ((event.clientY - rect.top) / rect.height) * 20;
-    return { x: x.toFixed(2), y: y.toFixed(2) };
-}
-
-/* Active les traits libres sur un terrain donné. */
-function setupPencilInteractions(index){
-    const svg = index === 0 ? $("courtSvg") : $("courtSvg2");
-    const pencilLayer = index === 0 ? $("pencilPathsLayer") : $("pencilPathsLayer2");
-    if(!svg || !pencilLayer) return;
-
-    svg.addEventListener("pointerdown", event => {
-        if(!isPencilActive) return;
-
-        event.preventDefault();
-        event.stopPropagation();
-        setActiveCourt(index);
-        saveUndoPoint();
-        isDrawing = true;
-
-        const point = getSvgCoords(event, svg);
-        const width = parseFloat($("pencilWidth").value) || 0.08;
-
-        currentPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        currentPath.dataset.pathId = uid();
-        currentPath.dataset.courtIndex = String(index);
-        currentPath.setAttribute("fill", "none");
-        currentPath.setAttribute("stroke", activeColor);
-        currentPath.setAttribute("stroke-width", width);
-        currentPath.setAttribute("stroke-linecap", "round");
-        currentPath.setAttribute("stroke-linejoin", "round");
-        currentPath.setAttribute("d", `M ${point.x} ${point.y}`);
-        currentPath.style.pointerEvents = "stroke";
-
-        currentPath.addEventListener("pointerdown", e => {
-            e.stopPropagation();
-            selectObject(currentPath);
-        });
-
-        pencilLayer.appendChild(currentPath);
-        svg.setPointerCapture(event.pointerId);
-    });
-
-    svg.addEventListener("pointermove", event => {
-        if(!isDrawing || !currentPath) return;
-        if(currentPath.dataset.courtIndex !== String(index)) return;
-
-        const point = getSvgCoords(event, svg);
-        const oldD = currentPath.getAttribute("d");
-        currentPath.setAttribute("d", `${oldD} L ${point.x} ${point.y}`);
-    });
-
-    const finishPath = event => {
-        if(!isDrawing || !currentPath) return;
-        if(currentPath.dataset.courtIndex !== String(index)) return;
-
-        isDrawing = false;
-
-        const courtPaths = pathsByCourt[index] || (pathsByCourt[index] = []);
-        courtPaths.push({
-            id: currentPath.dataset.pathId,
-            d: currentPath.getAttribute("d"),
-            color: currentPath.getAttribute("stroke") || activeColor,
-            width: parseFloat(currentPath.getAttribute("stroke-width")) || 0.08
-        });
-        pathsData = courtPaths;
-
-        if(svg.hasPointerCapture(event.pointerId)){
-            svg.releasePointerCapture(event.pointerId);
-        }
-
-        currentPath = null;
-    };
-
-    svg.addEventListener("pointerup", finishPath);
-    svg.addEventListener("pointercancel", finishPath);
-}
-
-setupPencilInteractions(0);
-
-/* Active / désactive le crayon. */
-$("pencilToolBtn").onclick = () => {
-    isPencilActive = !isPencilActive;
-
-    $("pencilToolBtn").classList.toggle("active", isPencilActive);
-
-    document.querySelectorAll(".palette .tool[data-tool]").forEach(button => {
-        button.classList.remove("active");
-    });
-
-    activeTool = null;
-};
-
-/* Choix de la couleur du crayon. */
-document.querySelectorAll(".color-dot").forEach(dot => {
-    dot.onclick = () => {
-        document.querySelectorAll(".color-dot").forEach(d => d.classList.remove("active"));
-        dot.classList.add("active");
-        activeColor = dot.dataset.color;
-
-        if(!isPencilActive) $("pencilToolBtn").click();
-    };
-});
-
-/* Efface tous les traits libres. */
-function clearFreehandPaths(createUndo = true){
-    if(createUndo) saveUndoPoint();
-
-    const layer = getPencilLayer();
-    if(layer) layer.innerHTML = "";
-
-    pathsByCourt[activeCourtIndex] = [];
-    pathsData = pathsByCourt[activeCourtIndex];
-    selected = null;
-}
-
-$("clearDrawingsBtn").onclick = () => clearFreehandPaths(true);
-
-/* =========================================================
-   5. OBJETS ET FORMES
-
-   Types disponibles :
-   - player-purple    = joueur A
-   - player-orange    = joueur B
-   - cone             = plot
-   - ball             = ballon
-   - shape-square     = carré
-   - shape-rectangle  = rectangle
-   - shape-triangle   = triangle
-   - shape-circle     = cercle
-   - text             = texte
-========================================================= */
-
-function createObject(type, x, y, options = {}){
-    const layer = getObjectLayer();
-    const id = options.id || uid();
-    const element = document.createElement("div");
-
-    /* -----------------------------------------------------
-       TEXTE
-    ----------------------------------------------------- */
-    if(type === "text"){
-        element.className = "text-object";
-        element.textContent = options.text || prompt("Texte :", "Remarque") || "Texte";
-    }
-
-    /* -----------------------------------------------------
-       FORMES GÉOMÉTRIQUES
-    ----------------------------------------------------- */
-    else if(type === "shape-square"){
-        element.className = "object shape-square";
-    }
-    else if(type === "shape-rectangle"){
-        element.className = "object shape-rectangle";
-    }
-    else if(type === "shape-triangle"){
-        element.className = "object shape-triangle";
-    }
-    else if(type === "shape-circle"){
-        element.className = "object shape-circle";
-    }
-
-    /* -----------------------------------------------------
-       JOUEURS / PLOTS / BALLON
-    ----------------------------------------------------- */
-    else{
-        element.className =
-            "object " +
-            (
-                type === "player-purple"
-                    ? "player player-purple"
-                : type === "player-orange"
-                    ? "player player-orange"
-                : type
-            );
-
-        if(type === "ball") element.textContent = "⚽";
-        if(options.text) element.textContent = options.text;
-    }
-
-    /* -----------------------------------------------------
-       DONNÉES INTERNES
-    ----------------------------------------------------- */
-    element.dataset.id = id;
-    element.dataset.type = type;
-    element.style.left = x;
-    element.style.top = y;
-
-    /* Dimensions sauvegardées. */
-    if(options.width) element.style.width = options.width;
-    if(options.height) element.style.height = options.height;
-
-    /* Angle sauvegardé de la forme. */
-    const rotation = parseFloat(options.rotation) || 0;
-    element.dataset.rotation = rotation;
-    element.style.setProperty("--rotation", rotation + "deg");
-
-    layer.appendChild(element);
-
-    /* Rend l'objet déplaçable. */
-    makeDraggable(element);
-
-    /* Ajoute les poignées aux formes. */
-    makeShapeResizable(element);
-    makeShapeRotatable(element);
-
-    return element;
-}
-
-/* =========================================================
-   6. SÉLECTION / DÉPLACEMENT / REDIMENSIONNEMENT
-========================================================= */
-
-/* Déplace un objet avec la souris. */
-function makeDraggable(element){
-    let dragging = false;
-    let startX = 0;
-    let startY = 0;
-    let initialLeft = 0;
-    let initialTop = 0;
-
-    const layer = getObjectLayer();
-
-    element.addEventListener("pointerdown", event => {
-        if(event.target.classList.contains("shape-resize-handle")) return;
-
-        event.stopPropagation();
-        saveUndoPoint();
-        selectObject(element);
-
-        dragging = true;
-        startX = event.clientX;
-        startY = event.clientY;
-
-        const rect = layer.getBoundingClientRect();
-        initialLeft = (element.offsetLeft / rect.width) * 100;
-        initialTop = (element.offsetTop / rect.height) * 100;
-
-        element.setPointerCapture(event.pointerId);
-    });
-
-    element.addEventListener("pointermove", event => {
-        if(!dragging || !element.hasPointerCapture(event.pointerId)) return;
-
-        const rect = layer.getBoundingClientRect();
-        const dx = ((event.clientX - startX) / rect.width) * 100;
-        const dy = ((event.clientY - startY) / rect.height) * 100;
-
-        element.style.left = (initialLeft + dx) + "%";
-        element.style.top = (initialTop + dy) + "%";
-    });
-
-    element.addEventListener("pointerup", event => {
-        if(dragging && element.hasPointerCapture(event.pointerId)){
-            element.releasePointerCapture(event.pointerId);
-        }
-
-        dragging = false;
-    });
-
-    /* Double-clic = suppression rapide. */
-    element.addEventListener("dblclick", event => {
-        event.stopPropagation();
-        saveUndoPoint();
-        element.remove();
-        selected = null;
-    });
-}
-
-/* Ajoute une poignée pour agrandir / réduire les formes. */
-function makeShapeResizable(element){
-    const isShape = [
-        "shape-square",
-        "shape-rectangle",
-        "shape-triangle",
-        "shape-circle"
-    ].some(className => element.classList.contains(className));
-
-    if(!isShape) return;
-
-    const handle = document.createElement("div");
-    handle.className = "shape-resize-handle";
-    handle.title = "Agrandir / réduire";
-    element.appendChild(handle);
-
-    let resizing = false;
-    let startX = 0;
-    let startY = 0;
-    let startWidth = 0;
-    let startHeight = 0;
-
-    handle.addEventListener("pointerdown", event => {
-        event.stopPropagation();
-        saveUndoPoint();
-        selectObject(element);
-
-        resizing = true;
-        startX = event.clientX;
-        startY = event.clientY;
-        startWidth = element.offsetWidth;
-        startHeight = element.offsetHeight;
-
-        handle.setPointerCapture(event.pointerId);
-    });
-
-    handle.addEventListener("pointermove", event => {
-        if(!resizing || !handle.hasPointerCapture(event.pointerId)) return;
-
-        const dx = event.clientX - startX;
-        const dy = event.clientY - startY;
-
-        let width = Math.max(20, startWidth + dx);
-        let height = Math.max(20, startHeight + dy);
-
-        /* Carré et cercle gardent toujours leurs proportions. */
-        if(
-            element.classList.contains("shape-square") ||
-            element.classList.contains("shape-circle")
-        ){
-            const size = Math.max(width, height);
-            width = size;
-            height = size;
-        }
-
-        element.style.width = width + "px";
-        element.style.height = height + "px";
-    });
-
-    handle.addEventListener("pointerup", event => {
-        if(handle.hasPointerCapture(event.pointerId)){
-            handle.releasePointerCapture(event.pointerId);
-        }
-
-        resizing = false;
-    });
-}
-
-
-/* =========================================================
-   ROTATION DES FORMES
-   ---------------------------------------------------------
-   On clique-glisse la poignée orange située au-dessus
-   de la forme pour la faire tourner.
-========================================================= */
-
-function makeShapeRotatable(element){
-
-    const isShape = [
-        "shape-square",
-        "shape-rectangle",
-        "shape-triangle",
-        "shape-circle"
-    ].some(className => element.classList.contains(className));
-
-    if(!isShape) return;
-
-    const handle = document.createElement("div");
-    handle.className = "shape-rotate-handle";
-    handle.title = "Tourner la forme";
-    element.appendChild(handle);
-
-    let rotating = false;
-    let centerX = 0;
-    let centerY = 0;
-    let startAngle = 0;
-    let startRotation = 0;
-
-    handle.addEventListener("pointerdown", event => {
-        event.stopPropagation();
-        event.preventDefault();
-
-        saveUndoPoint();
-        selectObject(element);
-
-        const rect = element.getBoundingClientRect();
-
-        centerX = rect.left + rect.width / 2;
-        centerY = rect.top + rect.height / 2;
-
-        startAngle = Math.atan2(
-            event.clientY - centerY,
-            event.clientX - centerX
-        ) * 180 / Math.PI;
-
-        startRotation = parseFloat(element.dataset.rotation) || 0;
-        rotating = true;
-
-        handle.setPointerCapture(event.pointerId);
-    });
-
-    handle.addEventListener("pointermove", event => {
-        if(!rotating || !handle.hasPointerCapture(event.pointerId)) return;
-
-        const currentAngle = Math.atan2(
-            event.clientY - centerY,
-            event.clientX - centerX
-        ) * 180 / Math.PI;
-
-        const rotation = startRotation + (currentAngle - startAngle);
-
-        element.dataset.rotation = rotation;
-        element.style.setProperty("--rotation", rotation + "deg");
-    });
-
-    handle.addEventListener("pointerup", event => {
-        if(handle.hasPointerCapture(event.pointerId)){
-            handle.releasePointerCapture(event.pointerId);
-        }
-
-        rotating = false;
-    });
-}
-
-/* Création d'un objet sur le clic dans le terrain. */
-function setupCourtInteractions(index){
-
-    const container = index === 0
-        ? $("courtContainer")
-        : $("courtContainer2");
-
-    if(!container) return;
-
-    container.addEventListener("pointerdown", event => {
-
-        setActiveCourt(index);
-
-        if(isPencilActive || !activeTool) return;
-
-        if(event.target.closest(".object, .text-object")) return;
-
-        const rect = container.getBoundingClientRect();
-
-        const x =
-            ((event.clientX - rect.left) / rect.width) * 100 + "%";
-
-        const y =
-            ((event.clientY - rect.top) / rect.height) * 100 + "%";
-
-        saveUndoPoint();
-
-        createObject(activeTool, x, y);
-    });
-}
-
-/* Gestion des boutons de la palette. */
-document.querySelectorAll(".palette .tool[data-tool]").forEach(button => {
-    button.onclick = () => {
-        isPencilActive = false;
-        $("pencilToolBtn").classList.remove("active");
-
-        document.querySelectorAll(".palette .tool[data-tool]").forEach(b => {
-            b.classList.remove("active");
-        });
-
-        activeTool = button.dataset.tool;
-        button.classList.add("active");
-    };
-});
-
-setupCourtInteractions(0);
-
-/* =========================================================
-   7. UNDO / REDO
-========================================================= */
-
-/* Lit uniquement la partie dessinée de l'exercice. */
-function getEditorSnapshot(){
-    return JSON.stringify({
-        objects: readObjects(),
-        paths: JSON.parse(JSON.stringify(pathsByCourt[activeCourtIndex] || [])),
-        pathsByCourt: JSON.parse(JSON.stringify(pathsByCourt))
-    });
-}
-
-/* Enregistre un état avant une modification. */
-function saveUndoPoint(){
-    const state = getEditorSnapshot();
-
-    if(undoStack[undoStack.length - 1] === state) return;
-
-    undoStack.push(state);
-    if(undoStack.length > 50) undoStack.shift();
-
-    redoStack = [];
-}
-
-/* Restaure un état de dessin. */
-function restoreEditorSnapshot(snapshot){
-    const data = JSON.parse(snapshot);
-
-    getObjectLayer().innerHTML = "";
-    const layer = getPencilLayer();
-    if(layer) layer.innerHTML = "";
-    pathsByCourt[activeCourtIndex] = [];
-    pathsData = pathsByCourt[activeCourtIndex];
-    selected = null;
-
-    (data.objects || []).forEach(object => {
-        createObject(object.type, object.left, object.top, object);
-    });
-
-    (data.paths || []).forEach(pathData => {
-        addSavedPath(pathData);
-    });
-}
-
-/* Annuler. */
-function undo(){
-    if(!undoStack.length) return;
-
-    redoStack.push(getEditorSnapshot());
-    restoreEditorSnapshot(undoStack.pop());
-}
-
-/* Rétablir. */
-function redo(){
-    if(!redoStack.length) return;
-
-    undoStack.push(getEditorSnapshot());
-    restoreEditorSnapshot(redoStack.pop());
-}
-
-
-/* Raccourcis clavier. */
-document.addEventListener("keydown", event => {
-    const typing = ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName);
-
-    if(event.key === "Delete" && selected && !typing){
-        deleteSelected();
-    }
-
-    if((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z" && !typing){
-        event.preventDefault();
-        undo();
-    }
-
-    if((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "y" && !typing){
-        event.preventDefault();
-        redo();
-    }
-});
-
-/* =========================================================
-   8. CHARGEMENT / SAUVEGARDE DES EXERCICES
-========================================================= */
-
-/* Transforme les objets HTML en données JSON. */
-function readObjects(){
-    return Array.from(getObjectLayer().children).map(element => ({
-        id: element.dataset.id,
-        type: element.dataset.type,
-        left: element.style.left,
-        top: element.style.top,
-        width: element.style.width,
-        height: element.style.height,
-        rotation: element.dataset.rotation || 0,
-        text: element.classList.contains("text-object")
-            ? element.textContent
-            : element.textContent || ""
-    }));
-}
-
-/* Transforme l'exercice actuellement affiché en objet JavaScript. */
-function readCurrentExercise(){
-    return {
-        id: currentId || uid(),
-        title: $("exerciseTitle").value || "Sans titre",
-        category: $("exerciseCategory").value,
-        duration: $("exerciseDuration").value || "15",
-        setup: $("setup").value,
-        instructions: $("instructions").value,
-        variant: $("variant").value,
-        objectives: $("objectives").value,
-        objects: readObjects(),
-        paths: JSON.parse(JSON.stringify(pathsByCourt[activeCourtIndex] || [])),
-        pathsByCourt: JSON.parse(JSON.stringify(pathsByCourt))
-    };
-}
-
-/* Ajoute un trait sauvegardé au terrain. */
-function addSavedPath(pathData){
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-
-    path.dataset.pathId = pathData.id || uid();
-    path.setAttribute("fill", "none");
-    path.setAttribute("stroke", pathData.color || "#222");
-    path.setAttribute("stroke-width", pathData.width || 0.08);
-    path.setAttribute("stroke-linecap", "round");
-    path.setAttribute("stroke-linejoin", "round");
-    path.setAttribute("d", pathData.d || "");
-    path.style.pointerEvents = "stroke";
-
-    path.addEventListener("pointerdown", event => {
-        event.stopPropagation();
-        selectObject(path);
-    });
-
-    getPencilLayer().appendChild(path);
-    pathsData.push({
-        id: path.dataset.pathId,
-        d: path.getAttribute("d"),
-        color: pathData.color || "#222",
-        width: parseFloat(pathData.width) || 0.08
-    });
-}
-
-/* Ouvre un exercice existant. */
-function loadExercise(exercise){
-    currentId = exercise.id;
-
-    $("exerciseTitle").value = exercise.title || "";
-    $("exerciseCategory").value = exercise.category || "Attaque";
-    $("exerciseDuration").value = exercise.duration || "15";
-    $("setup").value = exercise.setup || "";
-    $("instructions").value = exercise.instructions || "";
-    $("variant").value = exercise.variant || "";
-    $("objectives").value = exercise.objectives || "";
-
-    getObjectLayer().innerHTML = "";
-    getPencilLayer().innerHTML = "";
-    pathsByCourt[activeCourtIndex] = [];
-    pathsData = pathsByCourt[activeCourtIndex];
-    selected = null;
-
-    (exercise.objects || []).forEach(object => {
-        createObject(object.type, object.left, object.top, object);
-    });
-
-    const savedPaths = exercise.pathsByCourt
-        ? (exercise.pathsByCourt[activeCourtIndex] || [])
-        : (exercise.paths || []);
-
-    (savedPaths || []).forEach(path => {
-        addSavedPath(path);
-    });
-
-    undoStack = [];
-    redoStack = [];
-
-    renderSidebar();
-}
-
-/* Crée un exercice vide. */
-function resetFormToBlank(){
-    currentId = null;
-    activeTool = null;
-    isPencilActive = false;
-    selected = null;
-
-    getObjectLayer().innerHTML = "";
-    getPencilLayer().innerHTML = "";
-    pathsByCourt[activeCourtIndex] = [];
-    pathsData = pathsByCourt[activeCourtIndex];
-    undoStack = [];
-    redoStack = [];
-
-    $("exerciseTitle").value = "";
-    $("exerciseCategory").value = "Attaque";
-    $("exerciseDuration").value = "15";
-    $("setup").value = "";
-    $("instructions").value = "";
-    $("variant").value = "";
-    $("objectives").value = "";
-
-    document.querySelectorAll(".palette .tool[data-tool]").forEach(button => {
-        button.classList.remove("active");
-    });
-    $("pencilToolBtn").classList.remove("active");
-
-    renderSidebar();
-}
-
-/* Sauvegarde l'exercice actuel. */
-async function saveCurrentExercise(){
-    const data = readCurrentExercise();
-
-    const index = exercises.findIndex(exercise => exercise.id === data.id);
-
-    if(index >= 0){
-        exercises[index] = data;
-    }else{
-        exercises.push(data);
-        currentId = data.id;
-    }
-
-    saveStorage();
-
-  
-
-}
-
-$("newExercise").onclick = resetFormToBlank;
-$("saveExercise").onclick = saveCurrentExercise;
-$("undo").onclick = undo;
-$("redo").onclick = redo;
-$("clearAll").onclick = clearAll;
-$("addCourtButton").onclick = addSecondCourt;
-
-/* =========================================================
-   9. IMPORT / EXPORT JSON
-========================================================= */
-
-function exportExercises(){
-    const blob = new Blob(
-        [JSON.stringify(exercises, null, 2)],
-        { type:"application/json" }
-    );
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = `handcoach_exercices_${Date.now()}.json`;
-    link.click();
-
-    URL.revokeObjectURL(url);
-}
-
-/* Boutons ajoutés dynamiquement sous la zone de travail. */
-
-
-
-// Champ fichier caché pour l'import
-const importFileInput = document.createElement("input");
-importFileInput.type = "file";
-importFileInput.accept = ".json";
-importFileInput.id = "importFile";
-importFileInput.hidden = true;
-document.body.appendChild(importFileInput);
-
-$("exportButton").onclick = exportExercises;
-$("importButton").onclick = () => $("importFile").click();
-
-$("importFile").onchange = event => {
-    const file = event.target.files[0];
-    if(!file) return;
-
-    const reader = new FileReader();
-    reader.onload = loadEvent => {
-        try{
-            const imported = JSON.parse(loadEvent.target.result);
-            if(!Array.isArray(imported)){
-                throw new Error("Le fichier ne contient pas une liste d'exercices.");
-            }
-            exercises = mergeById(exercises, imported);
-            saveStorage();
-            alert("Exercices importés avec succès !");
-        }catch(error){
-            alert("Fichier JSON invalide.\n\n" + error.message);
-        }
-    };
-    reader.readAsText(file);
-    event.target.value = "";
-};
-
-/* =========================================================
-   10. GESTION DES SÉANCES
-========================================================= */
-
-$("sessionButton").onclick = () => {
-    $("sessionName").value = "";
-    $("sessionCategory").value = "";
-    $("sessionModal").classList.add("visible");
-};
-
-$("closeSessionBtn").onclick = () => {
-    $("sessionModal").classList.remove("visible");
-};
-
-$("saveSessionBtn").onclick = async () => {
-    const name = $("sessionName").value.trim() || "Nouvelle Séance";
-    const category = $("sessionCategory").value.trim() || "Général";
-
-    sessions.push({
-        id: uid(),
-        name,
-        category,
-        date: new Date().toLocaleDateString("fr-FR"),
-        items: []
-    });
-
-    saveStorage();
-
-
-    
-
-    $("sessionModal").classList.remove("visible");
-};
-
-/* =========================================================
-   11. IMPRESSION PDF
-========================================================= */
-
-function printExercise(){
-    $("printTitle").textContent = $("exerciseTitle").value || "Exercice sans titre";
-    $("printMeta").textContent =
-        `Catégorie : ${$("exerciseCategory").value} | Durée : ${$("exerciseDuration").value} min`;
-
-    window.print();
-}
-
-$("printButton").onclick = printExercise;
-
-/* Impression complète d'une séance. */
-function printSession(sessionId){
-    const session = sessions.find(item => item.id === sessionId);
-    if(!session) return;
-
-    const container = $("sessionPrintContainer");
-    const totalDuration = (session.items || []).reduce(
-        (total, item) => total + (parseInt(item.duration) || 0),
-        0
-    );
-
-    container.innerHTML = `
-        <div style="border-bottom:3px solid #17202a; padding-bottom:8px; margin-bottom:20px;">
-            <h1 style="margin:0; font-size:26px;">Séance : ${session.name}</h1>
-            <p style="margin:5px 0 0 0; font-size:14px; color:#475569;">
-                Thème : <strong>${session.category || "Général"}</strong> |
-                Date : <strong>${session.date || ""}</strong> |
-                Durée : <strong>${totalDuration} min</strong> |
-                Exercices : <strong>${(session.items || []).length}</strong>
-            </p>
-        </div>
-    `;
-
-    (session.items || []).forEach((item, index) => {
-        const exercise = exercises.find(ex => ex.id === item.exerciseId);
-        if(!exercise) return;
-
-        const page = document.createElement("div");
-        page.className = "session-print-page";
-
-        const pathsSvg = (exercise.paths || []).map(path => `
-            <path
-                fill="none"
-                stroke="${path.color || "#222"}"
-                stroke-width="${path.width || 0.08}"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="${path.d || ""}"
-            />
-        `).join("");
-
-        const objectsHtml = (exercise.objects || []).map(object => {
-            if(object.type === "text"){
-                return `
-                    <div class="text-object"
-                         style="left:${object.left}; top:${object.top}; position:absolute; transform:translate(-50%,-50%);">
-                        ${object.text || ""}
-                    </div>
-                `;
-            }
-
-            const classType =
-                object.type === "player-purple"
-                    ? "player player-purple"
-                : object.type === "player-orange"
-                    ? "player player-orange"
-                : object.type;
-
-            const content = object.type === "ball" ? "⚽" : (object.text || "");
-
-            return `
-                <div class="object ${classType}"
-                     style="left:${object.left}; top:${object.top}; width:${object.width || ""}; height:${object.height || ""}; position:absolute; transform:translate(-50%,-50%);">
-                    ${content}
-                </div>
-            `;
-        }).join("");
-
-        page.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #287fe8; padding-bottom:4px; margin-bottom:12px;">
-                <h2 style="margin:0; font-size:20px;">Ex ${index + 1} : ${exercise.title}</h2>
-                <span style="font-weight:bold; font-size:13px; background:#f1f5f9; border:1px solid #cbd5e1; padding:4px 8px; border-radius:4px;">
-                    ⏱️ ${item.duration} min | ${exercise.category}
-                </span>
-            </div>
-
-            <div style="display:grid; grid-template-columns:1fr 280px; gap:15px;">
-                <div style="height:330px; position:relative; border:2px solid #000; background:#fafafa; border-radius:6px; overflow:hidden;">
-                    <svg viewBox="0 0 40 20" preserveAspectRatio="none" style="width:100%;height:100%;">
-                        <rect x="0" y="0" width="40" height="20" fill="#e5b66d"/>
-                        <rect x="0" y="0" width="40" height="20" fill="none" stroke="#fff" stroke-width="0.12"/>
-                        <path d="M20 0V20" fill="none" stroke="#fff" stroke-width="0.15"/>
-                        <circle cx="20" cy="10" r="1.8" fill="none" stroke="#fff" stroke-width="0.11"/>
-                        <path d="M0 8.5V11.5M40 8.5V11.5" fill="none" stroke="#fff" stroke-width="0.15"/>
-                        <path d="M0 4 A6 6 0 0 1 6 10 A6 6 0 0 1 0 16 M40 4 A6 6 0 0 0 34 10 A6 6 0 0 0 40 16" fill="none" stroke="#fff" stroke-width="0.15"/>
-                        <path d="M0 1 A9 9 0 0 1 9 10 A9 9 0 0 1 0 19 M40 1 A9 9 0 0 0 31 10 A9 9 0 0 0 40 19" fill="none" stroke="#fff" stroke-width="0.11" stroke-dasharray="0.28 0.28"/>
-                        <path d="M7 9.5V10.5M33 9.5V10.5M4 9.8V10.2M36 9.8V10.2" fill="none" stroke="#fff" stroke-width="0.15"/>
-                        ${pathsSvg}
-                    </svg>
-                    <div style="position:absolute; inset:0; pointer-events:none;">
-                        ${objectsHtml}
-                    </div>
-                </div>
-
-                <div style="font-size:11px; display:flex; flex-direction:column; gap:8px;">
-                    ${printInfoBlock("Mise en place", exercise.setup)}
-                    ${printInfoBlock("Consignes", exercise.instructions)}
-                    ${printInfoBlock("Variantes", exercise.variant)}
-                    ${printInfoBlock("Objectifs", exercise.objectives)}
-                </div>
-            </div>
-        `;
-
-        container.appendChild(page);
-    });
-
-    document.body.classList.add("printing-session");
-    window.print();
-    document.body.classList.remove("printing-session");
-}
-
-function printInfoBlock(title, text){
-    return `
-        <div style="border:1px solid #ccc; padding:5px; border-radius:4px; min-height:40px;">
-            <strong style="text-transform:uppercase; color:#475569;">${title}</strong>
-            <div style="white-space:pre-wrap; margin-top:2px;">${text || "—"}</div>
-        </div>
-    `;
-}
-
-/* =========================================================
-   12. ARBORESCENCE / MENU LATÉRAL
-========================================================= */
-
-function renderSidebar(){
-    // === Sauvegarde de l'état ouvert ===
-    const openStates = {
-        exercises: {},
-        sessions: {}
-    };
-
-    // Catégories d'exercices ouvertes
-    document.querySelectorAll("#exercisesTree > details.tree-group").forEach(details => {
-        const title = details.querySelector("summary")?.textContent?.split(" (")[0];
-        if(title) openStates.exercises[title] = details.open;
-    });
-
-    // Séances ouvertes : on mémorise les IDs, pas les noms.
-    document.querySelectorAll("#sessionsTree > details.tree-group").forEach(details => {
-        if(details.dataset.category) {
-            openStates.sessions[`category:${details.dataset.category}`] = details.open;
-        }
-    });
-
-    document.querySelectorAll("#sessionsTree details.session-library-group").forEach(details => {
-        if(details.dataset.sessionId) {
-            openStates.sessions[`session:${details.dataset.sessionId}`] = details.open;
-        }
-    });
-
-    // === Rendu normal ===
-    const exerciseContainer = $("exercisesTree");
-    exerciseContainer.innerHTML = "";
-
-    const categories = [
-        "Attaque", "Défense", "Échauffement", "Montée de balle",
-        "Jeu à thème", "Gardien", "Physique"
-    ];
-
-    categories.forEach(category => {
-        const categoryExercises = exercises.filter(ex => ex.category === category);
-
-        const details = document.createElement("details");
-        details.className = "tree-group";
-        // Restaure l'état ouvert
-        details.open = openStates.exercises[category] === true; // ouvert par défaut si pas d'info
-
-        const summary = document.createElement("summary");
-        summary.className = "tree-summary";
-        summary.textContent = `${category} (${categoryExercises.length})`;
-        details.appendChild(summary);
-
-        const content = document.createElement("div");
-        content.className = "tree-content";
-
-        categoryExercises.forEach(exercise => {
-            const item = document.createElement("div");
-            item.className = "tree-item" + (exercise.id === currentId ? " active" : "");
-            item.draggable = true;
-
-            item.innerHTML = `
-                <span>📄 ${exercise.title || "Sans titre"}
-                    <small>(${exercise.duration || 15}m)</small>
-                </span>
-            `;
-
-            item.ondragstart = event => {
-                draggedExerciseId = exercise.id;
-                event.dataTransfer.effectAllowed = "copy";
-                event.dataTransfer.setData("text/plain", exercise.id);
-            };
-
-            item.ondragend = () => {
-                draggedExerciseId = null;
-            };
-
-           const shareButton = document.createElement("button");
-shareButton.className = "del-btn";
-shareButton.textContent = "🤝";
-shareButton.title = "Partager l'exercice";
-
-shareButton.onclick = event => {
-    event.stopPropagation();
-    openShareExerciseModal(exercise);
-};
-
-
-const deleteButton = document.createElement("button");
-deleteButton.className = "del-btn";
-deleteButton.textContent = "✕";
-deleteButton.title = "Supprimer l'exercice";
-
-deleteButton.onclick = event => {
-    event.stopPropagation();
-
-    if(confirm(`Supprimer l'exercice "${exercise.title}" ?`)){
-        exercises = exercises.filter(ex => ex.id !== exercise.id);
-
-        if(currentId === exercise.id) {
-            resetFormToBlank();
-        }
-
-        saveStorage();
-    }
-};
-
-if (exercise.team_id) {
-    const unshareBtn = document.createElement("button");
-    unshareBtn.className = "del-btn";
-    unshareBtn.textContent = "🔗";
-    unshareBtn.title = "Retirer le partage";
-    unshareBtn.onclick = event => {
-        event.stopPropagation();
-        unshareExercise(exercise);
-    };
-    item.appendChild(unshareBtn);
-}
-
-
-item.appendChild(shareButton);
-item.appendChild(deleteButton);
-            item.onclick = () => loadExercise(exercise);
-            content.appendChild(item);
-        });
-
-        details.appendChild(content);
-        exerciseContainer.appendChild(details);
-    });
-
-    renderSessionsTree(openStates.sessions);
-}
-
-  function renderSessionsTree(savedOpenStates = {}){
-    const sessionContainer = $("sessionsTree");
-    sessionContainer.innerHTML = "";
-
-    const sessionCategories = [...new Set(
-        sessions.map(session => session.category || "Général")
-    )];
-
-    sessionCategories.forEach(category => {
-        const categorySessions = sessions.filter(
-            session => (session.category || "Général") === category
-        );
-
-        const details = document.createElement("details");
-        details.className = "tree-group";
-        details.dataset.category = category;
-        details.open = savedOpenStates[`category:${category}`] === true;
-
-        const summary = document.createElement("summary");
-        summary.className = "tree-summary";
-        summary.textContent = `${category} (${categorySessions.length})`;
-        details.appendChild(summary);
-
-        const content = document.createElement("div");
-        content.className = "tree-content";
-
-        categorySessions.forEach(session => {
-            const sessionDetails = document.createElement("details");
-            sessionDetails.className = "tree-group session-library-group";
-            sessionDetails.dataset.sessionId = session.id;
-            sessionDetails.style.margin = "4px 0";
-
-            // On garde exactement l'état ouvert/fermé de cette séance.
-            sessionDetails.open = savedOpenStates[`session:${session.id}`] === true;
-
-            const sessionSummary = document.createElement("summary");
-            sessionSummary.className = "tree-summary";
-            sessionSummary.style.background = "#edf6ff";
-
-            const totalDuration = (session.items || []).reduce(
-                (total, item) => total + (parseInt(item.duration) || 0), 0
-            );
-
-            sessionSummary.innerHTML = `
-                <span>📋 ${session.name}
-                    <small style="color:#64748b; font-weight:normal;">(${totalDuration}m)</small>
-                </span>
-            `;
-
-	    sessionSummary.addEventListener("dblclick", event => {
-    		             event.preventDefault();
-    			  event.stopPropagation();
-
-  			    const nouveauNom = prompt("Nouveau nom de la séance :", session.name || "");
-  			    if(nouveauNom === null) return;
-
-  			    const nom = nouveauNom.trim();
- 			    if(!nom){
-  		        alert("Le nom ne peut pas être vide.");
-    		           return;
-	      }
-
-   			   session.name = nom;
-    			   saveStorage();
-	   });
-
-            const actions = document.createElement("div");
-            actions.className = "tree-actions";
-
-            const printButton = document.createElement("button");
-            printButton.textContent = "🖨️";
-            printButton.title = "Imprimer la séance";
-            printButton.onclick = event => {
-                event.stopPropagation();
-                printSession(session.id);
-            };
-
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "✕";
-            deleteButton.style.color = "#a33";
-            deleteButton.title = "Supprimer la séance";
-            deleteButton.onclick = event => {
-                event.stopPropagation();
-                if(confirm("Supprimer cette séance ?")){
-                    sessions = sessions.filter(item => item.id !== session.id);
-                    saveStorage();
-                }
-            };
-
-const shareSessionButton = document.createElement("button");
-shareSessionButton.textContent = "🤝";
-shareSessionButton.title = "Partager la séance";
-shareSessionButton.onclick = event => {
-    event.stopPropagation();
-    openShareSessionModal(session);
-};
-
-actions.appendChild(printButton);
-actions.appendChild(shareSessionButton);
-actions.appendChild(deleteButton);
-            sessionSummary.appendChild(actions);
-            sessionDetails.appendChild(sessionSummary);
-
-            const sessionContent = document.createElement("div");
-            sessionContent.className = "tree-content session-drop-target";
-
-if (session.team_id) {
-    const unshareSessionBtn = document.createElement("button");
-    unshareSessionBtn.textContent = "🔗";
-    unshareSessionBtn.title = "Retirer le partage (séance + exercices)";
-    unshareSessionBtn.onclick = event => {
-        event.stopPropagation();
-        unshareSession(session);
-    };
-    actions.appendChild(unshareSessionBtn);
-}
-
-            /* =====================================================
-               AJOUT D'UN EXERCICE DANS UNE SÉANCE
-               Le dépôt est volontairement attaché à TOUTE la séance
-               (nom + contenu), et pas seulement à la zone intérieure.
-               Ainsi ça fonctionne même si la séance est fermée.
-            ===================================================== */
-            const dropExerciseIntoSession = event => {
-                event.preventDefault();
-                event.stopPropagation();
-
-                const exerciseId = (
-                    event.dataTransfer ? event.dataTransfer.getData("text/plain") : ""
-                ) || draggedExerciseId || "";
-
-                if(!exerciseId) return;
-
-                const exercise = exercises.find(ex => ex.id === exerciseId);
-                if(!exercise) return;
-
-                if(!Array.isArray(session.items)) session.items = [];
-
-                session.items.push({
-                    exerciseId: exercise.id,
-                    duration: exercise.duration || "15"
-                });
-
-                saveStorage();
-
-            };
-
-            const startSessionDrop = event => {
-                event.preventDefault();
-                if(event.dataTransfer){
-                    event.dataTransfer.dropEffect = "copy";
-                }
-                sessionDetails.classList.add("drag-over");
-            };
-
-            const leaveSessionDrop = event => {
-                if(!sessionDetails.contains(event.relatedTarget)){
-                    sessionDetails.classList.remove("drag-over");
-                }
-            };
-
-            /* Toute la séance accepte un exercice déposé. */
-            sessionDetails.addEventListener("dragenter", startSessionDrop);
-            sessionDetails.addEventListener("dragover", startSessionDrop);
-            sessionDetails.addEventListener("dragleave", leaveSessionDrop);
-            sessionDetails.addEventListener("drop", event => {
-                sessionDetails.classList.remove("drag-over");
-                dropExerciseIntoSession(event);
-            });
-
-            /* La zone intérieure garde aussi son indication visuelle. */
-            sessionContent.addEventListener("dragover", startSessionDrop);
-            sessionContent.addEventListener("dragleave", leaveSessionDrop);
-
-            /* Empêche le clic sur le résumé de simplement ouvrir/fermer
-               au moment où le navigateur termine un glisser-déposer. */
-            sessionSummary.addEventListener("drop", event => {
-                sessionDetails.classList.remove("drag-over");
-                dropExerciseIntoSession(event);
-            });
-
-            (session.items || []).forEach((item, itemIndex) => {
-                const exercise = exercises.find(ex => ex.id === item.exerciseId);
-                if(!exercise) return;
-
-                const subItem = document.createElement("div");
-                subItem.className = "tree-item sub-tree-item" +
-                    (exercise.id === currentId ? " active" : "");
-                subItem.dataset.sessionId = session.id;
-                subItem.dataset.itemIndex = String(itemIndex);
-                subItem.classList.add("session-sortable-row");
-
-                subItem.innerHTML = `
-                    <span>↕ &nbsp;📄 ${exercise.title}
-                        <small>(${item.duration} min)</small>
-                    </span>
-                    <button class="session-remove-btn" title="Retirer cet exercice de la séance">✕</button>
-                `;
-
-                const removeFromSessionButton = subItem.querySelector(".session-remove-btn");
-                removeFromSessionButton.addEventListener("pointerdown", event => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                });
-
-                removeFromSessionButton.onclick = event => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    if(!Array.isArray(session.items)) return;
-
-                    session.items.splice(itemIndex, 1);
-                    saveStorage();
-
-                 
-                };
-
-                // === Drag & drop (le code que tu avais déjà) ===
-                subItem.addEventListener("pointerdown", event => {
-                    if(event.button !== 0) return;
-                    sessionSortState = {
-                        sessionId: session.id,
-                        fromIndex: itemIndex,
-                        sourceEl: subItem,
-                        startY: event.clientY,
-                        pointerId: event.pointerId,
-                        dragging: false
-                    };
-                    try{ subItem.setPointerCapture(event.pointerId); }catch(e){}
-                });
-
-                subItem.addEventListener("pointermove", event => {
-                    const state = sessionSortState;
-                    if(!state || state.sourceEl !== subItem) return;
-
-                    if(!state.dragging){
-                        if(Math.abs(event.clientY - state.startY) < 5) return;
-                        state.dragging = true;
-                        subItem.classList.add("session-sort-dragging");
-                    }
-
-                    event.preventDefault();
-
-                    const rows = Array.from(
-                        sessionContent.querySelectorAll(".session-sortable-row")
-                    );
-                    rows.forEach(row => row.classList.remove(
-                        "session-sort-before","session-sort-after"
-                    ));
-
-                    for(const row of rows){
-                        if(row === subItem) continue;
-                        const rect = row.getBoundingClientRect();
-                        if(event.clientY >= rect.top && event.clientY <= rect.bottom){
-                            row.classList.add(
-                                event.clientY < rect.top + rect.height/2
-                                    ? "session-sort-before"
-                                    : "session-sort-after"
-                            );
-                            break;
-                        }
-                    }
-                });
-
-                const finishDrag = event => {
-                    const state = sessionSortState;
-                    if(!state || state.sourceEl !== subItem) return;
-
-                    if(!state.dragging){
-                        sessionSortState = null;
-                        return;
-                    }
-
-                    event.preventDefault();
-                    sessionSuppressClickUntil = Date.now() + 400;
-
-                    const rows = Array.from(
-                        sessionContent.querySelectorAll(".session-sortable-row")
-                    );
-                    rows.forEach(row => row.classList.remove(
-                        "session-sort-before","session-sort-after","session-sort-dragging"
-                    ));
-
-                    let target = null;
-                    for(const row of rows){
-                        if(row === subItem) continue;
-                        const rect = row.getBoundingClientRect();
-                        if(event.clientY >= rect.top && event.clientY <= rect.bottom){
-                            target = row;
-                            break;
-                        }
-                    }
-
-                    if(target){
-                        const targetIndex = parseInt(target.dataset.itemIndex, 10);
-                        const rect = target.getBoundingClientRect();
-                        let toIndex = event.clientY > rect.top + rect.height/2
-                            ? targetIndex + 1
-                            : targetIndex;
-
-                        if(state.fromIndex < toIndex) toIndex--;
-
-                        if(state.fromIndex !== toIndex){
-                            const moved = session.items.splice(state.fromIndex, 1)[0];
-                            session.items.splice(toIndex, 0, moved);
-                            saveStorage(); // ← ici le rendu se relance, mais on a sauvegardé l'état ouvert
-                        }
-                    }
-
-                    sessionSortState = null;
-                };
-
-                subItem.addEventListener("pointerup", finishDrag);
-                subItem.addEventListener("pointercancel", () => {
-                    if(sessionSortState && sessionSortState.sourceEl === subItem){
-                        subItem.classList.remove(
-                            "session-sort-dragging","session-sort-before","session-sort-after"
-                        );
-                        sessionSortState = null;
-                    }
-                });
-
-                subItem.onclick = event => {
-                    event.stopPropagation();
-                    if(Date.now() < sessionSuppressClickUntil){
-                        event.preventDefault();
-                        return;
-                    }
-                    loadExercise(exercise);
-                };
-
-                sessionContent.appendChild(subItem);
-            });
-
-            sessionDetails.appendChild(sessionContent);
-            content.appendChild(sessionDetails);
-        });
-
-        details.appendChild(content);
-        sessionContainer.appendChild(details);
-    });
-}
-
-/* =========================================================
-   INITIALISATION
-========================================================= */
-
-/* Si une ancienne version n'a pas encore été migrée, on copie ses données. */
-if(localStorage.getItem(EXERCISES_KEY) === null && exercises.length){
-    localStorage.setItem(EXERCISES_KEY, JSON.stringify(exercises));
-}
-
-if(localStorage.getItem(SESSIONS_KEY) === null && sessions.length){
-    localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
-}
-
-exercises = [];
-sessions = [];
-renderSidebar();
-if (typeof updateSaveStatus === 'function') updateSaveStatus();
-
-</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
+/* =========================================================
+   CONFIG — mêmes clés que la version PC
+========================================================= */
+const SUPABASE_URL = 'https://yosujqdjffuyibddquxq.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_jl0cfFR4jbQpnbxvAAbubA_Bcg-Jmx8';
+const REDIRECT_URL = 'https://mytechadmin.github.io/handball-mobile/';
 
+/* Mode lecture seule pour l'instant.
+   Plus tard : passer à true pour activer l'édition. */
+const EDIT_MODE = false;
 
-// =========================================================
-// PARTAGE D'UN EXERCICE
-// =========================================================
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let exerciseToShare = null;
+let currentUser = null;
+let exercises = [];
+let sessions = [];
+let fromSessionId = null; // pour le bouton retour depuis un exo ouvert via une séance
 
-
-async function openShareExerciseModal(exercise) {
-
-    if (!currentUser) {
-        showToast('❌ Connectez-vous d’abord');
-        return;
-    }
-
-    const modal = document.getElementById('shareExerciseModal');
-    const name = document.getElementById('shareExerciseName');
-    const select = document.getElementById('shareTeamSelect');
-
-    if (!modal || !name || !select) {
-        console.error('❌ Modal de partage introuvable');
-        return;
-    }
-
-    exerciseToShare = exercise;
-
-    name.textContent =
-        'Exercice : ' + (exercise.title || 'Sans titre');
-
-    select.innerHTML = '<option value="">Chargement...</option>';
-
-    modal.style.display = 'flex';
-
-    try {
-
-        const { data, error } = await sb
-            .from('teams')
-            .select('id, name, owner_id')
-            .eq('owner_id', currentUser.id)
-            .order('created_at', {
-                ascending: true
-            });
-
-        if (error) throw error;
-
-        if (!data || data.length === 0) {
-
-            select.innerHTML =
-                '<option value="">Aucune bibliothèque disponible</option>';
-
-            return;
-        }
-
-        select.innerHTML = `
-            <option value="">
-                Sélectionner une bibliothèque...
-            </option>
-        `;
-
-        data.forEach(team => {
-
-            const option = document.createElement('option');
-
-            option.value = team.id;
-            option.textContent = team.name;
-
-            select.appendChild(option);
-
-        });
-
-    } catch (err) {
-
-        console.error(
-            'Erreur chargement bibliothèques :',
-            err
-        );
-
-        select.innerHTML =
-            '<option value="">Erreur de chargement</option>';
-
-        showToast(
-            '❌ ' + err.message
-        );
-    }
+/* =========================================================
+   UI HELPERS
+========================================================= */
+function showToast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => el.classList.remove('show'), 2800);
 }
 
-
-function closeShareExerciseModal() {
-
-    const modal =
-        document.getElementById('shareExerciseModal');
-
-    if (modal) {
-        modal.style.display = 'none';
-    }
-
-    exerciseToShare = null;
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-' + name);
+  if(el) el.classList.add('active');
 }
 
-
-async function confirmShareExercise() {
-
-    if (!currentUser) {
-        showToast('❌ Connectez-vous d’abord');
-        return;
-    }
-
-    if (!exerciseToShare) {
-        showToast('❌ Aucun exercice sélectionné');
-        return;
-    }
-
-    const select =
-        document.getElementById('shareTeamSelect');
-
-    const teamId = select?.value;
-
-    if (!teamId) {
-        showToast(
-            '⚠️ Sélectionnez une bibliothèque'
-        );
-        return;
-    }
-
-    try {
-
-        const { data, error } = await sb.rpc(
-            'share_exercise_with_team',
-            {
-                p_exercise_id: exerciseToShare.id,
-                p_team_id: teamId
-            }
-        );
-
-        if (error) throw error;
-
-        console.log(
-            '✅ Exercice partagé :',
-            exerciseToShare.id,
-            '→',
-            teamId
-        );
-
-        showToast(
-            '🤝 Exercice partagé avec la bibliothèque'
-        );
-
-        closeShareExerciseModal();
-
-        await loadFromSupabase();
-
-    } catch (err) {
-
-        console.error(
-            'Erreur partage exercice :',
-            err
-        );
-
-        showToast(
-            '❌ ' + err.message
-        );
-    }
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+  document.getElementById('listSessions').style.display = tab === 'sessions' ? 'block' : 'none';
+  document.getElementById('listExercises').style.display = tab === 'exercises' ? 'block' : 'none';
 }
 
-
-
-// =========================================================
-// PARTAGE D'UNE SÉANCE
-// =========================================================
-
-let sessionToShare = null;
-
-async function openShareSessionModal(session) {
-    if (!currentUser) {
-        showToast('❌ Connectez-vous d’abord');
-        return;
-    }
-
-    const modal = document.getElementById('shareSessionModal');
-    const name = document.getElementById('shareSessionName');
-    const select = document.getElementById('shareSessionTeamSelect');
-
-    if (!modal || !name || !select) {
-        console.error('❌ Modal partage séance introuvable');
-        return;
-    }
-
-    sessionToShare = session;
-    name.textContent = 'Séance : ' + (session.name || 'Sans titre');
-    select.innerHTML = '<option value="">Chargement...</option>';
-    modal.style.display = 'flex';
-
-    try {
-        const { data, error } = await sb
-            .from('teams')
-            .select('id, name, owner_id')
-            .eq('owner_id', currentUser.id)
-            .order('created_at', { ascending: true });
-
-        if (error) throw error;
-
-        if (!data || data.length === 0) {
-            select.innerHTML = '<option value="">Aucune bibliothèque disponible</option>';
-            return;
-        }
-
-        select.innerHTML = '<option value="">Sélectionner une bibliothèque...</option>';
-
-        data.forEach(team => {
-            const option = document.createElement('option');
-            option.value = team.id;
-            option.textContent = team.name;
-            select.appendChild(option);
-        });
-    } catch (err) {
-        console.error(err);
-        select.innerHTML = '<option value="">Erreur de chargement</option>';
-        showToast('❌ ' + err.message);
-    }
+function escapeHtml(str){
+  return String(str ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
 }
 
-function closeShareSessionModal() {
-    const modal = document.getElementById('shareSessionModal');
-    if (modal) modal.style.display = 'none';
-    sessionToShare = null;
-}
-
-async function confirmShareSession() {
-    if (!currentUser) {
-        showToast('❌ Connectez-vous d’abord');
-        return;
-    }
-    if (!sessionToShare) {
-        showToast('❌ Aucune séance sélectionnée');
-        return;
-    }
-
-    const select = document.getElementById('shareSessionTeamSelect');
-    const teamId = select?.value;
-
-    if (!teamId) {
-        showToast('⚠️ Sélectionnez une bibliothèque');
-        return;
-    }
-
-    try {
-    // 1. Partager la séance
-    const { error } = await sb.rpc('share_session_with_team', {
-        p_session_id: sessionToShare.id,
-        p_team_id: teamId
-    });
-    if (error) throw error;
-
-    // 2. Partager aussi les exercices de la séance
-    const exerciseIds = (sessionToShare.items || [])
-        .map(item => item.exerciseId)
-        .filter(Boolean);
-
-    const uniqueIds = [...new Set(exerciseIds)];
-
-    for (const exerciseId of uniqueIds) {
-        const { error: exError } = await sb.rpc('share_exercise_with_team', {
-            p_exercise_id: exerciseId,
-            p_team_id: teamId
-        });
-        // Si déjà partagé ou pas proprio, on ignore l'erreur
-        if (exError) {
-            console.warn('Exercice non partagé :', exerciseId, exError.message);
-        }
-    }
-
-    console.log('✅ Séance + exercices partagés :', sessionToShare.id, '→', teamId);
-    showToast('🤝 Séance et exercices partagés');
-    closeShareSessionModal();
-    await loadFromSupabase();
-
-} catch (err) {
-    console.error(err);
-    showToast('❌ ' + err.message);
-}
-
-
-}
-
-// =========================================================
-// RETRAIT DE PARTAGE
-// =========================================================
-
-async function unshareExercise(exercise) {
-    if (!currentUser) {
-        showToast('❌ Connectez-vous d’abord');
-        return;
-    }
-    if (!exercise?.id) return;
-
-    if (!confirm('Retirer le partage de cet exercice ?\nLes autres membres de la bibliothèque ne le verront plus.')) {
-        return;
-    }
-
-    try {
-        const { error } = await sb.rpc('unshare_exercise_from_team', {
-            p_exercise_id: exercise.id
-        });
-        if (error) throw error;
-
-        showToast('🔗 Partage exercice retiré');
-        await loadFromSupabase();
-    } catch (err) {
-        console.error(err);
-        showToast('❌ ' + err.message);
-    }
-}
-
-async function unshareSession(session) {
-    if (!currentUser) {
-        showToast('❌ Connectez-vous d’abord');
-        return;
-    }
-    if (!session?.id) return;
-
-    if (!confirm(
-        'Retirer le partage de cette séance ET de tous ses exercices ?\n' +
-        'Les autres membres ne les verront plus.'
-    )) {
-        return;
-    }
-
-    try {
-        // 1. Séance
-        const { error } = await sb.rpc('unshare_session_from_team', {
-            p_session_id: session.id
-        });
-        if (error) throw error;
-
-        // 2. Exercices de la séance
-        const exerciseIds = [...new Set(
-            (session.items || []).map(i => i.exerciseId).filter(Boolean)
-        )];
-
-        for (const exerciseId of exerciseIds) {
-            const { error: exError } = await sb.rpc('unshare_exercise_from_team', {
-                p_exercise_id: exerciseId
-            });
-            if (exError) {
-                console.warn('Exercice non retiré :', exerciseId, exError.message);
-            }
-        }
-
-        showToast('🔗 Partage séance + exercices retiré');
-        await loadFromSupabase();
-    } catch (err) {
-        console.error(err);
-        showToast('❌ ' + err.message);
-    }
-}
-
-  // =========================================================
-  // SUPABASE
-  // =========================================================
-
-  const SUPABASE_URL = 'https://yosujqdjffuyibddquxq.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_jl0cfFR4jbQpnbxvAAbubA_Bcg-Jmx8';
-
-  const sb = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-  let currentUser = null;
-
-
-  // =========================================================
-  // UTILISATEUR CONNECTÉ
-  // =========================================================
-
-  async function getCurrentUser() {
-
-    const { data, error } = await sb.auth.getUser();
-
-    if (error) {
-      console.error('Erreur utilisateur :', error);
-      return null;
-    }
-
-    return data.user || null;
-  }
-
-
-  // =========================================================
-  // CONNEXION
-  // =========================================================
-
-  async function loginUser() {
-
-    const email = document.getElementById('authEmail').value.trim();
-    const password = document.getElementById('authPassword').value;
-
-    if (!email || !password) {
-      showToast('⚠️ Email et mot de passe obligatoires');
-      return;
-    }
-
-    const { data, error } = await sb.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) {
-      console.error(error);
-      showToast('❌ ' + error.message);
-      return;
-    }
-
-    currentUser = data.user;
-
-    closeAuthModal();
-
-    showToast('✅ Connexion réussie');
-
-    await loadFromSupabase();
-  }
-
-
-async function resetPassword() {
-    const email = document.getElementById('authEmail')?.value.trim();
-
-    if (!email) {
-        showToast('⚠️ Entre ton email d’abord');
-        return;
-    }
-
-    // URL de ton app en ligne (pas file:// ni localhost)
-    const redirectTo = 'https://mytechadmin.github.io/handball-mobile/';
-
-    const { error } = await sb.auth.resetPasswordForEmail(email, {
-        redirectTo
-    });
-
-    if (error) {
-        console.error(error);
-        showToast('❌ ' + error.message);
-        return;
-    }
-
-    showToast('📧 Email de réinitialisation envoyé');
-    closeAuthModal();
-}
-
-  // =========================================================
-  // CREATION DE COMPTE
-  // =========================================================
-
-  async function registerUser() {
-
-    const email = document.getElementById('authEmail').value.trim();
-    const password = document.getElementById('authPassword').value;
-
-    if (!email || !password) {
-      showToast('⚠️ Email et mot de passe obligatoires');
-      return;
-    }
-
-    if (password.length < 6) {
-      showToast('⚠️ Minimum 6 caractères pour le mot de passe');
-      return;
-    }
-
-    const { data, error } = await sb.auth.signUp({
-      email,
-      password
-    });
-
-    if (error) {
-      console.error(error);
-      showToast('❌ ' + error.message);
-      return;
-    }
-
-    currentUser = data.user;
-
-    closeAuthModal();
-
-    showToast('✅ Compte créé');
-
-    await loadFromSupabase();
-  }
-
-
-  // =========================================================
-  // DECONNEXION
-  // =========================================================
-
-async function logoutUser() {
-
-    const { error } = await sb.auth.signOut();
-
-    if (error) {
-        console.error(error);
-        showToast('❌ Erreur de déconnexion');
-        return;
-    }
-
-    currentUser = null;
-
-    exercises = [];
-    sessions = [];
-
-    localStorage.setItem(
-        EXERCISES_KEY,
-        JSON.stringify([])
-    );
-
-    localStorage.setItem(
-        SESSIONS_KEY,
-        JSON.stringify([])
-    );
-
-    // Vider les champs de connexion
-   const passwordInput = document.getElementById('authPassword');
-
-if (passwordInput) {
-    passwordInput.value = '';
-}
-
-    renderSidebar();
-
-    updateAuthUI();
-
-    showToast('👋 Déconnexion réussie');
-}
-
-  // =========================================================
-  // INTERFACE AUTH
-  // =========================================================
-
-  function openAuthModal() {
-
-    const modal = document.getElementById('authModal');
-    const passwordInput = document.getElementById('authPassword');
-
-    if (passwordInput) {
-        passwordInput.value = '';
-    }
-
-    if (modal) {
-        modal.style.display = 'flex';
-    }
-}
-
-
-  function closeAuthModal() {
-
-    const modal = document.getElementById('authModal');
-
-    if (modal) {
-      modal.style.display = 'none';
-    }
-  }
-
-
-  function updateAuthUI() {
-
-    const authButton = document.getElementById('authButton');
-    const userInfo = document.getElementById('userInfo');
-
-    if (!authButton || !userInfo) return;
-
-    if (currentUser) {
-
-      authButton.textContent = '🚪 Déconnexion';
-      authButton.onclick = logoutUser;
-
-      userInfo.textContent = '👤 ' + currentUser.email;
-
-    } else {
-
-      authButton.textContent = '🔐 Connexion';
-      authButton.onclick = openAuthModal;
-
-      userInfo.textContent = '';
-    }
-  }
-
-
-  // =========================================================
-  // CHARGEMENT DEPUIS SUPABASE
-  // =========================================================
-
-async function loadFromSupabase() {
-  if (!currentUser) {
-    console.log('Aucun utilisateur connecté');
+/* =========================================================
+   AUTH
+========================================================= */
+async function login(){
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  if(!email || !password){
+    showToast('⚠️ Email et mot de passe requis');
     return;
   }
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if(error){
+    showToast('❌ ' + error.message);
+    return;
+  }
+  currentUser = data.user;
+  showToast('✅ Connecté');
+  await afterLogin();
+}
 
-  try {
-    // =====================================================
-    // 1. Récupération des bibliothèques de l'utilisateur
-    // =====================================================
+async function resetPassword(){
+  const email = document.getElementById('authEmail').value.trim();
+  if(!email){
+    showToast('⚠️ Entre ton email d’abord');
+    return;
+  }
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: REDIRECT_URL
+  });
+  if(error){
+    showToast('❌ ' + error.message);
+    return;
+  }
+  showToast('📧 Email de réinitialisation envoyé');
+}
 
-    const { data: teamData, error: teamError } = await sb
+async function logout(){
+  await sb.auth.signOut();
+  currentUser = null;
+  exercises = [];
+  sessions = [];
+  document.getElementById('userLabel').textContent = '';
+  showScreen('login');
+  showToast('👋 Déconnecté');
+}
+
+async function afterLogin(){
+  document.getElementById('userLabel').textContent = currentUser?.email || '';
+  showScreen('home');
+  switchTab('sessions');
+  await loadData();
+}
+
+/* =========================================================
+   DATA
+========================================================= */
+async function loadData(){
+  if(!currentUser) return;
+
+  document.getElementById('listSessions').innerHTML = '<div class="loading">Chargement…</div>';
+  document.getElementById('listExercises').innerHTML = '<div class="loading">Chargement…</div>';
+
+  try{
+    // Teams accessibles
+    const { data: memberRows } = await sb
+      .from('team_members')
+      .select('team_id')
+      .eq('user_id', currentUser.id);
+
+    const memberTeamIds = (memberRows || []).map(r => r.team_id);
+
+    const { data: ownedTeams } = await sb
       .from('teams')
-      .select('id, name, owner_id')
-      .or(
-        `owner_id.eq.${currentUser.id},id.in.(${
-          (
-            await sb
-              .from('team_members')
-              .select('team_id')
-              .eq('user_id', currentUser.id)
-          ).data?.map(tm => tm.team_id).join(',') || '00000000-0000-0000-0000-000000000000'
-        })`
-      );
+      .select('id')
+      .eq('owner_id', currentUser.id);
 
-    if (teamError) throw teamError;
+    const teamIds = [...new Set([
+      ...(ownedTeams || []).map(t => t.id),
+      ...memberTeamIds
+    ])];
 
-    const teams = teamData || [];
-    const teamIds = teams.map(team => team.id);
-
-    console.log('🤝 Bibliothèques accessibles :', teams);
-
-    // =====================================================
-    // 2. Exercices personnels + exercices partagés
-    // =====================================================
-
-    let exQuery = sb
-      .from('Exercices')
-      .select('*');
-
-    if (teamIds.length > 0) {
+    // Exercices
+    let exQuery = sb.from('Exercices').select('*');
+    if(teamIds.length){
       exQuery = exQuery.or(
         `user_id.eq.${currentUser.id},team_id.in.(${teamIds.join(',')})`
       );
     } else {
       exQuery = exQuery.eq('user_id', currentUser.id);
     }
-
     const { data: exData, error: exError } = await exQuery;
+    if(exError) throw exError;
 
-    if (exError) throw exError;
+    exercises = (exData || []).map(row => ({
+      id: row.id,
+      title: row.title,
+      category: row.category,
+      duration: row.duration,
+      ...(row.data || {}),
+      team_id: row.team_id || null
+    }));
 
-   exercises = (exData || []).map(row => ({
-  id: row.id,
-  title: row.title,
-  category: row.category,
-  duration: row.duration,
-  ...(row.data || {}),
-  team_id: row.team_id || null   // ← en dernier, gagne toujours
-}));
-
-    // =====================================================
-    // 3. Séances personnelles + séances partagées
-    // =====================================================
-
-    let seQuery = sb
-      .from('seances')
-      .select('*');
-
-    if (teamIds.length > 0) {
+    // Séances
+    let seQuery = sb.from('seances').select('*');
+    if(teamIds.length){
       seQuery = seQuery.or(
         `user_id.eq.${currentUser.id},team_id.in.(${teamIds.join(',')})`
       );
     } else {
       seQuery = seQuery.eq('user_id', currentUser.id);
     }
-
     const { data: seData, error: seError } = await seQuery;
-
-    if (seError) throw seError;
+    if(seError) throw seError;
 
     sessions = (seData || []).map(row => ({
       id: row.id,
@@ -3554,779 +388,270 @@ async function loadFromSupabase() {
       items: row.items || []
     }));
 
-    // =====================================================
-    // 4. Mise à jour du stockage local
-    // =====================================================
-
-    localStorage.setItem(
-      EXERCISES_KEY,
-      JSON.stringify(exercises)
-    );
-
-    localStorage.setItem(
-      SESSIONS_KEY,
-      JSON.stringify(sessions)
-    );
-
-    renderSidebar();
-
-    if (typeof updateSaveStatus === 'function') {
-      updateSaveStatus();
-    }
-
-    console.log(
-      '✅ Données chargées pour',
-      currentUser.email,
-      '| Bibliothèques :',
-      teams.length,
-      '| Exercices :',
-      exercises.length,
-      '| Séances :',
-      sessions.length
-    );
-
-  } catch (err) {
-    console.error('Erreur chargement Supabase :', err);
-    showToast('❌ Erreur de chargement : ' + err.message);
+    renderLists();
+  } catch(err){
+    console.error(err);
+    showToast('❌ ' + err.message);
+    document.getElementById('listSessions').innerHTML =
+      '<div class="empty">Erreur de chargement</div>';
   }
 }
 
-
-  // =========================================================
-  // SAUVEGARDE VERS SUPABASE
-  // =========================================================
-
-// =========================================================
-// SAUVEGARDE VERS SUPABASE
-// =========================================================
-
-async function saveToSupabase() {
-
-    if (!currentUser) {
-        throw new Error('Aucun utilisateur connecté');
-    }
-
-    try {
-
-        // -------------------------------------------------------
-        // EXERCICES
-        // -------------------------------------------------------
-
-        const exRows = [];
-
-        for (const ex of exercises) {
-
-            /*
-             * On récupère la ligne existante pour connaître
-             * son propriétaire et sa bibliothèque éventuelle.
-             *
-             * Cela évite de remplacer user_id par currentUser.id
-             * lorsqu'un exercice appartient à un autre coach.
-             */
-
-            const { data: existingExercise, error: existingError } =
-                await sb
-                    .from('Exercices')
-                    .select('id, user_id, team_id')
-                    .eq('id', ex.id)
-                    .maybeSingle();
-
-            if (existingError) {
-                throw existingError;
-            }
-
-            /*
-             * Nouvel exercice :
-             * le compte connecté devient propriétaire.
-             *
-             * Exercice existant :
-             * on conserve impérativement son propriétaire.
-             */
-
-            const ownerId =
-                existingExercise?.user_id || currentUser.id;
-
-
-            const row = {
-
-                id: ex.id,
-
-                user_id: ownerId,
-
-                title: ex.title || '',
-
-                category: ex.category || '',
-
-                duration: parseInt(ex.duration) || 15,
-
-                data: ex,
-
-                updated_at: new Date().toISOString()
-
-            };
-
-
-            /*
-             * On ne modifie jamais team_id ici.
-             *
-             * Si l'exercice est déjà partagé, sa bibliothèque
-             * reste celle enregistrée dans Supabase.
-             *
-             * Le changement de bibliothèque passe uniquement
-             * par share_exercise_with_team().
-             */
-
-            exRows.push(row);
-        }
-
-
-        if (exRows.length) {
-
-            const { error: exError } = await sb
-                .from('Exercices')
-                .upsert(
-                    exRows,
-                    { onConflict: 'id' }
-                );
-
-            if (exError) {
-                throw exError;
-            }
-        }
-
-
-        // -------------------------------------------------------
-        // SEANCES
-        // -------------------------------------------------------
-
-        const seRows = sessions.map(se => ({
-
-            id: se.id,
-
-            user_id: currentUser.id,
-
-            name: se.name || '',
-
-            category: se.category || '',
-
-            date: se.date || '',
-
-            items: se.items || [],
-
-            updated_at: new Date().toISOString()
-
-        }));
-
-
-        if (seRows.length) {
-
-            const { error: seError } = await sb
-                .from('seances')
-                .upsert(
-                    seRows,
-                    { onConflict: 'id' }
-                );
-
-            if (seError) {
-                throw seError;
-            }
-        }
-
-
-        console.log(
-            '✅ Données sauvegardées pour',
-            currentUser.email
-        );
-
-    } catch (err) {
-
-        console.error(
-            'Erreur sauvegarde Supabase :',
-            err
-        );
-
-        throw err;
-    }
+function sessionDuration(session){
+  return (session.items || []).reduce((t, it) => t + (parseInt(it.duration) || 0), 0);
 }
 
-  // =========================================================
-  // INITIALISATION AUTH
-  // =========================================================
+function renderLists(){
+  const sessEl = document.getElementById('listSessions');
+  const exEl = document.getElementById('listExercises');
 
-  async function initAuth() {
+  if(!sessions.length){
+    sessEl.innerHTML = '<div class="empty">Aucune séance</div>';
+  } else {
+    const sorted = [...sessions].sort((a,b) =>
+      (a.name || '').localeCompare(b.name || '', 'fr')
+    );
+    sessEl.innerHTML = sorted.map(s => {
+      const dur = sessionDuration(s);
+      const n = (s.items || []).length;
+      return `
+        <div class="card" onclick="openSession('${escapeHtml(s.id)}')">
+          <div class="card-icon">📋</div>
+          <div class="card-body">
+            <div class="card-title">${escapeHtml(s.name || 'Sans titre')}</div>
+            <div class="card-meta">${escapeHtml(s.category || 'Général')} · ${n} exo · ${dur} min</div>
+          </div>
+          ${s.team_id ? '<span class="badge">🤝</span>' : ''}
+        </div>`;
+    }).join('');
+  }
 
-    currentUser = await getCurrentUser();
+  if(!exercises.length){
+    exEl.innerHTML = '<div class="empty">Aucun exercice</div>';
+  } else {
+    const sorted = [...exercises].sort((a,b) =>
+      (a.title || '').localeCompare(b.title || '', 'fr')
+    );
+    exEl.innerHTML = sorted.map(ex => `
+      <div class="card" onclick="openExercise('${escapeHtml(ex.id)}', null)">
+        <div class="card-icon">📄</div>
+        <div class="card-body">
+          <div class="card-title">${escapeHtml(ex.title || 'Sans titre')}</div>
+          <div class="card-meta">${escapeHtml(ex.category || '')} · ${ex.duration || 15} min</div>
+        </div>
+        ${ex.team_id ? '<span class="badge">🤝</span>' : ''}
+      </div>
+    `).join('');
+  }
+}
 
-    updateAuthUI();
+/* =========================================================
+   SESSION DETAIL
+========================================================= */
+function openSession(id){
+  const session = sessions.find(s => s.id === id);
+  if(!session) return;
 
-    if (currentUser) {
+  document.getElementById('sessionTitle').textContent = session.name || 'Séance';
+  const box = document.getElementById('sessionDetail');
 
-      console.log(
-        'Utilisateur connecté :',
-        currentUser.email
-      );
+  const items = session.items || [];
+  if(!items.length){
+    box.innerHTML = '<div class="empty">Aucun exercice dans cette séance</div>';
+    showScreen('session');
+    return;
+  }
 
-      await loadFromSupabase();
+  let html = `<div class="card-meta" style="margin-bottom:12px">
+    ${escapeHtml(session.category || '')} · ${sessionDuration(session)} min · ${items.length} exercice(s)
+  </div>`;
 
-    } else {
+  items.forEach((item, i) => {
+    const ex = exercises.find(e => e.id === item.exerciseId);
+    const title = ex ? (ex.title || 'Sans titre') : 'Exercice manquant';
+    const dur = item.duration || (ex && ex.duration) || 15;
+    const click = ex
+      ? `onclick="openExercise('${escapeHtml(ex.id)}', '${escapeHtml(session.id)}')"`
+      : '';
+    html += `
+      <div class="session-item" ${click}>
+        <div class="num">${i + 1}</div>
+        <div class="card-body">
+          <div class="card-title">${escapeHtml(title)}</div>
+          <div class="card-meta">${dur} min${ex ? ' · ' + escapeHtml(ex.category || '') : ''}</div>
+        </div>
+      </div>`;
+  });
 
-      console.log('Aucun utilisateur connecté');
+  box.innerHTML = html;
+  showScreen('session');
+}
 
-      exercises = [];
-      sessions = [];
-      localStorage.setItem(EXERCISES_KEY, JSON.stringify([]));
-      localStorage.setItem(SESSIONS_KEY, JSON.stringify([]));
-      renderSidebar();
+/* =========================================================
+   EXERCISE DETAIL + COURT
+========================================================= */
+function backFromExercise(){
+  if(fromSessionId){
+    openSession(fromSessionId);
+  } else {
+    showScreen('home');
+  }
+}
 
-    }
+function openExercise(id, sessionId){
+  fromSessionId = sessionId;
+  const ex = exercises.find(e => e.id === id);
+  if(!ex){
+    showToast('Exercice introuvable');
+    return;
+  }
 
+  document.getElementById('exerciseTitle').textContent = ex.title || 'Exercice';
+  const box = document.getElementById('exerciseDetail');
 
-    sb.auth.onAuthStateChange(
-      async (event, session) => {
+  const courtHtml = renderCourt(ex);
 
-        console.log(
-          'Auth event :',
-          event
-        );
+  box.innerHTML = `
+    <div class="card-meta" style="margin-bottom:10px">
+      ${escapeHtml(ex.category || '')} · ${ex.duration || 15} min
+    </div>
+    <div class="court-box">${courtHtml}</div>
+    ${infoBlock('Mise en place', ex.setup)}
+    ${infoBlock('Consignes', ex.instructions)}
+    ${infoBlock('Variantes', ex.variant)}
+    ${infoBlock('Objectifs', ex.objectives)}
+  `;
 
-        currentUser = session?.user || null;
+  showScreen('exercise');
+}
 
-        updateAuthUI();
+function infoBlock(title, text){
+  if(!text || !String(text).trim()) return '';
+  return `
+    <div class="info-block">
+      <h3>${escapeHtml(title)}</h3>
+      <p>${escapeHtml(text)}</p>
+    </div>`;
+}
+
+function renderCourt(ex){
+  // Terrain de base (même proportions que le PC)
+  const lines = `
+    <rect class="floor" x="0" y="0" width="40" height="20" fill="#e5b66d"/>
+    <rect x="0" y="0" width="40" height="20" fill="none" stroke="#fff" stroke-width="0.12"/>
+    <path d="M20 0V20" fill="none" stroke="#fff" stroke-width="0.15"/>
+    <circle cx="20" cy="10" r="1.8" fill="none" stroke="#fff" stroke-width="0.11"/>
+    <path d="M0 8.5V11.5M40 8.5V11.5" fill="none" stroke="#fff" stroke-width="0.15"/>
+    <path d="M0 4 A6 6 0 0 1 6 10 A6 6 0 0 1 0 16 M40 4 A6 6 0 0 0 34 10 A6 6 0 0 0 40 16" fill="none" stroke="#fff" stroke-width="0.15"/>
+    <path d="M0 1 A9 9 0 0 1 9 10 A9 9 0 0 1 0 19 M40 1 A9 9 0 0 0 31 10 A9 9 0 0 0 40 19" fill="none" stroke="#fff" stroke-width="0.11" stroke-dasharray="0.28 0.28"/>
+    <path d="M7 9.5V10.5M33 9.5V10.5M4 9.8V10.2M36 9.8V10.2" fill="none" stroke="#fff" stroke-width="0.15"/>
+  `;
+
+  // Traits crayon (si stockés dans paths / freehand / pencilPaths)
+  const paths = ex.paths || ex.freehandPaths || ex.pencilPaths || [];
+  let pathsSvg = '';
+  if(Array.isArray(paths)){
+    pathsSvg = paths.map(p => {
+      if(typeof p === 'string'){
+        return `<path d="${escapeHtml(p)}" fill="none" stroke="#1e293b" stroke-width="0.12"/>`;
       }
-    );
+      if(p && p.d){
+        const stroke = p.color || p.stroke || '#1e293b';
+        const w = p.width || p.strokeWidth || 0.12;
+        return `<path d="${escapeHtml(p.d)}" fill="none" stroke="${escapeHtml(stroke)}" stroke-width="${w}"/>`;
+      }
+      return '';
+    }).join('');
   }
 
-async function testInviteCode() {
-    if (!currentUser) {
-        showToast('❌ Aucun utilisateur connecté');
+  // Objets (joueurs, plots, formes…)
+  const objects = ex.objects || ex.elements || [];
+  let objectsHtml = '';
+  if(Array.isArray(objects)){
+    objects.forEach(obj => {
+      if(!obj) return;
+      // Coordonnées : souvent en % du terrain (0–100) ou en unités viewBox (0–40 / 0–20)
+      let left, top;
+      if(obj.x != null && obj.y != null){
+        // Si valeurs > 40, on suppose des pourcentages 0–100
+        if(obj.x > 40 || obj.y > 20){
+          left = obj.x;
+          top = obj.y;
+        } else {
+          left = (obj.x / 40) * 100;
+          top = (obj.y / 20) * 100;
+        }
+      } else {
         return;
-    }
+      }
 
-    const { data, error } = await sb.rpc('create_invite_code', {
-        p_team_id: '2e6d9541-dbd1-4c23-bb14-81cce7d65fd6',
-        p_permission: 'read'
+      const type = obj.type || obj.kind || '';
+      const label = obj.label || obj.number || obj.text || '';
+
+      if(type.includes('player-purple') || type === 'player-purple'){
+        objectsHtml += `<div class="mob-obj mob-player mob-player-purple" style="left:${left}%;top:${top}%">${escapeHtml(label || 'A')}</div>`;
+      } else if(type.includes('player-orange') || type === 'player-orange'){
+        objectsHtml += `<div class="mob-obj mob-player mob-player-orange" style="left:${left}%;top:${top}%">${escapeHtml(label || 'B')}</div>`;
+      } else if(type.includes('cone') || type === 'cone'){
+        objectsHtml += `<div class="mob-obj mob-cone" style="left:${left}%;top:${top}%">▲</div>`;
+      } else if(type.includes('ball') || type === 'ball'){
+        objectsHtml += `<div class="mob-obj mob-ball" style="left:${left}%;top:${top}%">⚽</div>`;
+      } else if(type.includes('text') || type === 'text'){
+        objectsHtml += `<div class="mob-obj mob-text" style="left:${left}%;top:${top}%">${escapeHtml(obj.text || label || '')}</div>`;
+      } else if(type.includes('shape') || type.includes('circle') || type.includes('square') || type.includes('rectangle') || type.includes('triangle')){
+        const w = obj.w || obj.width || 12;
+        const h = obj.h || obj.height || 12;
+        // tailles en % approximatifs
+        const ww = Math.max(6, Math.min(30, (typeof w === 'number' && w < 50) ? w : 12));
+        const hh = Math.max(6, Math.min(30, (typeof h === 'number' && h < 50) ? h : 12));
+        let shapeClass = 'mob-shape';
+        if(type.includes('circle')) shapeClass += ' mob-shape-circle';
+        else if(type.includes('triangle')) shapeClass += ' mob-shape-triangle';
+        else if(type.includes('rectangle')) shapeClass += ' mob-shape-rectangle';
+        else shapeClass += ' mob-shape-square';
+        const rot = obj.rotation || obj.angle || 0;
+        objectsHtml += `<div class="mob-obj ${shapeClass}" style="left:${left}%;top:${top}%;width:${ww}%;height:${hh}%;transform:translate(-50%,-50%) rotate(${rot}deg)"></div>`;
+      }
     });
-
-    if (error) {
-        console.error('Erreur création code :', error);
-        showToast('❌ ' + error.message);
-        return;
-    }
-
-    console.log('✅ Code invitation :', data);
-    showToast('✅ Code : ' + data);
-}
-
-async function testShareExercise() {
-
-    if (!currentUser) {
-        showToast('❌ Aucun utilisateur connecté');
-        return;
-    }
-
-    // On prend le premier exercice personnel
-    const exercise = exercises.find(ex => !ex.team_id);
-
-    if (!exercise) {
-        showToast('❌ Aucun exercice personnel trouvé');
-        return;
-    }
-
-    const { data, error } = await sb.rpc('share_exercise_with_team', {
-        p_exercise_id: exercise.id,
-        p_team_id: '2e6d9541-dbd1-4c23-bb14-81cce7d65fd6'
-    });
-
-    if (error) {
-        console.error('Erreur partage exercice :', error);
-        showToast('❌ ' + error.message);
-        return;
-    }
-
-    console.log('✅ Exercice partagé :', exercise);
-    console.log('Résultat RPC :', data);
-
-    showToast('🤝 Exercice partagé avec Seniors');
-
-    await loadFromSupabase();
-}
-
-
-
-
-// =========================================================
-// DEMARRAGE
-// =========================================================
-
-
-// =========================================================
-// BIBLIOTHÈQUES PARTAGÉES
-// =========================================================
-
-async function openTeamsModal() {
-
-    if (!currentUser) {
-        showToast('❌ Connectez-vous d’abord');
-        return;
-    }
-
-    const modal = document.getElementById('teamsModal');
-
-    if (!modal) {
-        console.error('❌ teamsModal introuvable');
-        return;
-    }
-
-    console.log('🤝 Ouverture bibliothèques...');
-
-    await loadTeamsUI();
-
-    modal.style.display = 'flex';
-
-    console.log('🤝 Bibliothèques affichées');
-}
-
-
-function closeTeamsModal() {
-
-    const modal = document.getElementById('teamsModal');
-
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
-
-
-async function loadTeamsUI() {
-
-    if (!currentUser) return;
-
-    const list = document.getElementById('teamsList');
-
-    if (!list) return;
-
-    list.innerHTML = 'Chargement...';
-
-    try {
-
-        const { data, error } = await sb
-            .from('teams')
-            .select('id, name, owner_id')
-            .order('created_at', { ascending: true });
-
-        if (error) throw error;
-
-        if (!data || data.length === 0) {
-
-            list.innerHTML = `
-                <p>Aucune bibliothèque.</p>
-            `;
-
-            return;
-        }
-
-        list.innerHTML = data.map(team => {
-
-            const owner = team.owner_id === currentUser.id;
-
-            return `
-                <div style="
-                    border:1px solid #ccc;
-                    border-radius:8px;
-                    padding:12px;
-                    margin-bottom:10px;
-                ">
-
-                    <strong>
-                        📁 ${team.name}
-                    </strong>
-
-                    <div style="
-                        font-size:12px;
-                        color:#666;
-                        margin-top:4px;
-                        margin-bottom:10px;
-                    ">
-                        ${owner ? '👑 Propriétaire' : '👤 Membre'}
-                    </div>
-
-                    ${
-                        owner
-                        ? `
-                            <div style="
-                                display:flex;
-                                gap:8px;
-                                flex-wrap:wrap;
-                            ">
-
-                                <button
-                                    class="auth-login"
-                                    onclick="createInviteCodeFromUI(
-                                        '${team.id}',
-                                        'read'
-                                    )">
-                                    👁️ Code lecture
-                                </button>
-
-                                <button
-                                    class="auth-register"
-                                    onclick="createInviteCodeFromUI(
-                                        '${team.id}',
-                                        'write'
-                                    )">
-                                    ✏️ Code modification
-                                </button>
-
-                            </div>
-                        `
-                        : ''
-                    }
-
-                </div>
-            `;
-
-        }).join('');
-
-    } catch (err) {
-
-        console.error(
-            'Erreur chargement bibliothèques :',
-            err
-        );
-
-        list.innerHTML = `
-            <p style="color:red;">
-                ❌ ${err.message}
-            </p>
-        `;
-    }
-}
-
-
-async function createInviteCodeFromUI(teamId, permission) {
-
-    if (!currentUser) {
-        showToast('❌ Connectez-vous d’abord');
-        return;
-    }
-
-    const { data, error } = await sb.rpc(
-        'create_invite_code',
-        {
-            p_team_id: teamId,
-            p_permission: permission
-        }
-    );
-
-    if (error) {
-
-        console.error(
-            'Erreur création code :',
-            error
-        );
-
-        showToast('❌ ' + error.message);
-
-        return;
-    }
-
-    console.log(
-        '✅ Code invitation :',
-        data
-    );
-
-    const type =
-        permission === 'read'
-            ? 'lecture seule'
-            : 'modification';
-
-    alert(
-        'Code d’invitation (' +
-        type +
-        ') :\n\n' +
-        data +
-        '\n\n' +
-        'Tu peux transmettre ce code au coach.'
-    );
-
-    showToast('✅ Code généré');
-}
-
-
-
-
-  async function createTeamFromUI() {
-
-    if (!currentUser) {
-      showToast('❌ Connectez-vous d’abord');
-      return;
-    }
-
-
-    const name = prompt(
-      'Nom de la bibliothèque :'
-    );
-
-
-    if (!name || !name.trim()) {
-      return;
-    }
-
-
-    const { data, error } = await sb.rpc(
-      'create_team',
-      {
-        p_name: name.trim()
-      }
-    );
-
-
-    if (error) {
-
-      console.error(
-        'Erreur création bibliothèque :',
-        error
-      );
-
-      showToast(
-        '❌ ' + error.message
-      );
-
-      return;
-    }
-
-
-    console.log(
-      '✅ Bibliothèque créée :',
-      data
-    );
-
-    showToast(
-      '✅ Bibliothèque créée'
-    );
-
-
-    await loadTeamsUI();
-
-    await loadFromSupabase();
   }
 
+  return `
+    <div class="court-frame">
+      <svg class="court-svg" viewBox="0 0 40 20" preserveAspectRatio="none">
+        ${lines}
+        ${pathsSvg}
+      </svg>
+      <div class="court-objects">${objectsHtml}</div>
+    </div>
+  `;
+}
 
-  async function joinTeamFromUI() {
+/* =========================================================
+   START
+========================================================= */
+async function init(){
+  const { data: { session } } = await sb.auth.getSession();
+  currentUser = session?.user || null;
 
-    if (!currentUser) {
-      showToast('❌ Connectez-vous d’abord');
-      return;
-    }
-
-
-    const code = prompt(
-      'Code d’invitation :'
-    );
-
-
-    if (!code || !code.trim()) {
-      return;
-    }
-
-
-    const { data, error } = await sb.rpc(
-      'join_team_with_code',
-      {
-        p_code: code.trim()
-      }
-    );
-
-
-    if (error) {
-
-      console.error(
-        'Erreur rejoindre bibliothèque :',
-        error
-      );
-
-      showToast(
-        '❌ ' + error.message
-      );
-
-      return;
-    }
-
-
-    console.log(
-      '✅ Bibliothèque rejointe :',
-      data
-    );
-
-    showToast(
-      '🤝 Bibliothèque rejointe'
-    );
-
-
-    await loadTeamsUI();
-
-    await loadFromSupabase();
+  if(currentUser){
+    await afterLogin();
+  } else {
+    showScreen('login');
   }
 
+  sb.auth.onAuthStateChange(async (event, session) => {
+    currentUser = session?.user || null;
+    if(event === 'SIGNED_OUT'){
+      showScreen('login');
+    }
+    // Recovery / lien mail : déjà connecté → on affiche l'app
+    if(event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN'){
+      if(currentUser) await afterLogin();
+    }
+  });
+}
 
-  initAuth();
-
+init();
 </script>
-<div id="authModal">
-    <div class="auth-box">
-        <h2>🔐 Connexion à HandCoach</h2>
-
-        <input
-            type="email"
-            id="authEmail"
-            placeholder="Adresse email"
-            autocomplete="email">
-
-        <input
-            type="password"
-            id="authPassword"
-            placeholder="Mot de passe"
-            autocomplete="current-password">
-
-        <button
-            type="button"
-            onclick="resetPassword()"
-            style="
-                width:100%;
-                margin: 4px 0 10px 0;
-                padding: 8px;
-                border: none;
-                background: transparent;
-                color: #6c3fd1;
-                text-decoration: underline;
-                cursor: pointer;
-                font-size: 13px;
-            ">
-            Mot de passe oublié ?
-        </button>
-
-        <div class="auth-buttons">
-            <button class="auth-login" onclick="loginUser()">
-                Se connecter
-            </button>
-            <button class="auth-register" onclick="registerUser()">
-                Créer un compte
-            </button>
-        </div>
-
-        <button class="auth-close" onclick="closeAuthModal()">
-            Fermer
-        </button>
-    </div>
-</div>
-
-
-<!-- =========================================================
-     BIBLIOTHÈQUES PARTAGÉES
-========================================================= -->
-
-<div id="teamsModal">
-
-    <div class="auth-box">
-
-        <h2>🤝 Bibliothèques</h2>
-
-        <div id="teamsList">
-            Chargement...
-        </div>
-
-        <hr>
-
-        <button
-            class="auth-login"
-            onclick="createTeamFromUI()">
-            ➕ Créer une bibliothèque
-        </button>
-
-        <button
-            class="auth-register"
-            onclick="joinTeamFromUI()">
-            🔑 Rejoindre avec un code
-        </button>
-
-        <button
-            class="auth-close"
-            onclick="closeTeamsModal()">
-            Fermer
-        </button>
-
-    </div>
-
-</div>
-
-
-<div id="toast"></div>
-
-
-<!-- =========================================================
-     MODAL PARTAGE EXERCICE
-========================================================= -->
-
-<div id="shareExerciseModal">
-
-    <div class="auth-box">
-
-        <h2>🤝 Partager l'exercice</h2>
-
-        <p id="shareExerciseName"
-           style="margin-bottom:20px;">
-        </p>
-
-        <label for="shareTeamSelect">
-            Bibliothèque :
-        </label>
-
-        <select
-            id="shareTeamSelect"
-            style="
-                width:100%;
-                padding:10px;
-                margin-top:8px;
-                margin-bottom:20px;
-                box-sizing:border-box;
-            ">
-        </select>
-
-        <div class="auth-buttons">
-
-            <button
-                class="auth-login"
-                onclick="confirmShareExercise()">
-                🤝 Partager
-            </button>
-
-            <button
-                class="auth-close"
-                onclick="closeShareExerciseModal()">
-                Fermer
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- MODAL PARTAGE SÉANCE -->
-<div id="shareSessionModal">
-    <div class="auth-box">
-        <h2>🤝 Partager la séance</h2>
-        <p id="shareSessionName" style="margin-bottom:20px;"></p>
-        <label for="shareSessionTeamSelect">Bibliothèque :</label>
-        <select id="shareSessionTeamSelect"
-            style="width:100%; padding:10px; margin-top:8px; margin-bottom:20px; box-sizing:border-box;">
-        </select>
-        <div class="auth-buttons">
-            <button class="auth-login" onclick="confirmShareSession()">🤝 Partager</button>
-            <button class="auth-close" onclick="closeShareSessionModal()">Fermer</button>
-        </div>
-    </div>
-</div>
-
 </body>
 </html>
