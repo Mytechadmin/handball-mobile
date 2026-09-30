@@ -1,10 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HandCoach Mobile — style Web</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>HandCoach Mobile</title>
 <style>
 *{box-sizing:border-box}
 html,body{
@@ -44,11 +44,7 @@ button{cursor:pointer}
     display:flex;
     align-items:center;
     gap:6px;
-    flex:0 1 auto;
-    overflow-x:auto;
-    scrollbar-width:none;
 }
-.header-actions::-webkit-scrollbar{display:none;}
 .icon-button{
     width:38px;
     height:38px;
@@ -220,6 +216,7 @@ summary.tree-summary{
     grid-template-columns:1fr 340px;
     gap:10px;
 }
+
 .court-wrapper{
     display:flex;
     flex-direction:column;
@@ -227,34 +224,86 @@ summary.tree-summary{
     min-height:0;
 }
 #toast {
-    position:fixed;
-    bottom:24px;
-    left:50%;
-    transform:translateX(-50%);
-    background:#17202a;
-    color:#fff;
-    padding:12px 20px;
-    border-radius:10px;
-    font-weight:bold;
-    z-index:9999;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .25s ease;
-    box-shadow:0 8px 24px rgba(0,0,0,.25);
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #17202a;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+    box-shadow: 0 8px 24px rgba(0,0,0,.25);
 }
-#toast.show{opacity:1;}
+#toast.show {
+    opacity: 1;
+}
 
-/* Cohérence avec la version Web : panneaux, champs et boutons tactiles. */
-.header-actions .icon-button:active{transform:translateY(1px);}
-.exercise-toolbar input:focus,
-.exercise-toolbar select:focus,
-.info-field textarea:focus{
-    outline:2px solid rgba(40,127,232,.25);
-    border-color:#287fe8;
+
+
+
+#shareExerciseModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
 }
-.tool:active,.panel-tools button:active,.bottom-toolbar button:active{
-    transform:translateY(1px);
+
+#shareExerciseModal .auth-box {
+    display: block;
+    width: 500px;
+    max-width: 90vw;
+    box-sizing: border-box;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
 }
+
+#shareTeamSelect {
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+
+
+
+
+#shareSessionModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#shareSessionModal .auth-box {
+    display: block;
+    width: 500px;
+    max-width: 90vw;
+    box-sizing: border-box;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+}
+
+
+
 
 /* =========================================================
    SECOND TERRAIN / ÉVOLUTION
@@ -311,7 +360,68 @@ summary.tree-summary{
     width:100%; height:100%;
     touch-action:none;
 }
-.floor{fill:#e5b66d}
+.court-logo-image{
+    pointer-events:auto;
+    display:none;
+    cursor:grab;
+}
+.court-logo-image:active{
+    cursor:grabbing;
+}
+.settings-grid{
+    display:grid;
+    gap:14px;
+}
+.settings-card{
+    border:1px solid #d8dee6;
+    border-radius:9px;
+    padding:12px;
+    background:#f8fafc;
+}
+.settings-card h3{
+    margin:0 0 6px;
+    font-size:14px;
+}
+.settings-card p{
+    margin:0 0 10px;
+    color:#64748b;
+    font-size:12px;
+}
+.settings-file-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+}
+.settings-file-row input[type=file]{
+    flex:1;
+    min-width:220px;
+    padding:7px;
+    border:1px solid #cfd5db;
+    border-radius:6px;
+    background:#fff;
+}
+.settings-range-row{
+    display:grid;
+    grid-template-columns:110px 1fr 55px;
+    gap:9px;
+    align-items:center;
+    margin-top:10px;
+    font-size:12px;
+}
+.settings-range-row input[type=range]{width:100%;}
+.settings-range-value{
+    text-align:right;
+    font-weight:bold;
+    color:#287fe8;
+}
+.settings-status{
+    margin-top:10px;
+    min-height:17px;
+    font-size:12px;
+    color:#475569;
+}
+.floor{fill:#e5b66d;fill-opacity:.96}
 .court-border, .court-line, .court-strong, .court-dashed{ fill:none; stroke:#fff; }
 .court-border{stroke-width:.12}
 .court-line{stroke-width:.11}
@@ -430,9 +540,12 @@ summary.tree-summary{
 .shape-resize-handle:hover{ background:#e0f2fe; }
 .freehand-path-selected{filter:drop-shadow(0 0 2px #00a8ff);}
 
-.player-purple{background:#783fb4;color:#fff}
-.player-orange{background:#e66c2e;color:#fff}
-.cone{background:#ffd21b;border-color:#987900;color:#665200}
+.player-purple{background:var(--color-a, #783fb4);color:#fff}
+.player-orange{background:var(--color-b, #e66c2e);color:#fff}
+.cone{background:var(--color-cone, #ffd21b);border-color:#987900;color:#665200}
+.tool-purple{background:var(--color-a, #783fb4)!important;color:#fff;border:none}
+.tool-orange{background:var(--color-b, #e66c2e)!important;color:#fff;border:none}
+.tool-yellow{background:var(--color-cone, #ffd21b)!important;color:#665200;border:none}
 .ball{
     width:24px; height:24px;
     display:flex; align-items:center; justify-content:center;
@@ -475,6 +588,35 @@ summary.tree-summary{
     background:#fff;
     font-weight:bold;
     padding:0 8px;
+}
+.palette-more-wrap{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+}
+.palette-more-panel{
+    display:none;
+    position:absolute;
+    left:0;
+    bottom:calc(100% + 8px);
+    z-index:200;
+    min-width:280px;
+    max-width:min(420px, 90vw);
+    padding:10px;
+    background:#fff;
+    border:1px solid #d5dbe1;
+    border-radius:10px;
+    box-shadow:0 10px 28px rgba(0,0,0,.18);
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+}
+.palette-more-panel.open{
+    display:flex;
+}
+.palette-more-panel .palette-title{
+    width:100%;
+    margin-top:4px;
 }
 .tool-purple{background:#783fb4;color:#fff;border:none}
 .tool-orange{background:#e66c2e;color:#fff;border:none}
@@ -642,9 +784,147 @@ summary.tree-summary{
 }
 .session-add-btn:hover{opacity:.85;}
 
+
+
+/* =========================================================
+   AUTHENTIFICATION
+========================================================= */
+
+.user-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 12px;
+}
+
+#userInfo {
+    font-size: 13px;
+    color: #dbeafe;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.auth-button {
+    border: 1px solid #56616c;
+    background: #3e4852;
+    color: #fff;
+    border-radius: 7px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.auth-button:hover {
+    background: #52606c;
+}
+
+
+/* =========================================================
+   FENETRE DE CONNEXION
+========================================================= */
+
+#authModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-box {
+    width: 360px;
+    max-width: calc(100vw - 40px);
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+}
+
+.auth-box h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.auth-box input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.auth-buttons button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.auth-login {
+    background: #6c3fd1;
+    color: white;
+}
+
+.auth-register {
+    background: #eee;
+    color: #333;
+}
+
+.auth-close {
+    width: 100%;
+    margin-top: 10px;
+    padding: 9px;
+    border: none;
+    background: transparent;
+    color: #777;
+    cursor: pointer;
+}
+
+
+
+
+#teamsModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#teamsModal .auth-box {
+    display: block;
+    width: 500px;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+}
+
 /* =========================================================
    V12 — ADAPTATION MOBILE
-   Même application, interface adaptée au tactile.
 ========================================================= */
 .mobile-menu-button{
     display:none;
@@ -658,6 +938,7 @@ summary.tree-summary{
     font-size:20px;
 }
 .mobile-sidebar-overlay{display:none;}
+.mobile-actions{display:none;}
 
 @media(max-width:900px){
     html,body{
@@ -676,7 +957,7 @@ summary.tree-summary{
     .mobile-menu-button{display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
     .header h1{
         margin:0 4px;
-        font-size:16px;
+        font-size:15px;
         white-space:nowrap;
     }
     .header-actions{
@@ -704,7 +985,7 @@ summary.tree-summary{
         right:0;
         top:44px;
         z-index:1000;
-        width:220px;
+        width:230px;
         padding:6px;
         background:#fff;
         border:1px solid #d7dde5;
@@ -730,10 +1011,17 @@ summary.tree-summary{
     .mobile-actions-menu button:active{
         background:#eef4fb;
     }
-    .header-actions::-webkit-scrollbar{display:none;}
-    .icon-button{width:38px;height:38px;flex:0 0 38px;font-size:18px;}
-    #saveStatus{display:none;}
-
+    .user-area{
+        margin-right:4px;
+        gap:4px;
+    }
+    #userInfo{
+        display:none;
+    }
+    .auth-button{
+        padding:6px 8px;
+        font-size:11px;
+    }
     .app{
         min-height:calc(100vh - 54px);
         height:auto;
@@ -750,6 +1038,7 @@ summary.tree-summary{
         transition:transform .2s ease;
         box-shadow:4px 0 18px rgba(0,0,0,.22);
         padding:10px;
+        overflow-y:auto;
     }
     body.mobile-sidebar-open .sidebar{transform:translateX(0);}
     .mobile-sidebar-overlay{
@@ -771,7 +1060,7 @@ summary.tree-summary{
         flex-wrap:wrap;
         gap:6px;
     }
-    .exercise-toolbar input{
+    .exercise-toolbar input[type="text"]{
         min-width:0;
         flex:1 1 100%;
         font-size:16px;
@@ -794,13 +1083,11 @@ summary.tree-summary{
         gap:8px;
         overflow:visible;
         padding:6px;
+        grid-template-columns:1fr;
     }
     .court-wrapper{
         width:100%;
         height:auto;
-    }
-    .court-wrapper:not(.multi-court){
-        display:flex;
     }
     .court-wrapper:not(.multi-court) .court-container{
         width:100%;
@@ -821,7 +1108,6 @@ summary.tree-summary{
         min-height:0;
         flex:none;
     }
-
     .palette{
         margin-top:6px;
         flex-wrap:nowrap;
@@ -830,10 +1116,8 @@ summary.tree-summary{
         -webkit-overflow-scrolling:touch;
         padding:7px;
         gap:7px;
-        scrollbar-width:thin;
         touch-action:pan-x;
     }
-    .palette-title{flex:0 0 auto;}
     .tool{
         min-height:44px;
         height:44px;
@@ -841,81 +1125,7 @@ summary.tree-summary{
         padding:0 10px;
         font-size:13px;
     }
-    /* Sur mobile : les 4 outils principaux restent visibles.
-       Les formes, le texte et le crayon passent dans le menu ⋮. */
-    .palette .tool[data-tool^="shape-"],
-    .palette .tool[data-tool="text"],
-    .palette .color-picker,
-    .palette #clearDrawingsBtn{
-        display:none !important;
-    }
-
-    .mobile-palette-actions{
-        position:relative;
-        flex:0 0 auto;
-    }
-    .mobile-palette-button{
-        width:44px;
-        height:44px;
-        border:0;
-        border-radius:7px;
-        background:#69737e;
-        color:#fff;
-        font-size:24px;
-        font-weight:bold;
-        line-height:1;
-        cursor:pointer;
-    }
-    .mobile-palette-menu{
-        display:none;
-        position:absolute;
-        right:0;
-        bottom:50px;
-        width:210px;
-        max-height:70vh;
-        overflow-y:auto;
-        padding:6px;
-        background:#fff;
-        border:1px solid #cfd5db;
-        border-radius:8px;
-        box-shadow:0 8px 24px rgba(0,0,0,.22);
-        z-index:300;
-    }
-    .mobile-palette-actions.open .mobile-palette-menu{display:block;}
-    .mobile-palette-menu-title{
-        padding:6px 8px 8px;
-        font-size:11px;
-        font-weight:bold;
-        color:#475569;
-        text-transform:uppercase;
-        border-bottom:1px solid #e5e7eb;
-        margin-bottom:4px;
-    }
-    .mobile-palette-menu button{
-        display:block;
-        width:100%;
-        min-height:42px;
-        padding:8px 10px;
-        border:0;
-        border-radius:6px;
-        background:#f8fafc;
-        color:#1f2937;
-        text-align:left;
-        font-size:14px;
-        cursor:pointer;
-        margin:2px 0;
-    }
-    .mobile-palette-menu button:active{background:#e8f1ff;}
-
-    .color-picker{
-        flex:0 0 auto;
-        min-height:44px;
-    }
-    .color-dot{width:30px;height:30px;flex:0 0 30px;}
-
-    .right-panel{
-        width:100%;
-    }
+    .right-panel{ width:100%; }
     .panel-tools{
         position:sticky;
         bottom:6px;
@@ -923,151 +1133,25 @@ summary.tree-summary{
         background:rgba(248,250,252,.96);
         backdrop-filter:blur(4px);
     }
-    .panel-tools button{
-        min-height:44px;
-        font-size:13px;
-    }
-    .info-field textarea{
-        min-height:100px;
-        font-size:16px;
-    }
-
-    .modal-box{
-        width:calc(100vw - 20px);
-        max-height:90vh;
-        padding:14px;
-    }
-    .modal-box input{
-        min-height:44px;
-        font-size:16px;
-    }
-    .modal-box button{min-height:44px;}
-
+    .panel-tools button{ min-height:44px; font-size:13px; }
+    .info-field textarea{ min-height:100px; font-size:16px; }
+    .modal-box{ width:calc(100vw - 20px); max-height:90vh; padding:14px; }
+    .modal-box input{ min-height:44px; font-size:16px; }
+    .modal-box button{ min-height:44px; }
     .sub-tree-item,.tree-item,summary.tree-summary{
         min-height:44px;
         font-size:13px;
     }
-    .session-remove-btn{
-        min-width:40px;
-        min-height:40px;
-        font-size:18px;
-    }
+    .session-remove-btn{ min-width:40px; min-height:40px; font-size:18px; }
+    .auth-box input{ font-size:16px; }
 }
 
 @media(max-width:600px){
-    .header h1{font-size:15px;}
+    .header h1{font-size:14px;}
     .mobile-actions-button{width:36px;height:36px;}
     .sheet{border-radius:7px;}
-    .court-wrapper.multi-court .court-evolution-label{font-size:10px;}
 }
 
-/* =========================================================
-   AUTHENTIFICATION (repris de la version web)
-========================================================= */
-.user-area {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-right: 8px;
-    flex: 0 0 auto;
-}
-#userInfo {
-    font-size: 12px;
-    color: #dbeafe;
-    max-width: 160px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-.auth-button {
-    border: 1px solid #56616c;
-    background: #3e4852;
-    color: #fff;
-    border-radius: 7px;
-    padding: 7px 10px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: bold;
-    white-space: nowrap;
-}
-.auth-button:hover { background: #52606c; }
-
-#authModal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.45);
-    z-index: 10000;
-    align-items: center;
-    justify-content: center;
-}
-.auth-box {
-    width: 360px;
-    max-width: calc(100vw - 40px);
-    background: white;
-    border-radius: 14px;
-    padding: 24px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
-    color: #20252b;
-}
-.auth-box h2 { margin-top: 0; margin-bottom: 20px; }
-.auth-box input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 11px;
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px; /* évite le zoom iOS */
-}
-.auth-buttons { display: flex; gap: 10px; margin-top: 8px; }
-.auth-buttons button {
-    flex: 1;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-}
-.auth-login { background: #6c3fd1; color: white; }
-.auth-register { background: #eee; color: #333; }
-.auth-close {
-    width: 100%;
-    margin-top: 10px;
-    padding: 9px;
-    border: none;
-    background: transparent;
-    color: #777;
-    cursor: pointer;
-}
-
-#teamsModal,
-#shareExerciseModal,
-#shareSessionModal,
-#resetPasswordModal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 99999;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.5);
-}
-#teamsModal .auth-box,
-#shareExerciseModal .auth-box,
-#shareSessionModal .auth-box {
-    width: 500px;
-    max-width: 90vw;
-    max-height: 80vh;
-    overflow-y: auto;
-}
-
-@media(max-width:900px){
-    .user-area { margin-right: 4px; gap: 4px; }
-    #userInfo { display: none; } /* sur mobile on n’affiche que le bouton */
-    .auth-button { padding: 6px 8px; font-size: 11px; }
-}
 </style>
 </head>
 <body>
@@ -1075,25 +1159,22 @@ summary.tree-summary{
 <header class="header">
     <button class="mobile-menu-button" id="mobileMenuButton" title="Ouvrir la bibliothèque" aria-label="Ouvrir la bibliothèque">☰</button>
     <h1>🤾 HandCoach</h1>
+
     <div class="spacer"></div>
 
-    <!-- Barre d'identification (email / mdp) -->
     <div class="user-area">
         <span id="userInfo"></span>
-        <button id="teamsButton" class="auth-button" type="button" onclick="openTeamsModal()" title="Bibliothèques partagées">🤝</button>
+        <button id="teamsButton" class="auth-button" type="button" onclick="openTeamsModal()" title="Bibliothèques">🤝</button>
         <button id="authButton" class="auth-button" type="button">🔐 Connexion</button>
     </div>
 
-    <!-- Barre d'actions compacte (desktop) -->
     <div class="header-actions">
         <button class="icon-button" id="addCourtButton" title="Ajouter un second terrain" aria-label="Ajouter un second terrain">＋</button>
         <button class="icon-button" id="newExercise" title="Fiche vierge" aria-label="Fiche vierge">📄</button>
         <button class="icon-button" id="saveExercise" title="Sauvegarder l'exercice" aria-label="Sauvegarder l'exercice">💾</button>
-        <button class="icon-button" id="chooseFolder" title="Choisir le dossier Hand" aria-label="Choisir le dossier Hand">📁</button>
         <button class="icon-button" id="sessionButton" title="Nouvelle séance" aria-label="Nouvelle séance">📋</button>
         <button class="icon-button" id="printButton" title="Imprimer l'exercice" aria-label="Imprimer l'exercice">🖨️</button>
-        <button class="icon-button" id="exportButton" title="Exporter JSON" aria-label="Exporter JSON">📤</button>
-        <button class="icon-button" id="importButton" title="Importer JSON" aria-label="Importer JSON">📥</button>
+        <button class="icon-button" id="settingsButton" title="Personnaliser HandCoach" aria-label="Personnaliser HandCoach">🔧</button>
     </div>
 
     <div class="mobile-actions">
@@ -1102,11 +1183,9 @@ summary.tree-summary{
             <button type="button" data-action="addCourtButton">＋&nbsp;&nbsp;Ajouter un second terrain</button>
             <button type="button" data-action="newExercise">📄&nbsp;&nbsp;Fiche vierge</button>
             <button type="button" data-action="saveExercise">💾&nbsp;&nbsp;Sauvegarder</button>
-            <button type="button" data-action="chooseFolder">📁&nbsp;&nbsp;Dossier Hand</button>
             <button type="button" data-action="sessionButton">📋&nbsp;&nbsp;Nouvelle séance</button>
             <button type="button" data-action="printButton">🖨️&nbsp;&nbsp;Imprimer</button>
-            <button type="button" data-action="exportButton">📤&nbsp;&nbsp;Exporter JSON</button>
-            <button type="button" data-action="importButton">📥&nbsp;&nbsp;Importer JSON</button>
+            <button type="button" data-action="settingsButton">🔧&nbsp;&nbsp;Personnaliser</button>
         </div>
     </div>
 </header>
@@ -1151,11 +1230,12 @@ summary.tree-summary{
                 <div class="court-container" id="courtContainer">
                         <svg id="courtSvg" class="court-svg" viewBox="0 0 40 20" preserveAspectRatio="none">
                         <rect class="floor" x="0" y="0" width="40" height="20"/>
+                        <image class="court-logo-image" x="18" y="8" width="4" height="4" preserveAspectRatio="xMidYMid meet" href=""/>
                         <rect class="court-border" x="0" y="0" width="40" height="20"/>
                         <path class="court-strong" d="M20 0V20"/>
                         <circle class="court-line" cx="20" cy="10" r="1.8"/>
-                        <path class="court-strong" d="M0 8.5V11.5"/>
-                        <path class="court-strong" d="M40 8.5V11.5"/>
+                        <path class="court-strong" d="M0 8.5V11.6"/>
+                        <path class="court-strong" d="M40 8.5V11.6"/>
                         <path class="court-strong" d="M0 4 A6 6 0 0 1 6 10 A6 6 0 0 1 0 16 M40 4 A6 6 0 0 0 34 10 A6 6 0 0 0 40 16"/>
                         <path class="court-dashed" d="M0 1 A9 9 0 0 1 9 10 A9 9 0 0 1 0 19 M40 1 A9 9 0 0 0 31 10 A9 9 0 0 0 40 19"/>
                         <path class="court-strong" d="M7 9.5V10.5M33 9.5V10.5"/>
@@ -1167,94 +1247,52 @@ summary.tree-summary{
 
                 <div class="palette">
                     <span class="palette-title">PIONS :</span>
-                    <!-- =========================
-     PIONS
-     ========================= -->
 
-<button class="tool tool-purple" data-tool="player-purple">
-    Attaquant (A)
-</button>
+                    <button class="tool tool-purple" data-tool="player-purple">
+                        Attaquant (A)
+                    </button>
 
-<button class="tool tool-orange" data-tool="player-orange">
-    Défenseur (B)
-</button>
+                    <button class="tool tool-orange" data-tool="player-orange">
+                        Défenseur (B)
+                    </button>
 
-<button class="tool tool-yellow" data-tool="cone">
-    Plot
-</button>
+                    <button class="tool tool-yellow" data-tool="cone">
+                        Plot
+                    </button>
 
-<button class="tool tool-ball" data-tool="ball">
-    ⚽
-</button>
+                    <button class="tool tool-ball" data-tool="ball">
+                        ⚽
+                    </button>
 
-<!-- Menu outils secondaires sur mobile -->
-<div class="mobile-palette-actions">
-    <button class="mobile-palette-button" id="mobilePaletteButton" aria-label="Ouvrir les autres outils" aria-expanded="false">⋮</button>
-    <div class="mobile-palette-menu" id="mobilePaletteMenu">
-        <div class="mobile-palette-menu-title">Autres outils</div>
-        <button type="button" data-palette-action="shape-square">◻ Carré</button>
-        <button type="button" data-palette-action="shape-rectangle">▭ Rectangle</button>
-        <button type="button" data-palette-action="shape-triangle">△ Triangle</button>
-        <button type="button" data-palette-action="shape-circle">○ Cercle</button>
-        <button type="button" data-palette-action="text">T Texte</button>
-        <button type="button" data-palette-action="pencilToolBtn">✏️ Crayon</button>
-        <button type="button" data-palette-action="clearDrawingsBtn">⌫ Effacer les lignes</button>
-    </div>
-</div>
+                    <div class="palette-more-wrap">
+                        <button type="button" class="tool" id="paletteMoreBtn" title="Autres outils">
+                            ＋ Outils
+                        </button>
 
+                        <div class="palette-more-panel" id="paletteMorePanel">
+                            <span class="palette-title">FORMES / TEXTE</span>
 
-<!-- =========================
-     FORMES
-     Les formes peuvent maintenant être agrandies/réduites
-     avec la petite poignée bleue en bas à droite.
-     ========================= -->
+                            <button class="tool" data-tool="shape-square">◻ Carré</button>
+                            <button class="tool" data-tool="shape-rectangle">▭ Rectangle</button>
+                            <button class="tool" data-tool="shape-triangle">△ Triangle</button>
+                            <button class="tool" data-tool="shape-circle">○ Cercle</button>
+                            <button class="tool" data-tool="text">Texte</button>
 
-<button class="tool" data-tool="shape-square">
-    ◻ Carré
-</button>
-
-<button class="tool" data-tool="shape-rectangle">
-    ▭ Rectangle
-</button>
-
-<button class="tool" data-tool="shape-triangle">
-    △ Triangle
-</button>
-
-<button class="tool" data-tool="shape-circle">
-    ○ Cercle
-</button>
-
-
-<!-- =========================
-     TEXTE
-     ========================= -->
-
-<button class="tool" data-tool="text">
-    Texte
-</button>
-
-                    <div class="color-picker">
-                        <span class="palette-title">CRAYON :</span>
-                        <button class="tool" id="pencilToolBtn">Dessiner</button>
-                        <select id="pencilWidth"
-        class="tool"
-        style="padding:0 4px;"
-        title="Épaisseur du trait">
-
-    <option value="0.04">Ultra fin</option>
-    <option value="0.08" selected>Très fin</option>
-    <option value="0.15">Fin</option>
-    <option value="0.30">Moyen</option>
-    <option value="0.50">Épais</option>
-
-</select>
-                        <div class="color-dot active" style="background:#222" data-color="#222"></div>
-                        <div class="color-dot" style="background:#2563eb" data-color="#2563eb"></div>
-                        <div class="color-dot" style="background:#dc2626" data-color="#dc2626"></div>
-                        <div class="color-dot" style="background:#ca8a04" data-color="#ca8a04"></div>
+                            <span class="palette-title">CRAYON</span>
+                            <button class="tool" id="pencilToolBtn">Dessiner</button>
+                            <select id="pencilWidth" class="tool" style="padding:0 4px;" title="Épaisseur du trait">
+                                <option value="0.04">Ultra fin</option>
+                                <option value="0.08" selected>Très fin</option>
+                                <option value="0.15">Fin</option>
+                                <option value="0.30">Moyen</option>
+                                <option value="0.50">Épais</option>
+                            </select>
+                            <div class="color-dot active" style="background:#222" data-color="#222"></div>
+                            <div class="color-dot" style="background:#2563eb" data-color="#2563eb"></div>
+                            <div class="color-dot" style="background:#dc2626" data-color="#dc2626"></div>
+                            <div class="color-dot" style="background:#ca8a04" data-color="#ca8a04"></div>
+                        </div>
                     </div>
-                    <button class="tool" id="clearDrawingsBtn">Effacer lignes</button>
                 </div>
             </section>
 
@@ -1306,9 +1344,88 @@ summary.tree-summary{
     </div>
 </div>
 
+<!-- MODALE PERSONNALISATION -->
+<div id="settingsModal" class="modal">
+    <div class="modal-box" style="width:min(620px,92vw);">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px;">
+            <h2 style="margin:0;">🔧 Personnaliser HandCoach</h2>
+            <button id="closeSettingsBtn" class="secondary" style="background:#3e4852; color:white; border:none; padding:8px 12px; border-radius:5px;">Fermer</button>
+        </div>
+
+        <div class="settings-grid">
+            <div class="settings-card">
+                <h3>🖼️ Fond de l'application</h3>
+                <p>Choisis une image pour personnaliser l'arrière-plan de ton HandCoach. Elle est enregistrée pour ton compte.</p>
+                <div class="settings-file-row">
+                    <input id="backgroundFile" type="file" accept="image/*">
+                    <button id="removeBackgroundBtn" class="secondary" type="button">Supprimer</button>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h3>🛡️ Logo du club</h3>
+                <p>Le logo apparaît au centre du terrain, derrière les joueurs, ballons, formes et tracés.</p>
+                <div class="settings-file-row">
+                    <input id="logoFile" type="file" accept="image/*">
+                    <button id="removeLogoBtn" class="secondary" type="button">Supprimer</button>
+                </div>
+
+                <div class="settings-range-row">
+                    <label for="logoSizeRange">Taille</label>
+                    <input id="logoSizeRange" type="range" min="5" max="40" step="1" value="18">
+                    <span id="logoSizeValue" class="settings-range-value">18%</span>
+                </div>
+
+                <div class="settings-range-row">
+                    <label for="logoOpacityRange">Opacité</label>
+                    <input id="logoOpacityRange" type="range" min="0" max="100" step="1" value="25">
+                    <span id="logoOpacityValue" class="settings-range-value">25%</span>
+                </div>
+                <div class="settings-range-row">
+    <label for="logoXRange">Gauche / Droite</label>
+    <input id="logoXRange" type="range" min="0" max="40" step="0.1" value="20">
+    <span id="logoXValue" class="settings-range-value">20</span>
+</div>
+
+<div class="settings-range-row">
+    <label for="logoYRange">Haut / Bas</label>
+    <input id="logoYRange" type="range" min="0" max="20" step="0.1" value="10">
+    <span id="logoYValue" class="settings-range-value">10</span>
+</div>
+
+<button type="button" id="positionLogoBtn"
+    style="margin-top:12px;width:100%;padding:10px;border:0;border-radius:7px;background:#287fe8;color:#fff;font-weight:bold;cursor:pointer;">
+    📍 Positionner le logo sur le terrain
+</button>
+            <div class="settings-card">
+                <h3>🎨 Couleurs terrain</h3>
+                <p>Joueurs A / B et plots. Appliqué tout de suite sur le terrain et la palette.</p>
+                <div class="settings-range-row">
+                    <label for="colorAPicker">Joueur A</label>
+                    <input id="colorAPicker" type="color" value="#783fb4" style="width:100%;height:32px;border:1px solid #cfd5db;border-radius:6px;">
+                    <span></span>
+                </div>
+                <div class="settings-range-row">
+                    <label for="colorBPicker">Joueur B</label>
+                    <input id="colorBPicker" type="color" value="#e66c2e" style="width:100%;height:32px;border:1px solid #cfd5db;border-radius:6px;">
+                    <span></span>
+                </div>
+                <div class="settings-range-row">
+                    <label for="colorConePicker">Plots</label>
+                    <input id="colorConePicker" type="color" value="#ffd21b" style="width:100%;height:32px;border:1px solid #cfd5db;border-radius:6px;">
+                    <span></span>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div id="settingsStatus" class="settings-status"></div>
+    </div>
+</div>
+
 <script>
 /* =========================================================
-   HANDCOACH V12 MOBILE — GUIDE RAPIDE
+   HANDCOACH V11.4 — GUIDE RAPIDE
 
    1. CONFIGURATION / STOCKAGE
    2. SAUVEGARDE DANS LE DOSSIER "Hand"
@@ -1318,10 +1435,9 @@ summary.tree-summary{
    6. SÉLECTION / DÉPLACEMENT / REDIMENSIONNEMENT
    7. UNDO / REDO
    8. CHARGEMENT / SAUVEGARDE DES EXERCICES
-   9. IMPORT / EXPORT JSON
-   10. GESTION DES SÉANCES
-   11. IMPRESSION PDF
-   12. INITIALISATION
+   9. GESTION DES SÉANCES
+   10. IMPRESSION PDF
+   11. PERSONNALISATION / INITIALISATION
 
    ASTUCE : Ctrl+F puis cherche le nom d'une fonction.
    Exemple : cherche "createObject" pour modifier la création
@@ -1332,7 +1448,7 @@ summary.tree-summary{
    1. CONFIGURATION / STOCKAGE
 ========================================================= */
 
-const APP_VERSION = "V12 Mobile";
+const APP_VERSION = "V11.6 Mobile";
 
 const EXERCISES_KEY = "handcoach_v10.3_exercises";
 const SESSIONS_KEY = "handcoach_v10.3_sessions";
@@ -1367,7 +1483,6 @@ let currentId = null;
 let activeTool = null;
 let selected = null;
 let clipboard = null;
-let handCoachDirectory = null;
 
 /* État du crayon. */
 let isPencilActive = false;
@@ -1390,6 +1505,7 @@ let undoStack = [];
 let redoStack = [];
 let sessionSortState = null;
 let draggedExerciseId = null;
+let draggedSessionId = null;
 let sessionSuppressClickUntil = 0;
 
 /* Charge un tableau depuis localStorage, avec récupération des anciennes versions. */
@@ -1405,24 +1521,35 @@ function loadArrayFromStorage(newKey, oldKeys, fallback){
     return fallback;
 }
 
-/* Sauvegarde les données dans le navigateur. */
+function showToast(message){
+    const el = document.getElementById("toast");
+    if(!el) return;
+    el.textContent = message;
+    el.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => el.classList.remove("show"), 2500);
+}
+function updateSaveStatus(message){
+    const el = $("saveStatus");
+    if(!el) return;
+    el.textContent = message || "☁️ Supabase";
+}
+
 function saveStorage(){
     localStorage.setItem(EXERCISES_KEY, JSON.stringify(exercises));
     localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
     renderSidebar();
-    updateSaveStatus();
+    updateSaveStatus("💾 Sauvegarde…");
+    saveToSupabase().then(() => {
+        updateSaveStatus("✅ Sauvegardé");
+        showToast("✅ Sauvegardé");
+        setTimeout(() => updateSaveStatus("☁️ Supabase"), 2000);
+    }).catch(() => {
+        updateSaveStatus("❌ Erreur");
+        showToast("❌ Erreur de sauvegarde");
+    });
 }
 
-/* Met à jour le petit indicateur de sauvegarde en haut. */
-function updateSaveStatus(){
-    if($("saveStatus")){
-        $("saveStatus").textContent = handCoachDirectory
-            ? "💾 Dossier + navigateur"
-            : "💻 Navigateur";
-    }
-}
-
-$("chooseFolder").onclick = chooseSaveFolder;
 
 /* =========================================================
    2. SAUVEGARDE DANS LE DOSSIER "Hand"
@@ -1433,29 +1560,7 @@ $("chooseFolder").onclick = chooseSaveFolder;
    Tu cliques donc sur 📁 et tu sélectionnes UNE FOIS le dossier Hand.
 ========================================================= */
 
-async function chooseSaveFolder(){
-    if(!window.showDirectoryPicker){
-        alert(
-            "La sélection d'un dossier n'est pas disponible ici.\n\n" +
-            "Utilise Microsoft Edge ou Google Chrome."
-        );
-        return;
-    }
 
-    try{
-        handCoachDirectory = await window.showDirectoryPicker({ mode:"readwrite" });
-        await importFilesFromFolder();
-        renderSidebar();
-        updateSaveStatus();
-
-        alert(
-            "Dossier sélectionné : " + handCoachDirectory.name +
-            "\n\nHandCoach peut maintenant y sauvegarder tes exercices."
-        );
-    }catch(error){
-        console.log("Sélection du dossier annulée :", error);
-    }
-}
 
 /* Fusionne deux listes en utilisant l'identifiant comme clé. */
 function mergeById(existing, imported){
@@ -1468,70 +1573,6 @@ function mergeById(existing, imported){
     return Array.from(map.values());
 }
 
-/* Récupère les fichiers JSON présents dans le dossier Hand. */
-async function importFilesFromFolder(){
-    if(!handCoachDirectory) return false;
-
-    let foundSomething = false;
-
-    try{
-        const fileHandle = await handCoachDirectory.getFileHandle("handcoach_exercices.json");
-        const file = await fileHandle.getFile();
-        const imported = JSON.parse(await file.text());
-
-        if(Array.isArray(imported)){
-            exercises = mergeById(exercises, imported);
-            localStorage.setItem(EXERCISES_KEY, JSON.stringify(exercises));
-            foundSomething = true;
-        }
-    }catch(error){
-        console.log("Aucun fichier d'exercices trouvé dans le dossier.");
-    }
-
-    try{
-        const fileHandle = await handCoachDirectory.getFileHandle("handcoach_seances.json");
-        const file = await fileHandle.getFile();
-        const imported = JSON.parse(await file.text());
-
-        if(Array.isArray(imported)){
-            sessions = mergeById(sessions, imported);
-            localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
-            foundSomething = true;
-        }
-    }catch(error){
-        console.log("Aucun fichier de séances trouvé dans le dossier.");
-    }
-
-    return foundSomething;
-}
-
-/* Écrit les deux fichiers JSON dans le dossier sélectionné. */
-async function saveFilesToFolder(){
-    if(!handCoachDirectory) return;
-
-    try{
-        const exerciseHandle = await handCoachDirectory.getFileHandle(
-            "handcoach_exercices.json",
-            { create:true }
-        );
-        const exerciseWriter = await exerciseHandle.createWritable();
-        await exerciseWriter.write(JSON.stringify(exercises, null, 2));
-        await exerciseWriter.close();
-
-        const sessionHandle = await handCoachDirectory.getFileHandle(
-            "handcoach_seances.json",
-            { create:true }
-        );
-        const sessionWriter = await sessionHandle.createWritable();
-        await sessionWriter.write(JSON.stringify(sessions, null, 2));
-        await sessionWriter.close();
-
-        if($("saveStatus")) $("saveStatus").textContent = "💾 Dossier synchronisé";
-    }catch(error){
-        console.error("Erreur de sauvegarde dans le dossier :", error);
-        alert("Impossible de sauvegarder dans le dossier.\n\n" + error.message);
-    }
-}
 
 
 
@@ -1906,7 +1947,10 @@ function clearFreehandPaths(createUndo = true){
     selected = null;
 }
 
-$("clearDrawingsBtn").onclick = () => clearFreehandPaths(true);
+const clearDrawingsBtn = $("clearDrawingsBtn");
+if (clearDrawingsBtn) {
+    clearDrawingsBtn.onclick = () => clearFreehandPaths(true);
+}
 
 /* =========================================================
    5. OBJETS ET FORMES
@@ -2212,6 +2256,9 @@ function setupCourtInteractions(index){
 
     if(!container) return;
 
+    if (container.dataset.courtBound === "1") return;
+    container.dataset.courtBound = "1";
+
     container.addEventListener("pointerdown", event => {
 
         setActiveCourt(index);
@@ -2221,64 +2268,46 @@ function setupCourtInteractions(index){
         if(event.target.closest(".object, .text-object")) return;
 
         const rect = container.getBoundingClientRect();
+        if(!rect.width || !rect.height) return;
 
-        const x =
-            ((event.clientX - rect.left) / rect.width) * 100 + "%";
+        const x = ((event.clientX - rect.left) / rect.width) * 100 + "%";
+        const y = ((event.clientY - rect.top) / rect.height) * 100 + "%";
 
-        const y =
-            ((event.clientY - rect.top) / rect.height) * 100 + "%";
-
-        saveUndoPoint();
-
-        createObject(activeTool, x, y);
+        try {
+            if (typeof saveUndoPoint === "function") saveUndoPoint();
+            createObject(activeTool, x, y);
+            console.log("Pion posé :", activeTool, x, y);
+        } catch (err) {
+            console.error("Erreur pose pion :", err);
+        }
     });
 }
 
 /* Gestion des boutons de la palette. */
-document.querySelectorAll(".palette .tool[data-tool]").forEach(button => {
-    button.onclick = () => {
-        isPencilActive = false;
-        $("pencilToolBtn").classList.remove("active");
+const paletteEl = document.querySelector(".palette");
+if (paletteEl && !paletteEl.dataset.toolsBound) {
+    paletteEl.dataset.toolsBound = "1";
+    paletteEl.addEventListener("click", event => {
+        const button = event.target.closest(".tool[data-tool]");
+        if (!button || !paletteEl.contains(button)) return;
 
-        document.querySelectorAll(".palette .tool[data-tool]").forEach(b => {
+        if (typeof setLogoPositionMode === "function") {
+            setLogoPositionMode(false);
+        }
+
+        isPencilActive = false;
+        const pencilBtn = $("pencilToolBtn");
+        if (pencilBtn) pencilBtn.classList.remove("active");
+
+        paletteEl.querySelectorAll(".tool[data-tool]").forEach(b => {
             b.classList.remove("active");
         });
 
         activeTool = button.dataset.tool;
         button.classList.add("active");
-    };
-});
-
-/* Menu mobile des outils secondaires.
-   Les boutons originaux restent dans le DOM pour conserver toute la logique existante. */
-(function setupMobilePaletteMenu(){
-    const wrap = $("mobilePaletteButton")?.closest(".mobile-palette-actions");
-    const btn = $("mobilePaletteButton");
-    const menu = $("mobilePaletteMenu");
-    if(!wrap || !btn || !menu) return;
-
-    btn.onclick = (event) => {
-        event.stopPropagation();
-        const open = wrap.classList.toggle("open");
-        btn.setAttribute("aria-expanded", open ? "true" : "false");
-    };
-
-    menu.querySelectorAll("[data-palette-action]").forEach(item => {
-        item.onclick = () => {
-            const target = $(item.dataset.paletteAction);
-            if(target) target.click();
-            wrap.classList.remove("open");
-            btn.setAttribute("aria-expanded", "false");
-        };
+        console.log("Outil actif :", activeTool);
     });
-
-    document.addEventListener("pointerdown", event => {
-        if(!wrap.contains(event.target)){
-            wrap.classList.remove("open");
-            btn.setAttribute("aria-expanded", "false");
-        }
-    });
-})();
+}
 
 setupCourtInteractions(0);
 
@@ -2508,11 +2537,8 @@ async function saveCurrentExercise(){
 
     saveStorage();
 
-    if(handCoachDirectory){
-        await saveFilesToFolder();
-    }
+  
 
-    alert("Exercice sauvegardé !");
 }
 
 $("newExercise").onclick = resetFormToBlank;
@@ -2521,95 +2547,6 @@ $("undo").onclick = undo;
 $("redo").onclick = redo;
 $("clearAll").onclick = clearAll;
 $("addCourtButton").onclick = addSecondCourt;
-
-/* =========================================================
-   MENU ACTIONS MOBILE
-   Les vrais boutons restent présents pour conserver toute la logique existante.
-   Sur mobile, ils sont simplement pilotés depuis le menu ⋮.
-========================================================= */
-const mobileActionsButton = $("mobileActionsButton");
-const mobileActionsMenu = $("mobileActionsMenu");
-
-if(mobileActionsButton && mobileActionsMenu){
-    mobileActionsButton.onclick = event => {
-        event.stopPropagation();
-        const open = mobileActionsMenu.classList.toggle("open");
-        mobileActionsButton.setAttribute("aria-expanded", open ? "true" : "false");
-    };
-
-    mobileActionsMenu.querySelectorAll("[data-action]").forEach(button => {
-        button.onclick = () => {
-            const target = $(button.dataset.action);
-            if(target) target.click();
-            mobileActionsMenu.classList.remove("open");
-            mobileActionsButton.setAttribute("aria-expanded", "false");
-        };
-    });
-
-    document.addEventListener("click", event => {
-        if(!mobileActionsMenu.contains(event.target) && event.target !== mobileActionsButton){
-            mobileActionsMenu.classList.remove("open");
-            mobileActionsButton.setAttribute("aria-expanded", "false");
-        }
-    });
-}
-
-/* =========================================================
-   9. IMPORT / EXPORT JSON
-========================================================= */
-
-function exportExercises(){
-    const blob = new Blob(
-        [JSON.stringify(exercises, null, 2)],
-        { type:"application/json" }
-    );
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = `handcoach_exercices_${Date.now()}.json`;
-    link.click();
-
-    URL.revokeObjectURL(url);
-}
-
-/* Boutons ajoutés dynamiquement sous la zone de travail. */
-
-
-
-// Champ fichier caché pour l'import
-const importFileInput = document.createElement("input");
-importFileInput.type = "file";
-importFileInput.accept = ".json";
-importFileInput.id = "importFile";
-importFileInput.hidden = true;
-document.body.appendChild(importFileInput);
-
-$("exportButton").onclick = exportExercises;
-$("importButton").onclick = () => $("importFile").click();
-
-$("importFile").onchange = event => {
-    const file = event.target.files[0];
-    if(!file) return;
-
-    const reader = new FileReader();
-    reader.onload = loadEvent => {
-        try{
-            const imported = JSON.parse(loadEvent.target.result);
-            if(!Array.isArray(imported)){
-                throw new Error("Le fichier ne contient pas une liste d'exercices.");
-            }
-            exercises = mergeById(exercises, imported);
-            saveStorage();
-            alert("Exercices importés avec succès !");
-        }catch(error){
-            alert("Fichier JSON invalide.\n\n" + error.message);
-        }
-    };
-    reader.readAsText(file);
-    event.target.value = "";
-};
 
 /* =========================================================
    10. GESTION DES SÉANCES
@@ -2639,9 +2576,8 @@ $("saveSessionBtn").onclick = async () => {
 
     saveStorage();
 
-    if(handCoachDirectory){
-        await saveFilesToFolder();
-    }
+
+    
 
     $("sessionModal").classList.remove("visible");
 };
@@ -2743,7 +2679,7 @@ function printSession(sessionId){
                         <rect x="0" y="0" width="40" height="20" fill="none" stroke="#fff" stroke-width="0.12"/>
                         <path d="M20 0V20" fill="none" stroke="#fff" stroke-width="0.15"/>
                         <circle cx="20" cy="10" r="1.8" fill="none" stroke="#fff" stroke-width="0.11"/>
-                        <path d="M0 8.5V11.5M40 8.5V11.5" fill="none" stroke="#fff" stroke-width="0.15"/>
+                        <path d="M0 8.5V11.6M40 8.5V11.6" fill="none" stroke="#fff" stroke-width="0.15"/>
                         <path d="M0 4 A6 6 0 0 1 6 10 A6 6 0 0 1 0 16 M40 4 A6 6 0 0 0 34 10 A6 6 0 0 0 40 16" fill="none" stroke="#fff" stroke-width="0.15"/>
                         <path d="M0 1 A9 9 0 0 1 9 10 A9 9 0 0 1 0 19 M40 1 A9 9 0 0 0 31 10 A9 9 0 0 0 40 19" fill="none" stroke="#fff" stroke-width="0.11" stroke-dasharray="0.28 0.28"/>
                         <path d="M7 9.5V10.5M33 9.5V10.5M4 9.8V10.2M36 9.8V10.2" fill="none" stroke="#fff" stroke-width="0.15"/>
@@ -2856,21 +2792,51 @@ function renderSidebar(){
                 draggedExerciseId = null;
             };
 
-            const deleteButton = document.createElement("button");
-            deleteButton.className = "del-btn";
-            deleteButton.textContent = "✕";
-            deleteButton.title = "Supprimer l'exercice";
+           const shareButton = document.createElement("button");
+shareButton.className = "del-btn";
+shareButton.textContent = "🤝";
+shareButton.title = "Partager l'exercice";
 
-            deleteButton.onclick = event => {
-                event.stopPropagation();
-                if(confirm(`Supprimer l'exercice "${exercise.title}" ?`)){
-                    exercises = exercises.filter(ex => ex.id !== exercise.id);
-                    if(currentId === exercise.id) resetFormToBlank();
-                    saveStorage();
-                }
-            };
+shareButton.onclick = event => {
+    event.stopPropagation();
+    openShareExerciseModal(exercise);
+};
 
-            item.appendChild(deleteButton);
+
+const deleteButton = document.createElement("button");
+deleteButton.className = "del-btn";
+deleteButton.textContent = "✕";
+deleteButton.title = "Supprimer l'exercice";
+
+deleteButton.onclick = event => {
+    event.stopPropagation();
+
+    if(confirm(`Supprimer l'exercice "${exercise.title}" ?`)){
+        exercises = exercises.filter(ex => ex.id !== exercise.id);
+
+        if(currentId === exercise.id) {
+            resetFormToBlank();
+        }
+
+        saveStorage();
+    }
+};
+
+if (exercise.team_id) {
+    const unshareBtn = document.createElement("button");
+    unshareBtn.className = "del-btn";
+    unshareBtn.textContent = "🔗";
+    unshareBtn.title = "Retirer le partage";
+    unshareBtn.onclick = event => {
+        event.stopPropagation();
+        unshareExercise(exercise);
+    };
+    item.appendChild(unshareBtn);
+}
+
+
+item.appendChild(shareButton);
+item.appendChild(deleteButton);
             item.onclick = () => loadExercise(exercise);
             content.appendChild(item);
         });
@@ -2903,6 +2869,68 @@ function renderSidebar(){
         const summary = document.createElement("summary");
         summary.className = "tree-summary";
         summary.textContent = `${category} (${categorySessions.length})`;
+        summary.title = "Double-clic pour renommer le thème";
+summary.addEventListener("dblclick", event => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const nouveau = prompt("Nouveau nom du thème :", category);
+    if (nouveau === null) return;
+
+    const nom = nouveau.trim();
+    if (!nom) {
+        alert("Le nom ne peut pas être vide.");
+        return;
+    }
+
+    sessions.forEach(session => {
+        if ((session.category || "Général") === category) {
+            session.category = nom;
+        }
+    });
+
+    if (typeof saveStorage === "function") {
+        saveStorage();
+    } else {
+        localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+        renderSidebar();
+    }
+});
+
+summary.addEventListener("dragover", event => {
+    if (!draggedSessionId) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+    details.classList.add("drag-over");
+});
+
+summary.addEventListener("dragleave", () => {
+    details.classList.remove("drag-over");
+});
+
+summary.addEventListener("drop", event => {
+    event.preventDefault();
+    event.stopPropagation();
+    details.classList.remove("drag-over");
+
+    const id = draggedSessionId
+        || (event.dataTransfer.getData("text/session-id") || "");
+    if (!id) return;
+
+    const seance = sessions.find(s => s.id === id);
+    if (!seance) return;
+
+    seance.category = category;
+    draggedSessionId = null;
+
+    if (typeof saveStorage === "function") {
+        saveStorage();
+    } else {
+        localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+        renderSidebar();
+    }
+});
+
         details.appendChild(summary);
 
         const content = document.createElement("div");
@@ -2920,16 +2948,81 @@ function renderSidebar(){
             const sessionSummary = document.createElement("summary");
             sessionSummary.className = "tree-summary";
             sessionSummary.style.background = "#edf6ff";
+            sessionSummary.draggable = true;
+sessionSummary.title = (sessionSummary.title || "") + " — Glisser vers un thème pour déplacer";
+
+sessionSummary.addEventListener("dragstart", event => {
+    draggedSessionId = session.id;
+    draggedExerciseId = null;
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/session-id", session.id);
+    event.dataTransfer.setData("text/plain", "session:" + session.id);
+    sessionSummary.style.opacity = "0.5";
+});
+
+sessionSummary.addEventListener("dragend", () => {
+    draggedSessionId = null;
+    sessionSummary.style.opacity = "";
+    document.querySelectorAll("#sessionsTree details.tree-group").forEach(el => {
+        el.classList.remove("drag-over");
+    });
+});
 
             const totalDuration = (session.items || []).reduce(
                 (total, item) => total + (parseInt(item.duration) || 0), 0
             );
 
-            sessionSummary.innerHTML = `
-                <span>📋 ${session.name}
-                    <small style="color:#64748b; font-weight:normal;">(${totalDuration}m)</small>
-                </span>
-            `;
+           sessionSummary.innerHTML = `
+    <span>📋 ${session.name}
+        <small style="color:#64748b; font-weight:normal;">(${totalDuration}m)</small>
+    </span>
+    <span class="tree-actions">
+        <button type="button" class="sess-theme-btn" title="Changer le thème">📁</button>
+    </span>
+`;
+
+	    sessionSummary.addEventListener("dblclick", event => {
+    		             event.preventDefault();
+    			  event.stopPropagation();
+
+  			    const nouveauNom = prompt("Nouveau nom de la séance :", session.name || "");
+  			    if(nouveauNom === null) return;
+
+  			    const nom = nouveauNom.trim();
+ 			    if(!nom){
+  		        alert("Le nom ne peut pas être vide.");
+    		           return;
+	      }
+
+
+const themeBtn = sessionSummary.querySelector(".sess-theme-btn");
+if (themeBtn) {
+    themeBtn.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const nouveauTheme = prompt(
+            "Thème de la séance :",
+            session.category || "Général"
+        );
+        if (nouveauTheme === null) return;
+
+        const theme = nouveauTheme.trim() || "Général";
+        session.category = theme;
+
+        if (typeof saveStorage === "function") {
+            saveStorage();
+        } else {
+            localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+            renderSidebar();
+        }
+    });
+}
+
+
+   			   session.name = nom;
+    			   saveStorage();
+	   });
 
             const actions = document.createElement("div");
             actions.className = "tree-actions";
@@ -2954,13 +3047,33 @@ function renderSidebar(){
                 }
             };
 
-            actions.appendChild(printButton);
-            actions.appendChild(deleteButton);
+const shareSessionButton = document.createElement("button");
+shareSessionButton.textContent = "🤝";
+shareSessionButton.title = "Partager la séance";
+shareSessionButton.onclick = event => {
+    event.stopPropagation();
+    openShareSessionModal(session);
+};
+
+actions.appendChild(printButton);
+actions.appendChild(shareSessionButton);
+actions.appendChild(deleteButton);
             sessionSummary.appendChild(actions);
             sessionDetails.appendChild(sessionSummary);
 
             const sessionContent = document.createElement("div");
             sessionContent.className = "tree-content session-drop-target";
+
+if (session.team_id) {
+    const unshareSessionBtn = document.createElement("button");
+    unshareSessionBtn.textContent = "🔗";
+    unshareSessionBtn.title = "Retirer le partage (séance + exercices)";
+    unshareSessionBtn.onclick = event => {
+        event.stopPropagation();
+        unshareSession(session);
+    };
+    actions.appendChild(unshareSessionBtn);
+}
 
             /* =====================================================
                AJOUT D'UN EXERCICE DANS UNE SÉANCE
@@ -2990,11 +3103,6 @@ function renderSidebar(){
 
                 saveStorage();
 
-                if(handCoachDirectory){
-                    saveFilesToFolder().catch(error =>
-                        console.error("Erreur de synchronisation de la séance :", error)
-                    );
-                }
             };
 
             const startSessionDrop = event => {
@@ -3063,11 +3171,7 @@ function renderSidebar(){
                     session.items.splice(itemIndex, 1);
                     saveStorage();
 
-                    if(handCoachDirectory){
-                        saveFilesToFolder().catch(error =>
-                            console.error("Erreur de synchronisation de la séance :", error)
-                        );
-                    }
+                 
                 };
 
                 // === Drag & drop (le code que tu avais déjà) ===
@@ -3197,38 +3301,6 @@ function renderSidebar(){
 }
 
 /* =========================================================
-   INTERFACE MOBILE
-========================================================= */
-function closeMobileSidebar(){
-    document.body.classList.remove("mobile-sidebar-open");
-}
-
-const mobileMenuButton = $("mobileMenuButton");
-const mobileSidebarOverlay = $("mobileSidebarOverlay");
-
-if(mobileMenuButton){
-    mobileMenuButton.addEventListener("click", event => {
-        event.stopPropagation();
-        document.body.classList.toggle("mobile-sidebar-open");
-    });
-}
-
-if(mobileSidebarOverlay){
-    mobileSidebarOverlay.addEventListener("click", closeMobileSidebar);
-}
-
-document.addEventListener("keydown", event => {
-    if(event.key === "Escape") closeMobileSidebar();
-});
-
-/* Sur mobile, ouvrir un exercice ferme automatiquement la bibliothèque. */
-const originalLoadExerciseForMobile = loadExercise;
-loadExercise = function(exercise){
-    originalLoadExerciseForMobile(exercise);
-    if(window.innerWidth <= 900) closeMobileSidebar();
-};
-
-/* =========================================================
    INITIALISATION
 ========================================================= */
 
@@ -3241,203 +3313,2139 @@ if(localStorage.getItem(SESSIONS_KEY) === null && sessions.length){
     localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
 }
 
+exercises = [];
+sessions = [];
 renderSidebar();
-updateSaveStatus();
+if (typeof updateSaveStatus === 'function') updateSaveStatus();
 
-/* =========================================================
-   AUTHENTIFICATION SUPABASE (repris de la version web)
-========================================================= */
-const SUPABASE_URL = 'https://yosujqdjffuyibddquxq.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_jl0cfFR4jbQpnbxvAAbubA_Bcg-Jmx8';
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-let sb = null;
-let currentUser = null;
+<script>
 
-function ensureSupabase() {
-    if (sb) return sb;
-    if (!window.supabase) {
-        console.error('Supabase JS non chargé');
-        return null;
-    }
-    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    return sb;
-}
 
-async function getCurrentUser() {
-    const client = ensureSupabase();
-    if (!client) return null;
-    const { data, error } = await client.auth.getUser();
-    if (error) {
-        console.error('Erreur utilisateur :', error);
-        return null;
-    }
-    return data.user || null;
-}
+// =========================================================
+// PARTAGE D'UN EXERCICE
+// =========================================================
 
-async function loginUser() {
-    const client = ensureSupabase();
-    if (!client) {
-        showToast('❌ Supabase non disponible');
+let exerciseToShare = null;
+
+
+async function openShareExerciseModal(exercise) {
+
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
         return;
     }
-    const email = document.getElementById('authEmail')?.value.trim();
-    const password = document.getElementById('authPassword')?.value;
-    if (!email || !password) {
-        showToast('⚠️ Email et mot de passe obligatoires');
+
+    const modal = document.getElementById('shareExerciseModal');
+    const name = document.getElementById('shareExerciseName');
+    const select = document.getElementById('shareTeamSelect');
+
+    if (!modal || !name || !select) {
+        console.error('❌ Modal de partage introuvable');
         return;
     }
-    const { data, error } = await client.auth.signInWithPassword({ email, password });
-    if (error) {
-        showToast('❌ ' + error.message);
-        return;
+
+    exerciseToShare = exercise;
+
+    name.textContent =
+        'Exercice : ' + (exercise.title || 'Sans titre');
+
+    select.innerHTML = '<option value="">Chargement...</option>';
+
+    modal.style.display = 'flex';
+
+    try {
+
+        const { data, error } = await sb
+            .from('teams')
+            .select('id, name, owner_id')
+            .eq('owner_id', currentUser.id)
+            .order('created_at', {
+                ascending: true
+            });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+
+            select.innerHTML =
+                '<option value="">Aucune bibliothèque disponible</option>';
+
+            return;
+        }
+
+        select.innerHTML = `
+            <option value="">
+                Sélectionner une bibliothèque...
+            </option>
+        `;
+
+        data.forEach(team => {
+
+            const option = document.createElement('option');
+
+            option.value = team.id;
+            option.textContent = team.name;
+
+            select.appendChild(option);
+
+        });
+
+    } catch (err) {
+
+        console.error(
+            'Erreur chargement bibliothèques :',
+            err
+        );
+
+        select.innerHTML =
+            '<option value="">Erreur de chargement</option>';
+
+        showToast(
+            '❌ ' + err.message
+        );
     }
-    currentUser = data.user;
-    closeAuthModal();
-    showToast('✅ Connexion réussie');
-    updateAuthUI();
-    // Optionnel : charger les données cloud
-    if (typeof loadFromSupabase === 'function') await loadFromSupabase();
 }
 
-async function registerUser() {
-    const client = ensureSupabase();
-    if (!client) return;
-    const email = document.getElementById('authEmail')?.value.trim();
-    const password = document.getElementById('authPassword')?.value;
-    if (!email || !password) {
-        showToast('⚠️ Email et mot de passe obligatoires');
-        return;
+
+function closeShareExerciseModal() {
+
+    const modal =
+        document.getElementById('shareExerciseModal');
+
+    if (modal) {
+        modal.style.display = 'none';
     }
-    if (password.length < 6) {
-        showToast('⚠️ Minimum 6 caractères');
-        return;
-    }
-    const { data, error } = await client.auth.signUp({ email, password });
-    if (error) {
-        showToast('❌ ' + error.message);
-        return;
-    }
-    currentUser = data.user;
-    closeAuthModal();
-    showToast('✅ Compte créé');
-    updateAuthUI();
+
+    exerciseToShare = null;
 }
 
-async function logoutUser() {
-    const client = ensureSupabase();
-    if (!client) return;
-    await client.auth.signOut();
-    currentUser = null;
-    updateAuthUI();
-    showToast('👋 Déconnexion réussie');
+
+async function confirmShareExercise() {
+
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        return;
+    }
+
+    if (!exerciseToShare) {
+        showToast('❌ Aucun exercice sélectionné');
+        return;
+    }
+
+    const select =
+        document.getElementById('shareTeamSelect');
+
+    const teamId = select?.value;
+
+    if (!teamId) {
+        showToast(
+            '⚠️ Sélectionnez une bibliothèque'
+        );
+        return;
+    }
+
+    try {
+
+        const { data, error } = await sb.rpc(
+            'share_exercise_with_team',
+            {
+                p_exercise_id: exerciseToShare.id,
+                p_team_id: teamId
+            }
+        );
+
+        if (error) throw error;
+
+        console.log(
+            '✅ Exercice partagé :',
+            exerciseToShare.id,
+            '→',
+            teamId
+        );
+
+        showToast(
+            '🤝 Exercice partagé avec la bibliothèque'
+        );
+
+        closeShareExerciseModal();
+
+        await loadFromSupabase();
+
+    } catch (err) {
+
+        console.error(
+            'Erreur partage exercice :',
+            err
+        );
+
+        showToast(
+            '❌ ' + err.message
+        );
+    }
 }
 
-function openAuthModal() {
-    const modal = document.getElementById('authModal');
-    const passwordInput = document.getElementById('authPassword');
-    if (passwordInput) passwordInput.value = '';
-    if (modal) modal.style.display = 'flex';
+
+
+// =========================================================
+// PARTAGE D'UNE SÉANCE
+// =========================================================
+
+let sessionToShare = null;
+
+async function openShareSessionModal(session) {
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        return;
+    }
+
+    const modal = document.getElementById('shareSessionModal');
+    const name = document.getElementById('shareSessionName');
+    const select = document.getElementById('shareSessionTeamSelect');
+
+    if (!modal || !name || !select) {
+        console.error('❌ Modal partage séance introuvable');
+        return;
+    }
+
+    sessionToShare = session;
+    name.textContent = 'Séance : ' + (session.name || 'Sans titre');
+    select.innerHTML = '<option value="">Chargement...</option>';
+    modal.style.display = 'flex';
+
+    try {
+        const { data, error } = await sb
+            .from('teams')
+            .select('id, name, owner_id')
+            .eq('owner_id', currentUser.id)
+            .order('created_at', { ascending: true });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            select.innerHTML = '<option value="">Aucune bibliothèque disponible</option>';
+            return;
+        }
+
+        select.innerHTML = '<option value="">Sélectionner une bibliothèque...</option>';
+
+        data.forEach(team => {
+            const option = document.createElement('option');
+            option.value = team.id;
+            option.textContent = team.name;
+            select.appendChild(option);
+        });
+    } catch (err) {
+        console.error(err);
+        select.innerHTML = '<option value="">Erreur de chargement</option>';
+        showToast('❌ ' + err.message);
+    }
 }
 
-function closeAuthModal() {
-    const modal = document.getElementById('authModal');
+function closeShareSessionModal() {
+    const modal = document.getElementById('shareSessionModal');
     if (modal) modal.style.display = 'none';
+    sessionToShare = null;
 }
 
-function updateAuthUI() {
-    const authButton = document.getElementById('authButton');
-    const userInfo = document.getElementById('userInfo');
-    if (!authButton) return;
-    if (currentUser) {
-        authButton.textContent = '🚪 Déconnexion';
-        authButton.onclick = logoutUser;
-        if (userInfo) userInfo.textContent = '👤 ' + (currentUser.email || '');
-    } else {
-        authButton.textContent = '🔐 Connexion';
-        authButton.onclick = openAuthModal;
-        if (userInfo) userInfo.textContent = '';
+async function confirmShareSession() {
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        return;
+    }
+    if (!sessionToShare) {
+        showToast('❌ Aucune séance sélectionnée');
+        return;
+    }
+
+    const select = document.getElementById('shareSessionTeamSelect');
+    const teamId = select?.value;
+
+    if (!teamId) {
+        showToast('⚠️ Sélectionnez une bibliothèque');
+        return;
+    }
+
+    try {
+    // 1. Partager la séance
+    const { error } = await sb.rpc('share_session_with_team', {
+        p_session_id: sessionToShare.id,
+        p_team_id: teamId
+    });
+    if (error) throw error;
+
+    // 2. Partager aussi les exercices de la séance
+    const exerciseIds = (sessionToShare.items || [])
+        .map(item => item.exerciseId)
+        .filter(Boolean);
+
+    const uniqueIds = [...new Set(exerciseIds)];
+
+    for (const exerciseId of uniqueIds) {
+        const { error: exError } = await sb.rpc('share_exercise_with_team', {
+            p_exercise_id: exerciseId,
+            p_team_id: teamId
+        });
+        // Si déjà partagé ou pas proprio, on ignore l'erreur
+        if (exError) {
+            console.warn('Exercice non partagé :', exerciseId, exError.message);
+        }
+    }
+
+    console.log('✅ Séance + exercices partagés :', sessionToShare.id, '→', teamId);
+    showToast('🤝 Séance et exercices partagés');
+    closeShareSessionModal();
+    await loadFromSupabase();
+
+} catch (err) {
+    console.error(err);
+    showToast('❌ ' + err.message);
+}
+
+
+}
+
+// =========================================================
+// RETRAIT DE PARTAGE
+// =========================================================
+
+async function unshareExercise(exercise) {
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        return;
+    }
+    if (!exercise?.id) return;
+
+    if (!confirm('Retirer le partage de cet exercice ?\nLes autres membres de la bibliothèque ne le verront plus.')) {
+        return;
+    }
+
+    try {
+        const { error } = await sb.rpc('unshare_exercise_from_team', {
+            p_exercise_id: exercise.id
+        });
+        if (error) throw error;
+
+        showToast('🔗 Partage exercice retiré');
+        await loadFromSupabase();
+    } catch (err) {
+        console.error(err);
+        showToast('❌ ' + err.message);
     }
 }
+
+async function unshareSession(session) {
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        return;
+    }
+    if (!session?.id) return;
+
+    if (!confirm(
+        'Retirer le partage de cette séance ET de tous ses exercices ?\n' +
+        'Les autres membres ne les verront plus.'
+    )) {
+        return;
+    }
+
+    try {
+        // 1. Séance
+        const { error } = await sb.rpc('unshare_session_from_team', {
+            p_session_id: session.id
+        });
+        if (error) throw error;
+
+        // 2. Exercices de la séance
+        const exerciseIds = [...new Set(
+            (session.items || []).map(i => i.exerciseId).filter(Boolean)
+        )];
+
+        for (const exerciseId of exerciseIds) {
+            const { error: exError } = await sb.rpc('unshare_exercise_from_team', {
+                p_exercise_id: exerciseId
+            });
+            if (exError) {
+                console.warn('Exercice non retiré :', exerciseId, exError.message);
+            }
+        }
+
+        showToast('🔗 Partage séance + exercices retiré');
+        await loadFromSupabase();
+    } catch (err) {
+        console.error(err);
+        showToast('❌ ' + err.message);
+    }
+}
+
+  // =========================================================
+  // SUPABASE
+  // =========================================================
+
+  const SUPABASE_URL = 'https://yosujqdjffuyibddquxq.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_jl0cfFR4jbQpnbxvAAbubA_Bcg-Jmx8';
+
+  const sb = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  let currentUser = null;
+
+  /* Personnalisation propre à chaque compte. */
+  let userSettings = {
+      background_url: null,
+     logo_url: null,
+logo_size: 18,
+logo_opacity: 0.25,
+logo_x: 20,
+logo_y: 10
+,
+color_a: '#783fb4',
+color_b: '#e66c2e',
+color_cone: '#ffd21b'
+  };
+
+
+  // =========================================================
+  // UTILISATEUR CONNECTÉ
+  // =========================================================
+
+  async function getCurrentUser() {
+
+    const { data, error } = await sb.auth.getUser();
+
+    if (error) {
+      console.error('Erreur utilisateur :', error);
+      return null;
+    }
+
+    return data.user || null;
+  }
+
+
+  // =========================================================
+  // CONNEXION
+  // =========================================================
+
+  async function loginUser() {
+
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+
+    if (!email || !password) {
+      showToast('⚠️ Email et mot de passe obligatoires');
+      return;
+    }
+
+    const { data, error } = await sb.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      console.error(error);
+      showToast('❌ ' + error.message);
+      return;
+    }
+
+    currentUser = data.user;
+
+    closeAuthModal();
+
+    showToast('✅ Connexion réussie');
+
+    await loadFromSupabase();
+  }
+
 
 async function resetPassword() {
-    const client = ensureSupabase();
-    if (!client) return;
     const email = document.getElementById('authEmail')?.value.trim();
+
     if (!email) {
         showToast('⚠️ Entre ton email d’abord');
         return;
     }
+
+    // --- DEBUT MODIF ---
     const redirectTo = window.location.origin + window.location.pathname;
-    const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo });
+    // --- FIN MODIF ---
+
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo
+    });
+
     if (error) {
+        console.error(error);
         showToast('❌ ' + error.message);
         return;
     }
+
     showToast('📧 Email de réinitialisation envoyé');
     closeAuthModal();
 }
 
-function openTeamsModal() {
-    if (!currentUser) {
-        showToast('❌ Connectez-vous d’abord');
-        openAuthModal();
+function openResetPasswordModal() {
+  const modal = document.getElementById('resetPasswordModal');
+  if (modal) modal.style.display = 'flex';
+  const a = document.getElementById('newPassword');
+  const b = document.getElementById('newPasswordConfirm');
+  if (a) a.value = '';
+  if (b) b.value = '';
+}
+
+function closeResetPasswordModal() {
+  const modal = document.getElementById('resetPasswordModal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function confirmNewPassword() {
+  const p1 = document.getElementById('newPassword')?.value || '';
+  const p2 = document.getElementById('newPasswordConfirm')?.value || '';
+
+  if (p1.length < 6) {
+    showToast('⚠️ Minimum 6 caractères');
+    return;
+  }
+  if (p1 !== p2) {
+    showToast('⚠️ Les mots de passe ne correspondent pas');
+    return;
+  }
+
+  const { error } = await sb.auth.updateUser({ password: p1 });
+  if (error) {
+    showToast('❌ ' + error.message);
+    return;
+  }
+
+  closeResetPasswordModal();
+  showToast('✅ Mot de passe mis à jour');
+  currentUser = (await sb.auth.getUser()).data.user;
+  updateAuthUI();
+  if (currentUser) await loadFromSupabase();
+}
+
+
+  // =========================================================
+  // CREATION DE COMPTE
+  // =========================================================
+
+  async function registerUser() {
+
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+
+    if (!email || !password) {
+      showToast('⚠️ Email et mot de passe obligatoires');
+      return;
+    }
+
+    if (password.length < 6) {
+      showToast('⚠️ Minimum 6 caractères pour le mot de passe');
+      return;
+    }
+
+    const { data, error } = await sb.auth.signUp({
+      email,
+      password
+    });
+
+    if (error) {
+      console.error(error);
+      showToast('❌ ' + error.message);
+      return;
+    }
+
+    currentUser = data.user;
+
+    closeAuthModal();
+
+    showToast('✅ Compte créé');
+
+    await loadFromSupabase();
+  }
+
+
+  // =========================================================
+  // DECONNEXION
+  // =========================================================
+
+async function logoutUser() {
+
+    const { error } = await sb.auth.signOut();
+
+    if (error) {
+        console.error(error);
+        showToast('❌ Erreur de déconnexion');
         return;
     }
-    showToast('🤝 Fonction Bibliothèques disponible après connexion');
-    // La logique complète des équipes peut être branchée ici comme dans la version web
+
+    currentUser = null;
+    resetUserSettings();
+
+    exercises = [];
+    sessions = [];
+
+    localStorage.setItem(
+        EXERCISES_KEY,
+        JSON.stringify([])
+    );
+
+    localStorage.setItem(
+        SESSIONS_KEY,
+        JSON.stringify([])
+    );
+
+    // Vider les champs de connexion
+   const passwordInput = document.getElementById('authPassword');
+
+if (passwordInput) {
+    passwordInput.value = '';
 }
 
-function showToast(message) {
-    let el = document.getElementById('toast');
-    if (!el) {
-        el = document.createElement('div');
-        el.id = 'toast';
-        document.body.appendChild(el);
-    }
-    el.textContent = message;
-    el.classList.add('show');
-    clearTimeout(showToast._t);
-    showToast._t = setTimeout(() => el.classList.remove('show'), 2500);
-}
+    renderSidebar();
 
-async function initAuth() {
-    ensureSupabase();
-    if (!sb) return;
-    sb.auth.onAuthStateChange(async (event, session) => {
-        currentUser = session?.user || null;
-        updateAuthUI();
-    });
-    currentUser = await getCurrentUser();
     updateAuthUI();
+
+    showToast('👋 Déconnexion réussie');
 }
 
-// Lancer l’auth dès que Supabase est prêt
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAuth);
-} else {
-    initAuth();
+  // =========================================================
+  // INTERFACE AUTH
+  // =========================================================
+
+  function openAuthModal() {
+
+    const modal = document.getElementById('authModal');
+    const passwordInput = document.getElementById('authPassword');
+
+    if (passwordInput) {
+        passwordInput.value = '';
+    }
+
+    if (modal) {
+        modal.style.display = 'flex';
+    }
 }
+
+
+  function closeAuthModal() {
+
+    const modal = document.getElementById('authModal');
+
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+
+
+  function updateAuthUI() {
+
+    const authButton = document.getElementById('authButton');
+    const userInfo = document.getElementById('userInfo');
+
+    if (!authButton || !userInfo) return;
+
+    if (currentUser) {
+
+      authButton.textContent = '🚪 Déconnexion';
+      authButton.onclick = logoutUser;
+
+      userInfo.textContent = '👤 ' + currentUser.email;
+
+    } else {
+
+      authButton.textContent = '🔐 Connexion';
+      authButton.onclick = openAuthModal;
+
+      userInfo.textContent = '';
+    }
+  }
+
+
+  // =========================================================
+  // PERSONNALISATION DU COMPTE
+  // =========================================================
+
+  function setSettingsStatus(message, isError = false){
+      const el = $("settingsStatus");
+      if(!el) return;
+      el.textContent = message || "";
+      el.style.color = isError ? "#b91c1c" : "#475569";
+  }
+
+  function resetUserSettings(){
+      userSettings = {
+          background_url: null,
+          logo_url: null,
+logo_size: 18,
+logo_opacity: 0.25,
+logo_x: 20,
+logo_y: 10
+,
+color_a: '#783fb4',
+color_b: '#e66c2e',
+color_cone: '#ffd21b'
+      };
+      applyUserSettings();
+  }
+
+
+  let logoDrag = null;
+  let logoPositionMode = false;
+
+  function svgPointFromEvent(svg, event){
+      const rect = svg.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 40;
+      const y = ((event.clientY - rect.top) / rect.height) * 20;
+      return {
+          x: Math.max(0, Math.min(40, x)),
+          y: Math.max(0, Math.min(20, y))
+      };
+  }
+
+  function setLogoPositionMode(on){
+      logoPositionMode = !!on;
+      document.querySelectorAll(".draw-layer").forEach(layer => {
+          layer.style.pointerEvents = on ? "none" : "";
+      });
+      document.querySelectorAll(".court-logo-image").forEach(image => {
+          image.style.pointerEvents = on && userSettings.logo_url ? "auto" : "none";
+          image.style.cursor = on ? "grab" : "default";
+          image.style.outline = on ? "2px solid #287fe8" : "none";
+      });
+  }
+
+  function setupLogoDrag(image){
+      if(!image || image.dataset.dragReady === "1") return;
+      image.dataset.dragReady = "1";
+
+      image.addEventListener("pointerdown", event => {
+          if(!logoPositionMode || !userSettings.logo_url) return;
+          event.preventDefault();
+          event.stopPropagation();
+          const svg = image.closest("svg");
+          if(!svg) return;
+          logoDrag = { image, svg };
+          image.setPointerCapture(event.pointerId);
+      });
+
+      image.addEventListener("pointermove", event => {
+          if(!logoDrag || logoDrag.image !== image) return;
+          const pt = svgPointFromEvent(logoDrag.svg, event);
+          userSettings.logo_x = Math.round(pt.x * 10) / 10;
+          userSettings.logo_y = Math.round(pt.y * 10) / 10;
+          applyUserSettings();
+          setLogoPositionMode(true);
+      });
+
+      image.addEventListener("pointerup", async event => {
+          if(!logoDrag || logoDrag.image !== image) return;
+          logoDrag = null;
+          try { image.releasePointerCapture(event.pointerId); } catch(e) {}
+          if(typeof saveUserSettings === "function") await saveUserSettings();
+          setLogoPositionMode(false);
+          showToast("✅ Position du logo enregistrée");
+      });
+  }
+   function applyUserSettings(){
+          document.documentElement.style.setProperty('--color-a', userSettings.color_a || '#783fb4');
+      document.documentElement.style.setProperty('--color-b', userSettings.color_b || '#e66c2e');
+      document.documentElement.style.setProperty('--color-cone', userSettings.color_cone || '#ffd21b');
+
+      const colorA = $('colorAPicker');
+      const colorB = $('colorBPicker');
+      const colorCone = $('colorConePicker');
+      if (colorA) colorA.value = userSettings.color_a || '#783fb4';
+      if (colorB) colorB.value = userSettings.color_b || '#e66c2e';
+      if (colorCone) colorCone.value = userSettings.color_cone || '#ffd21b';
+      const backgroundUrl = userSettings.background_url || null;
+
+      if(backgroundUrl){
+          document.body.classList.add("handcoach-custom-background");
+          document.body.style.backgroundImage = `url("${String(backgroundUrl).replaceAll('"','\\"')}")`;
+      }else{
+          document.body.classList.remove("handcoach-custom-background");
+          document.body.style.backgroundImage = "";
+      }
+
+      const size = Math.max(5, Math.min(40, Number(userSettings.logo_size) || 18));
+      const opacity = Math.max(0, Math.min(1, Number(userSettings.logo_opacity) || 0));
+      const units = (size / 100) * 20;
+
+      const cx = Number(userSettings.logo_x);
+      const cy = Number(userSettings.logo_y);
+      const posX = Number.isFinite(cx) ? cx : 20;
+      const posY = Number.isFinite(cy) ? cy : 10;
+
+      document.querySelectorAll(".court-logo-image").forEach(image => {
+          if(!userSettings.logo_url){
+              image.style.display = "none";
+              image.setAttribute("href", "");
+              return;
+          }
+
+          image.setAttribute("x", String(posX - units / 2));
+          image.setAttribute("y", String(posY - units / 2));
+          image.setAttribute("width", String(units));
+          image.setAttribute("height", String(units));
+          image.setAttribute("opacity", String(opacity));
+          image.setAttribute("href", userSettings.logo_url);
+          image.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", userSettings.logo_url);
+          image.style.display = "block";
+                    setupLogoDrag(image);
+      });
+
+      const sizeRange = $("logoSizeRange");
+      const opacityRange = $("logoOpacityRange");
+      const sizeValue = $("logoSizeValue");
+      const opacityValue = $("logoOpacityValue");
+      const xRange = $("logoXRange");
+      const yRange = $("logoYRange");
+      const xValue = $("logoXValue");
+      const yValue = $("logoYValue");
+
+      if(sizeRange) sizeRange.value = String(size);
+      if(opacityRange) opacityRange.value = String(Math.round(opacity * 100));
+      if(sizeValue) sizeValue.textContent = `${Math.round(size)}%`;
+      if(opacityValue) opacityValue.textContent = `${Math.round(opacity * 100)}%`;
+      if(xRange) xRange.value = String(posX);
+      if(yRange) yRange.value = String(posY);
+      if(xValue) xValue.textContent = String(posX);
+      if(yValue) yValue.textContent = String(posY);
+  }
+
+  async function loadUserSettings(){
+      if(!currentUser){
+          resetUserSettings();
+          return;
+      }
+
+      try{
+          const { data, error } = await sb
+              .from("user_settings")
+              .select("background_url, logo_url, logo_size, logo_opacity, logo_x, logo_y, color_a, color_b, color_cone")
+              .eq("user_id", currentUser.id)
+              .maybeSingle();
+
+          if(error) throw error;
+
+          userSettings = {
+              background_url: data?.background_url || null,
+              logo_url: data?.logo_url || null,
+              logo_size: Number(data?.logo_size) || 18,
+              logo_opacity: data?.logo_opacity === null || data?.logo_opacity === undefined
+                  ? 0.25
+                  : Number(data.logo_opacity),
+              logo_x: Number(data?.logo_x) || 20,
+              logo_y: Number(data?.logo_y) || 10,
+              color_a: data?.color_a || '#783fb4',
+              color_b: data?.color_b || '#e66c2e',
+              color_cone: data?.color_cone || '#ffd21b'
+          };
+
+          applyUserSettings();
+          setSettingsStatus("");
+      }catch(error){
+          console.error("Erreur chargement personnalisation :", error);
+          resetUserSettings();
+          setSettingsStatus("⚠️ Personnalisation indisponible : " + error.message, true);
+      }
+  }
+
+  async function saveUserSettings(){
+      if(!currentUser){
+          showToast("🔐 Connecte-toi pour enregistrer ta personnalisation");
+          return false;
+      }
+
+      const payload = {
+          user_id: currentUser.id,
+          background_url: userSettings.background_url || null,
+          logo_url: userSettings.logo_url || null,
+          logo_size: Math.max(5, Math.min(40, Number(userSettings.logo_size) || 18)),
+          logo_opacity: Math.max(0, Math.min(1, Number(userSettings.logo_opacity) || 0)),
+          logo_x: Number.isFinite(Number(userSettings.logo_x)) ? Number(userSettings.logo_x) : 20,
+          logo_y: Number.isFinite(Number(userSettings.logo_y)) ? Number(userSettings.logo_y) : 10,
+          color_a: userSettings.color_a || '#783fb4',
+          color_b: userSettings.color_b || '#e66c2e',
+          color_cone: userSettings.color_cone || '#ffd21b',
+          updated_at: new Date().toISOString()
+      };
+
+      const { error } = await sb
+          .from("user_settings")
+          .upsert(payload, { onConflict: "user_id" });
+
+      if(error){
+          console.error("Erreur sauvegarde personnalisation :", error);
+          setSettingsStatus("❌ " + error.message, true);
+          showToast("❌ Impossible d'enregistrer la personnalisation");
+          return false;
+      }
+
+      userSettings = { ...userSettings, ...payload };
+      applyUserSettings();
+      setSettingsStatus("✅ Personnalisation enregistrée");
+      return true;
+  }
+
+  async function removeWhiteBackgroundFromLogo(file){
+      /*
+         On transforme le logo en PNG transparent.
+         Seules les zones blanches qui touchent le bord de l'image sont supprimées :
+         cela évite de supprimer les éléments blancs réellement présents dans le logo.
+      */
+      const imageUrl = URL.createObjectURL(file);
+
+      try{
+          const img = new Image();
+          img.decoding = "async";
+
+          await new Promise((resolve, reject) => {
+              img.onload = resolve;
+              img.onerror = reject;
+              img.src = imageUrl;
+          });
+
+          const maxDimension = 1800;
+          const scale = Math.min(1, maxDimension / Math.max(img.naturalWidth || img.width, img.naturalHeight || img.height));
+          const width = Math.max(1, Math.round((img.naturalWidth || img.width) * scale));
+          const height = Math.max(1, Math.round((img.naturalHeight || img.height) * scale));
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d", { willReadFrequently: true });
+          if(!ctx) throw new Error("Canvas indisponible");
+
+          ctx.clearRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const imageData = ctx.getImageData(0, 0, width, height);
+          const pixels = imageData.data;
+          const visited = new Uint8Array(width * height);
+          const queue = new Int32Array(width * height);
+          let head = 0;
+          let tail = 0;
+
+          /* Tolérance volontairement assez large pour les fonds blancs JPEG. */
+          const WHITE_TOLERANCE = 48;
+          const isWhiteBackgroundPixel = index => {
+              const a = pixels[index + 3];
+              if(a === 0) return true;
+
+              const r = pixels[index];
+              const g = pixels[index + 1];
+              const b = pixels[index + 2];
+              const distance = Math.sqrt((255-r)*(255-r) + (255-g)*(255-g) + (255-b)*(255-b));
+              return distance <= WHITE_TOLERANCE;
+          };
+
+          const addPixel = (x, y) => {
+              if(x < 0 || y < 0 || x >= width || y >= height) return;
+              const pixelNumber = y * width + x;
+              if(visited[pixelNumber]) return;
+              const index = pixelNumber * 4;
+              if(!isWhiteBackgroundPixel(index)) return;
+              visited[pixelNumber] = 1;
+              queue[tail++] = pixelNumber;
+          };
+
+          /* On part uniquement des quatre bords de l'image. */
+          for(let x = 0; x < width; x++){
+              addPixel(x, 0);
+              if(height > 1) addPixel(x, height - 1);
+          }
+          for(let y = 1; y < height - 1; y++){
+              addPixel(0, y);
+              if(width > 1) addPixel(width - 1, y);
+          }
+
+          while(head < tail){
+              const pixelNumber = queue[head++];
+              const x = pixelNumber % width;
+              const y = Math.floor(pixelNumber / width);
+              pixels[pixelNumber * 4 + 3] = 0;
+
+              addPixel(x - 1, y);
+              addPixel(x + 1, y);
+              addPixel(x, y - 1);
+              addPixel(x, y + 1);
+          }
+
+          ctx.putImageData(imageData, 0, 0);
+
+          const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+          if(!blob) throw new Error("Impossible de créer le PNG transparent");
+
+          return new File([blob], "handcoach-logo-transparent.png", { type: "image/png" });
+      } finally {
+          URL.revokeObjectURL(imageUrl);
+      }
+  }
+
+  async function uploadHandCoachAsset(file, kind){
+      if(!currentUser){
+          showToast("🔐 Connecte-toi pour personnaliser HandCoach");
+          return null;
+      }
+
+      if(!file || !file.type || !file.type.startsWith("image/")){
+          setSettingsStatus("❌ Sélectionne un fichier image.", true);
+          return null;
+      }
+
+      const maxSize = 8 * 1024 * 1024;
+      if(file.size > maxSize){
+          setSettingsStatus("❌ Image trop volumineuse (8 Mo maximum).", true);
+          return null;
+      }
+
+      setSettingsStatus("⏳ Préparation de l'image…");
+
+      let fileToUpload = file;
+      if(kind === "logo"){
+          try{
+              fileToUpload = await removeWhiteBackgroundFromLogo(file);
+          }catch(error){
+              console.error("Erreur de traitement du logo :", error);
+              setSettingsStatus("❌ Impossible de traiter le logo. Le fichier original sera utilisé.", true);
+              fileToUpload = file;
+          }
+      }
+
+      setSettingsStatus("⏳ Téléversement de l'image…");
+
+      const path = `${currentUser.id}/${kind}`;
+      const { error: uploadError } = await sb
+          .storage
+          .from("handcoach-assets")
+          .upload(path, fileToUpload, {
+              upsert: true,
+              contentType: fileToUpload.type,
+              cacheControl: "3600"
+          });
+
+      if(uploadError){
+          console.error("Erreur upload HandCoach :", uploadError);
+          setSettingsStatus("❌ " + uploadError.message, true);
+          return null;
+      }
+
+      const { data } = sb
+          .storage
+          .from("handcoach-assets")
+          .getPublicUrl(path);
+
+      if(!data?.publicUrl){
+          setSettingsStatus("❌ URL publique introuvable.", true);
+          return null;
+      }
+
+      /* Évite qu'un navigateur conserve l'ancienne image après remplacement. */
+      return `${data.publicUrl}?v=${Date.now()}`;
+  }
+
+  async function removeHandCoachAsset(kind, settingKey){
+      if(!currentUser) return;
+
+      setSettingsStatus("⏳ Suppression…");
+
+      const path = `${currentUser.id}/${kind}`;
+      const { error: storageError } = await sb
+          .storage
+          .from("handcoach-assets")
+          .remove([path]);
+
+      if(storageError){
+          console.warn("Suppression du fichier Storage :", storageError);
+      }
+
+      userSettings[settingKey] = null;
+      applyUserSettings();
+      await saveUserSettings();
+  }
+
+  function openSettingsModal(){
+      const modal = $("settingsModal");
+      if(!modal) return;
+
+      if(!currentUser){
+          showToast("🔐 Connecte-toi pour utiliser la personnalisation");
+          return;
+      }
+
+      applyUserSettings();
+      setSettingsStatus("");
+      modal.classList.add("visible");
+  }
+
+  function closeSettingsModal(){
+      const modal = $("settingsModal");
+      if(modal) modal.classList.remove("visible");
+  }
+
+  function setupSettingsUI(){
+      $("settingsButton")?.addEventListener("click", openSettingsModal);
+      $("closeSettingsBtn")?.addEventListener("click", closeSettingsModal);
+
+      $("settingsModal")?.addEventListener("click", event => {
+          if(event.target === $("settingsModal")) closeSettingsModal();
+      });
+
+      $("backgroundFile")?.addEventListener("change", async event => {
+          const file = event.target.files?.[0];
+          if(!file) return;
+
+          const url = await uploadHandCoachAsset(file, "background");
+          if(url){
+              userSettings.background_url = url;
+              applyUserSettings();
+              await saveUserSettings();
+          }
+          event.target.value = "";
+      });
+
+      $("logoFile")?.addEventListener("change", async event => {
+          const file = event.target.files?.[0];
+          if(!file) return;
+
+          const url = await uploadHandCoachAsset(file, "logo");
+          if(url){
+              userSettings.logo_url = url;
+              applyUserSettings();
+              await saveUserSettings();
+          }
+          event.target.value = "";
+      });
+
+      $("removeBackgroundBtn")?.addEventListener("click", () => removeHandCoachAsset("background", "background_url"));
+      $("removeLogoBtn")?.addEventListener("click", () => removeHandCoachAsset("logo", "logo_url"));
+
+      $("logoSizeRange")?.addEventListener("input", event => {
+          userSettings.logo_size = Number(event.target.value);
+          applyUserSettings();
+      });
+
+      $("logoSizeRange")?.addEventListener("change", saveUserSettings);
+
+      $("logoOpacityRange")?.addEventListener("input", event => {
+          userSettings.logo_opacity = Number(event.target.value) / 100;
+          applyUserSettings();
+      });
+
+      $("logoOpacityRange")?.addEventListener("change", saveUserSettings);
+            $("logoXRange")?.addEventListener("input", event => {
+          userSettings.logo_x = Number(event.target.value);
+          applyUserSettings();
+      });
+      $("logoXRange")?.addEventListener("change", saveUserSettings);
+
+           $("logoYRange")?.addEventListener("input", event => {
+          userSettings.logo_y = Number(event.target.value);
+          applyUserSettings();
+      });
+      $("logoYRange")?.addEventListener("change", saveUserSettings);
+
+      $("positionLogoBtn")?.addEventListener("click", () => {
+          if(!userSettings.logo_url){
+              showToast("⚠️ Ajoute d’abord un logo");
+              return;
+          }
+          closeSettingsModal();
+          setLogoPositionMode(true);
+          showToast("📍 Glisse le logo, puis relâche");
+      });
+      $("colorAPicker")?.addEventListener("input", event => {
+          userSettings.color_a = event.target.value;
+          applyUserSettings();
+      });
+      $("colorAPicker")?.addEventListener("change", saveUserSettings);
+
+      $("colorBPicker")?.addEventListener("input", event => {
+          userSettings.color_b = event.target.value;
+          applyUserSettings();
+      });
+      $("colorBPicker")?.addEventListener("change", saveUserSettings);
+
+      $("colorConePicker")?.addEventListener("input", event => {
+          userSettings.color_cone = event.target.value;
+          applyUserSettings();
+      });
+      $("colorConePicker")?.addEventListener("change", saveUserSettings);
+
+  }
+  // =========================================================
+  // CHARGEMENT DEPUIS SUPABASE
+  // =========================================================
+
+async function loadFromSupabase() {
+  if (!currentUser) {
+    console.log('Aucun utilisateur connecté');
+    return;
+  }
+
+  try {
+    // =====================================================
+    // 1. Récupération des bibliothèques de l'utilisateur
+    // =====================================================
+
+    const { data: teamData, error: teamError } = await sb
+      .from('teams')
+      .select('id, name, owner_id')
+      .or(
+        `owner_id.eq.${currentUser.id},id.in.(${
+          (
+            await sb
+              .from('team_members')
+              .select('team_id')
+              .eq('user_id', currentUser.id)
+          ).data?.map(tm => tm.team_id).join(',') || '00000000-0000-0000-0000-000000000000'
+        })`
+      );
+
+    if (teamError) throw teamError;
+
+    const teams = teamData || [];
+    const teamIds = teams.map(team => team.id);
+
+    console.log('🤝 Bibliothèques accessibles :', teams);
+
+    // =====================================================
+    // 2. Exercices personnels + exercices partagés
+    // =====================================================
+
+    let exQuery = sb
+      .from('Exercices')
+      .select('*');
+
+    if (teamIds.length > 0) {
+      exQuery = exQuery.or(
+        `user_id.eq.${currentUser.id},team_id.in.(${teamIds.join(',')})`
+      );
+    } else {
+      exQuery = exQuery.eq('user_id', currentUser.id);
+    }
+
+    const { data: exData, error: exError } = await exQuery;
+
+    if (exError) throw exError;
+
+   exercises = (exData || []).map(row => ({
+  id: row.id,
+  title: row.title,
+  category: row.category,
+  duration: row.duration,
+  ...(row.data || {}),
+  team_id: row.team_id || null   // ← en dernier, gagne toujours
+}));
+
+    // =====================================================
+    // 3. Séances personnelles + séances partagées
+    // =====================================================
+
+    let seQuery = sb
+      .from('seances')
+      .select('*');
+
+    if (teamIds.length > 0) {
+      seQuery = seQuery.or(
+        `user_id.eq.${currentUser.id},team_id.in.(${teamIds.join(',')})`
+      );
+    } else {
+      seQuery = seQuery.eq('user_id', currentUser.id);
+    }
+
+    const { data: seData, error: seError } = await seQuery;
+
+    if (seError) throw seError;
+
+    sessions = (seData || []).map(row => ({
+      id: row.id,
+      name: row.name,
+      category: row.category,
+      date: row.date,
+      team_id: row.team_id || null,
+      items: row.items || []
+    }));
+
+    // =====================================================
+    // 4. Mise à jour du stockage local
+    // =====================================================
+
+    localStorage.setItem(
+      EXERCISES_KEY,
+      JSON.stringify(exercises)
+    );
+
+    localStorage.setItem(
+      SESSIONS_KEY,
+      JSON.stringify(sessions)
+    );
+
+    renderSidebar();
+
+    if (typeof updateSaveStatus === 'function') {
+      updateSaveStatus();
+    }
+
+    console.log(
+      '✅ Données chargées pour',
+      currentUser.email,
+      '| Bibliothèques :',
+      teams.length,
+      '| Exercices :',
+      exercises.length,
+      '| Séances :',
+      sessions.length
+    );
+
+  } catch (err) {
+    console.error('Erreur chargement Supabase :', err);
+    showToast('❌ Erreur de chargement : ' + err.message);
+  }
+}
+
+
+  // =========================================================
+  // SAUVEGARDE VERS SUPABASE
+  // =========================================================
+
+// =========================================================
+// SAUVEGARDE VERS SUPABASE
+// =========================================================
+
+async function saveToSupabase() {
+
+    if (!currentUser) {
+        throw new Error('Aucun utilisateur connecté');
+    }
+
+    try {
+
+        // -------------------------------------------------------
+        // EXERCICES
+        // -------------------------------------------------------
+
+        const exRows = [];
+
+        for (const ex of exercises) {
+
+            /*
+             * On récupère la ligne existante pour connaître
+             * son propriétaire et sa bibliothèque éventuelle.
+             *
+             * Cela évite de remplacer user_id par currentUser.id
+             * lorsqu'un exercice appartient à un autre coach.
+             */
+
+            const { data: existingExercise, error: existingError } =
+                await sb
+                    .from('Exercices')
+                    .select('id, user_id, team_id')
+                    .eq('id', ex.id)
+                    .maybeSingle();
+
+            if (existingError) {
+                throw existingError;
+            }
+
+            /*
+             * Nouvel exercice :
+             * le compte connecté devient propriétaire.
+             *
+             * Exercice existant :
+             * on conserve impérativement son propriétaire.
+             */
+
+            const ownerId =
+                existingExercise?.user_id || currentUser.id;
+
+
+            const row = {
+
+                id: ex.id,
+
+                user_id: ownerId,
+
+                title: ex.title || '',
+
+                category: ex.category || '',
+
+                duration: parseInt(ex.duration) || 15,
+
+                data: ex,
+
+                updated_at: new Date().toISOString()
+
+            };
+
+
+            /*
+             * On ne modifie jamais team_id ici.
+             *
+             * Si l'exercice est déjà partagé, sa bibliothèque
+             * reste celle enregistrée dans Supabase.
+             *
+             * Le changement de bibliothèque passe uniquement
+             * par share_exercise_with_team().
+             */
+
+            exRows.push(row);
+        }
+
+
+        if (exRows.length) {
+
+            const { error: exError } = await sb
+                .from('Exercices')
+                .upsert(
+                    exRows,
+                    { onConflict: 'id' }
+                );
+
+            if (exError) {
+                throw exError;
+            }
+        }
+
+
+        // -------------------------------------------------------
+        // SEANCES
+        // -------------------------------------------------------
+
+        const seRows = sessions.map(se => ({
+
+            id: se.id,
+
+            user_id: currentUser.id,
+
+            name: se.name || '',
+
+            category: se.category || '',
+
+            date: se.date || '',
+
+            items: se.items || [],
+
+            updated_at: new Date().toISOString()
+
+        }));
+
+
+        if (seRows.length) {
+
+            const { error: seError } = await sb
+                .from('seances')
+                .upsert(
+                    seRows,
+                    { onConflict: 'id' }
+                );
+
+            if (seError) {
+                throw seError;
+            }
+        }
+
+
+        console.log(
+            '✅ Données sauvegardées pour',
+            currentUser.email
+        );
+
+    } catch (err) {
+
+        console.error(
+            'Erreur sauvegarde Supabase :',
+            err
+        );
+
+        throw err;
+    }
+}
+
+  // =========================================================
+  // INITIALISATION AUTH
+  // =========================================================
+
+  async function initAuth() {
+sb.auth.onAuthStateChange(
+  async (event, session) => {
+
+    console.log(
+      'Auth event :',
+      event
+    );
+
+    currentUser = session?.user || null;
+
+    updateAuthUI();
+
+    if (currentUser) {
+      await loadUserSettings();
+    } else {
+      resetUserSettings();
+    }
+
+    if (event === 'PASSWORD_RECOVERY') {
+      openResetPasswordModal();
+    }
+  }
+);
+    currentUser = await getCurrentUser();
+
+    updateAuthUI();
+
+    if (currentUser) {
+
+      console.log(
+        'Utilisateur connecté :',
+        currentUser.email
+      );
+
+      await loadFromSupabase();
+      await loadUserSettings();
+
+    } else {
+
+      console.log('Aucun utilisateur connecté');
+
+      exercises = [];
+      sessions = [];
+      localStorage.setItem(EXERCISES_KEY, JSON.stringify([]));
+      localStorage.setItem(SESSIONS_KEY, JSON.stringify([]));
+      renderSidebar();
+
+    }
+  }
+
+async function testInviteCode() {
+    if (!currentUser) {
+        showToast('❌ Aucun utilisateur connecté');
+        return;
+    }
+
+    const { data, error } = await sb.rpc('create_invite_code', {
+        p_team_id: '2e6d9541-dbd1-4c23-bb14-81cce7d65fd6',
+        p_permission: 'read'
+    });
+
+    if (error) {
+        console.error('Erreur création code :', error);
+        showToast('❌ ' + error.message);
+        return;
+    }
+
+    console.log('✅ Code invitation :', data);
+    showToast('✅ Code : ' + data);
+}
+
+async function testShareExercise() {
+
+    if (!currentUser) {
+        showToast('❌ Aucun utilisateur connecté');
+        return;
+    }
+
+    // On prend le premier exercice personnel
+    const exercise = exercises.find(ex => !ex.team_id);
+
+    if (!exercise) {
+        showToast('❌ Aucun exercice personnel trouvé');
+        return;
+    }
+
+    const { data, error } = await sb.rpc('share_exercise_with_team', {
+        p_exercise_id: exercise.id,
+        p_team_id: '2e6d9541-dbd1-4c23-bb14-81cce7d65fd6'
+    });
+
+    if (error) {
+        console.error('Erreur partage exercice :', error);
+        showToast('❌ ' + error.message);
+        return;
+    }
+
+    console.log('✅ Exercice partagé :', exercise);
+    console.log('Résultat RPC :', data);
+
+    showToast('🤝 Exercice partagé avec Seniors');
+
+    await loadFromSupabase();
+}
+
+
+
+
+// =========================================================
+// DEMARRAGE
+// =========================================================
+
+
+// =========================================================
+// BIBLIOTHÈQUES PARTAGÉES
+// =========================================================
+
+async function openTeamsModal() {
+
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        return;
+    }
+
+    const modal = document.getElementById('teamsModal');
+
+    if (!modal) {
+        console.error('❌ teamsModal introuvable');
+        return;
+    }
+
+    console.log('🤝 Ouverture bibliothèques...');
+
+    await loadTeamsUI();
+
+    modal.style.display = 'flex';
+
+    console.log('🤝 Bibliothèques affichées');
+}
+
+
+function closeTeamsModal() {
+
+    const modal = document.getElementById('teamsModal');
+
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+
+async function loadTeamsUI() {
+
+    if (!currentUser) return;
+
+    const list = document.getElementById('teamsList');
+
+    if (!list) return;
+
+    list.innerHTML = 'Chargement...';
+
+    try {
+
+        const { data, error } = await sb
+            .from('teams')
+            .select('id, name, owner_id')
+            .order('created_at', { ascending: true });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+
+            list.innerHTML = `
+                <p>Aucune bibliothèque.</p>
+            `;
+
+            return;
+        }
+
+        list.innerHTML = data.map(team => {
+
+            const owner = team.owner_id === currentUser.id;
+
+            return `
+                <div style="
+                    border:1px solid #ccc;
+                    border-radius:8px;
+                    padding:12px;
+                    margin-bottom:10px;
+                ">
+
+                    <strong>
+                        📁 ${team.name}
+                    </strong>
+
+                    <div style="
+                        font-size:12px;
+                        color:#666;
+                        margin-top:4px;
+                        margin-bottom:10px;
+                    ">
+                        ${owner ? '👑 Propriétaire' : '👤 Membre'}
+                    </div>
+
+                    ${
+                        owner
+                        ? `
+                            <div style="
+                                display:flex;
+                                gap:8px;
+                                flex-wrap:wrap;
+                            ">
+
+                                <button
+                                    class="auth-login"
+                                    onclick="createInviteCodeFromUI(
+                                        '${team.id}',
+                                        'read'
+                                    )">
+                                    👁️ Code lecture
+                                </button>
+
+                                <button
+                                    class="auth-register"
+                                    onclick="createInviteCodeFromUI(
+                                        '${team.id}',
+                                        'write'
+                                    )">
+                                    ✏️ Code modification
+                                </button>
+
+                            </div>
+                        `
+                        : ''
+                    }
+
+                </div>
+            `;
+
+        }).join('');
+
+    } catch (err) {
+
+        console.error(
+            'Erreur chargement bibliothèques :',
+            err
+        );
+
+        list.innerHTML = `
+            <p style="color:red;">
+                ❌ ${err.message}
+            </p>
+        `;
+    }
+}
+
+
+async function createInviteCodeFromUI(teamId, permission) {
+
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        return;
+    }
+
+    const { data, error } = await sb.rpc(
+        'create_invite_code',
+        {
+            p_team_id: teamId,
+            p_permission: permission
+        }
+    );
+
+    if (error) {
+
+        console.error(
+            'Erreur création code :',
+            error
+        );
+
+        showToast('❌ ' + error.message);
+
+        return;
+    }
+
+    console.log(
+        '✅ Code invitation :',
+        data
+    );
+
+    const type =
+        permission === 'read'
+            ? 'lecture seule'
+            : 'modification';
+
+    alert(
+        'Code d’invitation (' +
+        type +
+        ') :\n\n' +
+        data +
+        '\n\n' +
+        'Tu peux transmettre ce code au coach.'
+    );
+
+    showToast('✅ Code généré');
+}
+
+
+
+
+  async function createTeamFromUI() {
+
+    if (!currentUser) {
+      showToast('❌ Connectez-vous d’abord');
+      return;
+    }
+
+
+    const name = prompt(
+      'Nom de la bibliothèque :'
+    );
+
+
+    if (!name || !name.trim()) {
+      return;
+    }
+
+
+    const { data, error } = await sb.rpc(
+      'create_team',
+      {
+        p_name: name.trim()
+      }
+    );
+
+
+    if (error) {
+
+      console.error(
+        'Erreur création bibliothèque :',
+        error
+      );
+
+      showToast(
+        '❌ ' + error.message
+      );
+
+      return;
+    }
+
+
+    console.log(
+      '✅ Bibliothèque créée :',
+      data
+    );
+
+    showToast(
+      '✅ Bibliothèque créée'
+    );
+
+
+    await loadTeamsUI();
+
+    await loadFromSupabase();
+  }
+
+
+  async function joinTeamFromUI() {
+
+    if (!currentUser) {
+      showToast('❌ Connectez-vous d’abord');
+      return;
+    }
+
+
+    const code = prompt(
+      'Code d’invitation :'
+    );
+
+
+    if (!code || !code.trim()) {
+      return;
+    }
+
+
+    const { data, error } = await sb.rpc(
+      'join_team_with_code',
+      {
+        p_code: code.trim()
+      }
+    );
+
+
+    if (error) {
+
+      console.error(
+        'Erreur rejoindre bibliothèque :',
+        error
+      );
+
+      showToast(
+        '❌ ' + error.message
+      );
+
+      return;
+    }
+
+
+    console.log(
+      '✅ Bibliothèque rejointe :',
+      data
+    );
+
+    showToast(
+      '🤝 Bibliothèque rejointe'
+    );
+
+
+    await loadTeamsUI();
+
+    await loadFromSupabase();
+  }
+
+
+  setupSettingsUI();
+  applyUserSettings();
+
+
+(function setupPaletteMoreMenu(){
+    const btn = document.getElementById("paletteMoreBtn");
+    const panel = document.getElementById("paletteMorePanel");
+    if(!btn || !panel) return;
+
+    btn.addEventListener("click", event => {
+        event.stopPropagation();
+        panel.classList.toggle("open");
+    });
+
+    document.addEventListener("click", event => {
+        if(!panel.classList.contains("open")) return;
+        if(panel.contains(event.target) || btn.contains(event.target)) return;
+        panel.classList.remove("open");
+    });
+})();
+
+/* =========================================================
+   INTERFACE MOBILE
+========================================================= */
+function closeMobileSidebar(){
+    document.body.classList.remove("mobile-sidebar-open");
+}
+
+(function setupMobileUI(){
+    const mobileMenuButton = document.getElementById("mobileMenuButton");
+    const mobileSidebarOverlay = document.getElementById("mobileSidebarOverlay");
+    const mobileActionsButton = document.getElementById("mobileActionsButton");
+    const mobileActionsMenu = document.getElementById("mobileActionsMenu");
+
+    if(mobileMenuButton){
+        mobileMenuButton.addEventListener("click", event => {
+            event.stopPropagation();
+            document.body.classList.toggle("mobile-sidebar-open");
+        });
+    }
+    if(mobileSidebarOverlay){
+        mobileSidebarOverlay.addEventListener("click", closeMobileSidebar);
+    }
+    document.addEventListener("keydown", event => {
+        if(event.key === "Escape") closeMobileSidebar();
+    });
+
+    if(mobileActionsButton && mobileActionsMenu){
+        mobileActionsButton.addEventListener("click", event => {
+            event.stopPropagation();
+            const open = mobileActionsMenu.classList.toggle("open");
+            mobileActionsButton.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+        mobileActionsMenu.querySelectorAll("[data-action]").forEach(button => {
+            button.addEventListener("click", () => {
+                const target = document.getElementById(button.dataset.action);
+                if(target) target.click();
+                mobileActionsMenu.classList.remove("open");
+                mobileActionsButton.setAttribute("aria-expanded", "false");
+            });
+        });
+        document.addEventListener("click", event => {
+            if(!mobileActionsMenu.contains(event.target) && event.target !== mobileActionsButton){
+                mobileActionsMenu.classList.remove("open");
+                mobileActionsButton.setAttribute("aria-expanded", "false");
+            }
+        });
+    }
+
+    // Fermer la sidebar quand on ouvre un exercice (mobile)
+    if(typeof loadExercise === "function"){
+        const originalLoadExercise = loadExercise;
+        loadExercise = function(exercise){
+            originalLoadExercise(exercise);
+            if(window.innerWidth <= 900) closeMobileSidebar();
+        };
+    }
+})();
+
+  initAuth();
 
 </script>
-
-<!-- Modale de connexion -->
 <div id="authModal">
     <div class="auth-box">
         <h2>🔐 Connexion à HandCoach</h2>
-        <input type="email" id="authEmail" placeholder="Adresse email" autocomplete="email">
-        <input type="password" id="authPassword" placeholder="Mot de passe" autocomplete="current-password">
-        <button type="button" onclick="resetPassword()" style="width:100%; margin:4px 0 10px; padding:8px; border:none; background:transparent; color:#6c3fd1; text-decoration:underline; cursor:pointer; font-size:13px;">
+
+        <input
+            type="email"
+            id="authEmail"
+            placeholder="Adresse email"
+            autocomplete="email">
+
+        <input
+            type="password"
+            id="authPassword"
+            placeholder="Mot de passe"
+            autocomplete="current-password">
+
+        <button
+            type="button"
+            onclick="resetPassword()"
+            style="
+                width:100%;
+                margin: 4px 0 10px 0;
+                padding: 8px;
+                border: none;
+                background: transparent;
+                color: #6c3fd1;
+                text-decoration: underline;
+                cursor: pointer;
+                font-size: 13px;
+            ">
             Mot de passe oublié ?
         </button>
+
         <div class="auth-buttons">
-            <button class="auth-login" onclick="loginUser()">Se connecter</button>
-            <button class="auth-register" onclick="registerUser()">Créer un compte</button>
+            <button class="auth-login" onclick="loginUser()">
+                Se connecter
+            </button>
+            <button class="auth-register" onclick="registerUser()">
+                Créer un compte
+            </button>
         </div>
-        <button class="auth-close" onclick="closeAuthModal()">Fermer</button>
+
+        <button class="auth-close" onclick="closeAuthModal()">
+            Fermer
+        </button>
     </div>
 </div>
 
+
+<!-- =========================================================
+     BIBLIOTHÈQUES PARTAGÉES
+========================================================= -->
+
+<div id="teamsModal">
+
+    <div class="auth-box">
+
+        <h2>🤝 Bibliothèques</h2>
+
+        <div id="teamsList">
+            Chargement...
+        </div>
+
+        <hr>
+
+        <button
+            class="auth-login"
+            onclick="createTeamFromUI()">
+            ➕ Créer une bibliothèque
+        </button>
+
+        <button
+            class="auth-register"
+            onclick="joinTeamFromUI()">
+            🔑 Rejoindre avec un code
+        </button>
+
+        <button
+            class="auth-close"
+            onclick="closeTeamsModal()">
+            Fermer
+        </button>
+
+    </div>
+
+</div>
+
+
 <div id="toast"></div>
+
+
+<!-- =========================================================
+     MODAL PARTAGE EXERCICE
+========================================================= -->
+
+<div id="shareExerciseModal">
+
+    <div class="auth-box">
+
+        <h2>🤝 Partager l'exercice</h2>
+
+        <p id="shareExerciseName"
+           style="margin-bottom:20px;">
+        </p>
+
+        <label for="shareTeamSelect">
+            Bibliothèque :
+        </label>
+
+        <select
+            id="shareTeamSelect"
+            style="
+                width:100%;
+                padding:10px;
+                margin-top:8px;
+                margin-bottom:20px;
+                box-sizing:border-box;
+            ">
+        </select>
+
+        <div class="auth-buttons">
+
+            <button
+                class="auth-login"
+                onclick="confirmShareExercise()">
+                🤝 Partager
+            </button>
+
+            <button
+                class="auth-close"
+                onclick="closeShareExerciseModal()">
+                Fermer
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL PARTAGE SÉANCE -->
+<div id="shareSessionModal">
+    <div class="auth-box">
+        <h2>🤝 Partager la séance</h2>
+        <p id="shareSessionName" style="margin-bottom:20px;"></p>
+        <label for="shareSessionTeamSelect">Bibliothèque :</label>
+        <select id="shareSessionTeamSelect"
+            style="width:100%; padding:10px; margin-top:8px; margin-bottom:20px; box-sizing:border-box;">
+        </select>
+        <div class="auth-buttons">
+            <button class="auth-login" onclick="confirmShareSession()">🤝 Partager</button>
+            <button class="auth-close" onclick="closeShareSessionModal()">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<div id="resetPasswordModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:10001; align-items:center; justify-content:center;">
+  <div class="auth-box">
+    <h2>🔑 Nouveau mot de passe</h2>
+    <p style="font-size:13px; color:#666; margin-bottom:14px;">
+      Choisis un nouveau mot de passe (6 caractères minimum).
+    </p>
+    <input type="password" id="newPassword" placeholder="Nouveau mot de passe" autocomplete="new-password">
+    <input type="password" id="newPasswordConfirm" placeholder="Confirmer" autocomplete="new-password">
+    <div class="auth-buttons">
+      <button class="auth-login" onclick="confirmNewPassword()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 
 </body>
 </html>
