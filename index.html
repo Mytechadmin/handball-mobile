@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HandCoach Mobile — style Web</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
 html,body{
@@ -959,6 +960,114 @@ summary.tree-summary{
     .sheet{border-radius:7px;}
     .court-wrapper.multi-court .court-evolution-label{font-size:10px;}
 }
+
+/* =========================================================
+   AUTHENTIFICATION (repris de la version web)
+========================================================= */
+.user-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 8px;
+    flex: 0 0 auto;
+}
+#userInfo {
+    font-size: 12px;
+    color: #dbeafe;
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.auth-button {
+    border: 1px solid #56616c;
+    background: #3e4852;
+    color: #fff;
+    border-radius: 7px;
+    padding: 7px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+.auth-button:hover { background: #52606c; }
+
+#authModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+}
+.auth-box {
+    width: 360px;
+    max-width: calc(100vw - 40px);
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    color: #20252b;
+}
+.auth-box h2 { margin-top: 0; margin-bottom: 20px; }
+.auth-box input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px; /* évite le zoom iOS */
+}
+.auth-buttons { display: flex; gap: 10px; margin-top: 8px; }
+.auth-buttons button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+.auth-login { background: #6c3fd1; color: white; }
+.auth-register { background: #eee; color: #333; }
+.auth-close {
+    width: 100%;
+    margin-top: 10px;
+    padding: 9px;
+    border: none;
+    background: transparent;
+    color: #777;
+    cursor: pointer;
+}
+
+#teamsModal,
+#shareExerciseModal,
+#shareSessionModal,
+#resetPasswordModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.5);
+}
+#teamsModal .auth-box,
+#shareExerciseModal .auth-box,
+#shareSessionModal .auth-box {
+    width: 500px;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+@media(max-width:900px){
+    .user-area { margin-right: 4px; gap: 4px; }
+    #userInfo { display: none; } /* sur mobile on n’affiche que le bouton */
+    .auth-button { padding: 6px 8px; font-size: 11px; }
+}
 </style>
 </head>
 <body>
@@ -968,17 +1077,24 @@ summary.tree-summary{
     <h1>🤾 HandCoach</h1>
     <div class="spacer"></div>
 
-    <!-- Barre d'actions compacte : les explications apparaissent au survol -->
+    <!-- Barre d'identification (email / mdp) -->
+    <div class="user-area">
+        <span id="userInfo"></span>
+        <button id="teamsButton" class="auth-button" type="button" onclick="openTeamsModal()" title="Bibliothèques partagées">🤝</button>
+        <button id="authButton" class="auth-button" type="button">🔐 Connexion</button>
+    </div>
+
+    <!-- Barre d'actions compacte (desktop) -->
     <div class="header-actions">
-    <button class="icon-button" id="addCourtButton" title="Ajouter un second terrain" aria-label="Ajouter un second terrain">＋</button>
-    <button class="icon-button" id="newExercise" title="Fiche vierge" aria-label="Fiche vierge">📄</button>
-    <button class="icon-button" id="saveExercise" title="Sauvegarder l'exercice" aria-label="Sauvegarder l'exercice">💾</button>
-    <button class="icon-button" id="chooseFolder" title="Choisir le dossier Hand" aria-label="Choisir le dossier Hand">📁</button>
-    <button class="icon-button" id="sessionButton" title="Nouvelle séance" aria-label="Nouvelle séance">📋</button>
-    <button class="icon-button" id="printButton" title="Imprimer l'exercice" aria-label="Imprimer l'exercice">🖨️</button> 
-    <button class="icon-button" id="exportButton" title="Exporter JSON" aria-label="Exporter JSON">📤</button>
-    <button class="icon-button" id="importButton" title="Importer JSON" aria-label="Importer JSON">📥</button>
-</div>
+        <button class="icon-button" id="addCourtButton" title="Ajouter un second terrain" aria-label="Ajouter un second terrain">＋</button>
+        <button class="icon-button" id="newExercise" title="Fiche vierge" aria-label="Fiche vierge">📄</button>
+        <button class="icon-button" id="saveExercise" title="Sauvegarder l'exercice" aria-label="Sauvegarder l'exercice">💾</button>
+        <button class="icon-button" id="chooseFolder" title="Choisir le dossier Hand" aria-label="Choisir le dossier Hand">📁</button>
+        <button class="icon-button" id="sessionButton" title="Nouvelle séance" aria-label="Nouvelle séance">📋</button>
+        <button class="icon-button" id="printButton" title="Imprimer l'exercice" aria-label="Imprimer l'exercice">🖨️</button>
+        <button class="icon-button" id="exportButton" title="Exporter JSON" aria-label="Exporter JSON">📤</button>
+        <button class="icon-button" id="importButton" title="Importer JSON" aria-label="Importer JSON">📥</button>
+    </div>
 
     <div class="mobile-actions">
         <button class="mobile-actions-button" id="mobileActionsButton" aria-label="Ouvrir le menu des actions" aria-expanded="false">⋮</button>
@@ -3128,7 +3244,200 @@ if(localStorage.getItem(SESSIONS_KEY) === null && sessions.length){
 renderSidebar();
 updateSaveStatus();
 
+/* =========================================================
+   AUTHENTIFICATION SUPABASE (repris de la version web)
+========================================================= */
+const SUPABASE_URL = 'https://yosujqdjffuyibddquxq.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_jl0cfFR4jbQpnbxvAAbubA_Bcg-Jmx8';
+
+let sb = null;
+let currentUser = null;
+
+function ensureSupabase() {
+    if (sb) return sb;
+    if (!window.supabase) {
+        console.error('Supabase JS non chargé');
+        return null;
+    }
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    return sb;
+}
+
+async function getCurrentUser() {
+    const client = ensureSupabase();
+    if (!client) return null;
+    const { data, error } = await client.auth.getUser();
+    if (error) {
+        console.error('Erreur utilisateur :', error);
+        return null;
+    }
+    return data.user || null;
+}
+
+async function loginUser() {
+    const client = ensureSupabase();
+    if (!client) {
+        showToast('❌ Supabase non disponible');
+        return;
+    }
+    const email = document.getElementById('authEmail')?.value.trim();
+    const password = document.getElementById('authPassword')?.value;
+    if (!email || !password) {
+        showToast('⚠️ Email et mot de passe obligatoires');
+        return;
+    }
+    const { data, error } = await client.auth.signInWithPassword({ email, password });
+    if (error) {
+        showToast('❌ ' + error.message);
+        return;
+    }
+    currentUser = data.user;
+    closeAuthModal();
+    showToast('✅ Connexion réussie');
+    updateAuthUI();
+    // Optionnel : charger les données cloud
+    if (typeof loadFromSupabase === 'function') await loadFromSupabase();
+}
+
+async function registerUser() {
+    const client = ensureSupabase();
+    if (!client) return;
+    const email = document.getElementById('authEmail')?.value.trim();
+    const password = document.getElementById('authPassword')?.value;
+    if (!email || !password) {
+        showToast('⚠️ Email et mot de passe obligatoires');
+        return;
+    }
+    if (password.length < 6) {
+        showToast('⚠️ Minimum 6 caractères');
+        return;
+    }
+    const { data, error } = await client.auth.signUp({ email, password });
+    if (error) {
+        showToast('❌ ' + error.message);
+        return;
+    }
+    currentUser = data.user;
+    closeAuthModal();
+    showToast('✅ Compte créé');
+    updateAuthUI();
+}
+
+async function logoutUser() {
+    const client = ensureSupabase();
+    if (!client) return;
+    await client.auth.signOut();
+    currentUser = null;
+    updateAuthUI();
+    showToast('👋 Déconnexion réussie');
+}
+
+function openAuthModal() {
+    const modal = document.getElementById('authModal');
+    const passwordInput = document.getElementById('authPassword');
+    if (passwordInput) passwordInput.value = '';
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeAuthModal() {
+    const modal = document.getElementById('authModal');
+    if (modal) modal.style.display = 'none';
+}
+
+function updateAuthUI() {
+    const authButton = document.getElementById('authButton');
+    const userInfo = document.getElementById('userInfo');
+    if (!authButton) return;
+    if (currentUser) {
+        authButton.textContent = '🚪 Déconnexion';
+        authButton.onclick = logoutUser;
+        if (userInfo) userInfo.textContent = '👤 ' + (currentUser.email || '');
+    } else {
+        authButton.textContent = '🔐 Connexion';
+        authButton.onclick = openAuthModal;
+        if (userInfo) userInfo.textContent = '';
+    }
+}
+
+async function resetPassword() {
+    const client = ensureSupabase();
+    if (!client) return;
+    const email = document.getElementById('authEmail')?.value.trim();
+    if (!email) {
+        showToast('⚠️ Entre ton email d’abord');
+        return;
+    }
+    const redirectTo = window.location.origin + window.location.pathname;
+    const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo });
+    if (error) {
+        showToast('❌ ' + error.message);
+        return;
+    }
+    showToast('📧 Email de réinitialisation envoyé');
+    closeAuthModal();
+}
+
+function openTeamsModal() {
+    if (!currentUser) {
+        showToast('❌ Connectez-vous d’abord');
+        openAuthModal();
+        return;
+    }
+    showToast('🤝 Fonction Bibliothèques disponible après connexion');
+    // La logique complète des équipes peut être branchée ici comme dans la version web
+}
+
+function showToast(message) {
+    let el = document.getElementById('toast');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'toast';
+        document.body.appendChild(el);
+    }
+    el.textContent = message;
+    el.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+async function initAuth() {
+    ensureSupabase();
+    if (!sb) return;
+    sb.auth.onAuthStateChange(async (event, session) => {
+        currentUser = session?.user || null;
+        updateAuthUI();
+    });
+    currentUser = await getCurrentUser();
+    updateAuthUI();
+}
+
+// Lancer l’auth dès que Supabase est prêt
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAuth);
+} else {
+    initAuth();
+}
+
 </script>
+
+<!-- Modale de connexion -->
+<div id="authModal">
+    <div class="auth-box">
+        <h2>🔐 Connexion à HandCoach</h2>
+        <input type="email" id="authEmail" placeholder="Adresse email" autocomplete="email">
+        <input type="password" id="authPassword" placeholder="Mot de passe" autocomplete="current-password">
+        <button type="button" onclick="resetPassword()" style="width:100%; margin:4px 0 10px; padding:8px; border:none; background:transparent; color:#6c3fd1; text-decoration:underline; cursor:pointer; font-size:13px;">
+            Mot de passe oublié ?
+        </button>
+        <div class="auth-buttons">
+            <button class="auth-login" onclick="loginUser()">Se connecter</button>
+            <button class="auth-register" onclick="registerUser()">Créer un compte</button>
+        </div>
+        <button class="auth-close" onclick="closeAuthModal()">Fermer</button>
+    </div>
+</div>
+
+<div id="toast"></div>
 
 </body>
 </html>
