@@ -4008,7 +4008,7 @@ if (passwordInput) {
   }
 
 
-  function updateAuthUI() {
+function updateAuthUI() {
 
     const authButton = document.getElementById('authButton');
     const userInfo = document.getElementById('userInfo');
@@ -4022,12 +4022,16 @@ if (passwordInput) {
 
       userInfo.textContent = '👤 ' + currentUser.email;
 
+      if (typeof startIdleWatcher === 'function') startIdleWatcher();   // ← AJOUTER
+
     } else {
 
       authButton.textContent = '🔐 Connexion';
       authButton.onclick = openAuthModal;
 
       userInfo.textContent = '';
+
+      if (typeof stopIdleWatcher === 'function') stopIdleWatcher();     // ← AJOUTER
     }
   }
 
@@ -5346,6 +5350,95 @@ function isMobileReadOnly(){
         };
     }
 })();
+
+
+/* =========================================================
+   TIMER D'INACTIVITÉ → déconnexion automatique
+   ---------------------------------------------------------
+   IDLE_TIMEOUT_MS : durée sans activité avant déconnexion.
+   Exemples :
+     20 * 60 * 1000  = 20 minutes
+     30 * 60 * 1000  = 30 minutes
+     60 * 60 * 1000  = 1 heure
+========================================================= */
+const IDLE_TIMEOUT_MS = 20 * 60 * 1000; // 20 minutes
+const IDLE_WARNING_MS = 2 * 60 * 1000;  // avertissement 2 min avant
+
+let idleTimer = null;
+let idleWarningTimer = null;
+let idleListenersBound = false;
+
+function clearIdleTimers() {
+    if (idleTimer) {
+        clearTimeout(idleTimer);
+        idleTimer = null;
+    }
+    if (idleWarningTimer) {
+        clearTimeout(idleWarningTimer);
+        idleWarningTimer = null;
+    }
+}
+
+function resetIdleTimer() {
+    if (!currentUser) {
+        clearIdleTimers();
+        return;
+    }
+
+    clearIdleTimers();
+
+    const warnAfter = Math.max(0, IDLE_TIMEOUT_MS - IDLE_WARNING_MS);
+    if (warnAfter > 0 && IDLE_WARNING_MS > 0) {
+        idleWarningTimer = setTimeout(() => {
+            if (currentUser && typeof showToast === "function") {
+                showToast("⏰ Déconnexion dans 2 min (inactivité)");
+            }
+        }, warnAfter);
+    }
+
+    idleTimer = setTimeout(async () => {
+        if (!currentUser) return;
+        if (typeof showToast === "function") {
+            showToast("👋 Déconnecté pour inactivité");
+        }
+        if (typeof logoutUser === "function") {
+            await logoutUser();
+        }
+    }, IDLE_TIMEOUT_MS);
+}
+
+function startIdleWatcher() {
+    if (idleListenersBound) {
+        resetIdleTimer();
+        return;
+    }
+    idleListenersBound = true;
+
+    const events = [
+        "mousemove", "mousedown", "keydown",
+        "touchstart", "scroll", "click", "wheel"
+    ];
+
+    let lastReset = 0;
+    const onActivity = () => {
+        const now = Date.now();
+        if (now - lastReset < 1000) return;
+        lastReset = now;
+        resetIdleTimer();
+    };
+
+    events.forEach(evt => {
+        document.addEventListener(evt, onActivity, { passive: true, capture: true });
+    });
+
+    resetIdleTimer();
+}
+
+function stopIdleWatcher() {
+    clearIdleTimers();
+}
+
+  initAuth();
 
   initAuth();
 
