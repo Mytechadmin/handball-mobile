@@ -1152,6 +1152,68 @@ summary.tree-summary{
     .sheet{border-radius:7px;}
 }
 
+/* =========================================================
+   MOBILE LECTURE SEULE
+   ---------------------------------------------------------
+   Tout est masqué, PAS supprimé.
+   Pour réactiver l’édition sur mobile :
+   1. Cherche « MOBILE-READONLY »
+   2. Commente / décommente les blocs concernés
+========================================================= */
+@media(max-width:900px){
+    /* MOBILE-READONLY : masquer la palette d’outils (pions, formes, crayon) */
+    .palette{
+        display:none !important;
+    }
+
+    /* MOBILE-READONLY : masquer undo / redo / tout vider */
+    .panel-tools{
+        display:none !important;
+    }
+
+    /* MOBILE-READONLY : champs texte en lecture seule (visuel) */
+    .info-field textarea{
+        background:#f8fafc;
+        color:#334155;
+        resize:none;
+        pointer-events:none;
+    }
+
+    /* MOBILE-READONLY : toolbar titre / catégorie / durée non éditables */
+    .exercise-toolbar input,
+    .exercise-toolbar select{
+        pointer-events:none;
+        background:#f1f5f9;
+    }
+
+    /* MOBILE-READONLY : pas de création de bibliothèque */
+    .mobile-hide-create-team{
+        display:none !important;
+    }
+
+    /* MOBILE-READONLY : objets non déplaçables (consultation) */
+    .object, .text-object{
+        cursor:default !important;
+        pointer-events:none !important;
+    }
+    .shape-resize-handle,
+    .shape-rotate-handle{
+        display:none !important;
+    }
+
+    /* MOBILE-READONLY : actions d’édition dans le menu ⋮ */
+    .mobile-actions-menu .mobile-edit-only{
+        display:none !important;
+    }
+
+    /* MOBILE-READONLY : pas de suppression dans la bibliothèque */
+    .tree-item .del-btn,
+    .session-remove-btn,
+    .tree-actions button[title="Supprimer la séance"]{
+        display:none !important;
+    }
+}
+
 </style>
 </head>
 <body>
@@ -1180,12 +1242,15 @@ summary.tree-summary{
     <div class="mobile-actions">
         <button class="mobile-actions-button" id="mobileActionsButton" aria-label="Ouvrir le menu des actions" aria-expanded="false">⋮</button>
         <div class="mobile-actions-menu" id="mobileActionsMenu">
-            <button type="button" data-action="addCourtButton">＋&nbsp;&nbsp;Ajouter un second terrain</button>
-            <button type="button" data-action="newExercise">📄&nbsp;&nbsp;Fiche vierge</button>
-            <button type="button" data-action="saveExercise">💾&nbsp;&nbsp;Sauvegarder</button>
-            <button type="button" data-action="sessionButton">📋&nbsp;&nbsp;Nouvelle séance</button>
+            <!-- + second terrain : gardé (affichage / masquage du 2e terrain) -->
+            <button type="button" data-action="addCourtButton">＋&nbsp;&nbsp;Second terrain</button>
             <button type="button" data-action="printButton">🖨️&nbsp;&nbsp;Imprimer</button>
-            <button type="button" data-action="settingsButton">🔧&nbsp;&nbsp;Personnaliser</button>
+            <!-- MOBILE-READONLY : actions d’édition masquées via CSS (.mobile-edit-only)
+                 Pour réactiver : retire la classe mobile-edit-only des boutons ci-dessous -->
+            <button type="button" class="mobile-edit-only" data-action="newExercise">📄&nbsp;&nbsp;Fiche vierge</button>
+            <button type="button" class="mobile-edit-only" data-action="saveExercise">💾&nbsp;&nbsp;Sauvegarder</button>
+            <button type="button" class="mobile-edit-only" data-action="sessionButton">📋&nbsp;&nbsp;Nouvelle séance</button>
+            <button type="button" class="mobile-edit-only" data-action="settingsButton">🔧&nbsp;&nbsp;Personnaliser</button>
         </div>
     </div>
 </header>
@@ -2262,6 +2327,9 @@ function setupCourtInteractions(index){
     container.addEventListener("pointerdown", event => {
 
         setActiveCourt(index);
+
+        /* MOBILE-READONLY : pas de pose de pions / formes */
+        if(typeof isMobileReadOnly === "function" && isMobileReadOnly()) return;
 
         if(isPencilActive || !activeTool) return;
 
@@ -5222,6 +5290,12 @@ function closeMobileSidebar(){
     document.body.classList.remove("mobile-sidebar-open");
 }
 
+/* MOBILE-READONLY : true = lecture seule sur petit écran
+   Pour réactiver l’édition mobile : mets false ci-dessous */
+function isMobileReadOnly(){
+    return window.innerWidth <= 900;
+}
+
 (function setupMobileUI(){
     const mobileMenuButton = document.getElementById("mobileMenuButton");
     const mobileSidebarOverlay = document.getElementById("mobileSidebarOverlay");
@@ -5341,8 +5415,11 @@ function closeMobileSidebar(){
 
         <hr>
 
+        <!-- MOBILE-READONLY : masqué sur mobile via .mobile-hide-create-team
+             Pour réactiver la création de bibliothèque sur mobile :
+             retire la classe mobile-hide-create-team ci-dessous -->
         <button
-            class="auth-login"
+            class="auth-login mobile-hide-create-team"
             onclick="createTeamFromUI()">
             ➕ Créer une bibliothèque
         </button>
