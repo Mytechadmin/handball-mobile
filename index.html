@@ -1174,10 +1174,21 @@ summary.tree-summary{
     /* MOBILE-READONLY : champs texte en lecture seule (visuel) */
     .info-field textarea{
         background:#f8fafc;
-        color:#334155;
+        color:#0f172a;          /* plus foncé (était #334155) */
+        font-size:17px;         /* plus grand (le global donnait 16px) */
+        line-height:1.55;       /* interligne aéré */
+        padding:12px;
+        border:1px solid #94a3b8;  /* cadre plus visible */
         resize:none;
         pointer-events:none;
         overflow:hidden;      /* plus de scroll interne : le champ s'agrandit */
+    }
+
+	  /* Titres des champs (MISE EN PLACE, CONSIGNES...) */
+    .info-field label{
+        font-size:13px;
+        color:#1e293b;
+        margin-bottom:5px;
     }
      .info-field{
         flex:none;
