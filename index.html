@@ -1181,15 +1181,16 @@ summary.tree-summary{
         border:1px solid #94a3b8;  /* cadre plus visible */
         resize:none;
         pointer-events:none;
-        overflow:hidden;      /* plus de scroll interne : le champ s'agrandit */
+        overflow:hidden;
+        min-height:0;     
     }
-
-	  /* Titres des champs (MISE EN PLACE, CONSIGNES...) */
+  /* Titres des champs (MISE EN PLACE, CONSIGNES...) */
     .info-field label{
         font-size:13px;
         color:#1e293b;
         margin-bottom:5px;
     }
+
      .info-field{
         flex:none;
     }
@@ -5313,10 +5314,16 @@ async function createInviteCodeFromUI(teamId, permission) {
 function autosizeInfoFields(){
     const mobile = window.innerWidth <= 900;
     document.querySelectorAll(".info-field textarea").forEach(ta => {
-        ta.style.height = "auto";                       // reset pour mesurer correctement
-        if(mobile) ta.style.height = ta.scrollHeight + 2 + "px";
-        else ta.style.height = "";                      // desktop : comportement d'origine
+        ta.style.height = "auto";                    // reset pour mesurer
+        if(mobile) ta.style.height = (ta.scrollHeight + 2) + "px";  // +2 = bordures
+        else ta.style.height = "";                   // desktop : inchangé
     });
+}
+window.addEventListener("resize", autosizeInfoFields);
+window.addEventListener("orientationchange", () => setTimeout(autosizeInfoFields, 200));
+window.addEventListener("load", autosizeInfoFields);
+if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(autosizeInfoFields);   // après chargement des polices
 }
 window.addEventListener("resize", autosizeInfoFields);
 (function setupPaletteMoreMenu(){
@@ -5498,7 +5505,7 @@ function stopIdleWatcher() {
 ========================================================= */
 const CHANGELOG = [
     {
-        version: "V11.8",
+        version: "V11.7",
         date: "07/10/2026",
         items: [
             "Textes (consignes, variantes...) lisibles en entier sur mobile",
