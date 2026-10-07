@@ -1177,10 +1177,9 @@ summary.tree-summary{
         color:#334155;
         resize:none;
         pointer-events:none;
-        overflow:hidden;
-		flex:none;
+        overflow:hidden;      /* plus de scroll interne : le champ s'agrandit */
     }
-	 .info-field{
+     .info-field{
         flex:none;
     }
 
@@ -1201,7 +1200,7 @@ summary.tree-summary{
         cursor:default !important;
         pointer-events:none !important;
     }
-	 :root{ --mobile-obj-scale:.6; }
+     :root{ --mobile-obj-scale:.6; }
 
     /* Joueurs, plots, ballon */
     .object{
@@ -1237,6 +1236,13 @@ summary.tree-summary{
         display:none !important;
     }
 }
+
+#changelogModal{ z-index:20000; }
+.changelog-entry{ margin-bottom:12px; }
+.changelog-entry h3{ margin:0 0 4px; font-size:14px; color:#287fe8; }
+.changelog-entry small{ color:#64748b; font-weight:normal; }
+.changelog-entry ul{ margin:0; padding-left:18px; font-size:13px; }
+
 
 </style>
 </head>
@@ -5472,6 +5478,76 @@ function stopIdleWatcher() {
     clearIdleTimers();
 }
 
+/* =========================================================
+   NOUVEAUTÉS (CHANGELOG)
+   ---------------------------------------------------------
+   À CHAQUE MODIFICATION : ajoute une entrée EN HAUT de la liste
+   avec un nouveau numéro de version. L'encart s'affiche alors
+   une fois pour chaque utilisateur.
+========================================================= */
+const CHANGELOG = [
+    {
+        version: "V11.7",
+        date: "07/10/2026",
+        items: [
+            "Textes (consignes, variantes...) lisibles en entier sur mobile",
+            "Pions et formes réduits sur mobile"
+        ]
+    }
+    // Entrées plus anciennes en dessous, par exemple :
+    // { version: "V11.6", date: "01/10/2026", items: ["..."] }
+];
+
+const CHANGELOG_SEEN_KEY = "handcoach_changelog_seen";
+
+function showChangelogIfNew(){
+    if(!CHANGELOG.length) return;
+
+    let seen = null;
+    try{ seen = localStorage.getItem(CHANGELOG_SEEN_KEY); }catch(e){}
+
+    const seenIndex = CHANGELOG.findIndex(entry => entry.version === seen);
+    // Déjà à jour : rien à afficher
+    if(seenIndex === 0) return;
+    // Jamais vu : on montre seulement la dernière. Sinon, toutes les nouvelles.
+    const unseen = seenIndex > 0 ? CHANGELOG.slice(0, seenIndex) : [CHANGELOG[0]];
+
+    const box = document.getElementById("changelogContent");
+    if(!box) return;
+    box.innerHTML = "";
+
+    unseen.forEach(entry => {
+        const wrap = document.createElement("div");
+        wrap.className = "changelog-entry";
+
+        const title = document.createElement("h3");
+        title.textContent = entry.version + " ";
+        const date = document.createElement("small");
+        date.textContent = entry.date || "";
+        title.appendChild(date);
+
+        const list = document.createElement("ul");
+        entry.items.forEach(text => {
+            const li = document.createElement("li");
+            li.textContent = text;   // textContent : pas d'injection HTML
+            list.appendChild(li);
+        });
+
+        wrap.appendChild(title);
+        wrap.appendChild(list);
+        box.appendChild(wrap);
+    });
+
+    document.getElementById("changelogModal").classList.add("visible");
+}
+
+function closeChangelog(){
+    document.getElementById("changelogModal").classList.remove("visible");
+    try{ localStorage.setItem(CHANGELOG_SEEN_KEY, CHANGELOG[0].version); }catch(e){}
+}
+
+window.addEventListener("load", () => setTimeout(showChangelogIfNew, 600));
+
   initAuth();
 
   initAuth();
@@ -5570,6 +5646,16 @@ function stopIdleWatcher() {
 
 <div id="toast"></div>
 
+<div id="changelogModal" class="modal">
+    <div class="modal-box" style="width:min(460px,92vw);">
+        <h2 style="margin-top:0;">🆕 Nouveautés</h2>
+        <div id="changelogContent"></div>
+        <button type="button" onclick="closeChangelog()"
+            style="margin-top:14px;width:100%;padding:10px;border:0;border-radius:7px;background:#287fe8;color:#fff;font-weight:bold;">
+            OK
+        </button>
+    </div>
+</div>
 
 <!-- =========================================================
      MODAL PARTAGE EXERCICE
