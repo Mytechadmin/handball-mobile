@@ -1177,6 +1177,7 @@ summary.tree-summary{
         color:#334155;
         resize:none;
         pointer-events:none;
+        overflow:hidden;      /* plus de scroll interne : le champ s'agrandit */
     }
 
     /* MOBILE-READONLY : toolbar titre / catégorie / durée non éditables */
@@ -5269,7 +5270,15 @@ async function createInviteCodeFromUI(teamId, permission) {
   setupSettingsUI();
   applyUserSettings();
 
-
+function autosizeInfoFields(){
+    const mobile = window.innerWidth <= 900;
+    document.querySelectorAll(".info-field textarea").forEach(ta => {
+        ta.style.height = "auto";                       // reset pour mesurer correctement
+        if(mobile) ta.style.height = ta.scrollHeight + 2 + "px";
+        else ta.style.height = "";                      // desktop : comportement d'origine
+    });
+}
+window.addEventListener("resize", autosizeInfoFields);
 (function setupPaletteMoreMenu(){
     const btn = document.getElementById("paletteMoreBtn");
     const panel = document.getElementById("paletteMorePanel");
@@ -5347,6 +5356,8 @@ function isMobileReadOnly(){
         loadExercise = function(exercise){
             originalLoadExercise(exercise);
             if(window.innerWidth <= 900) closeMobileSidebar();
+              autosizeInfoFields();
+            requestAnimationFrame(autosizeInfoFields);  // 2e passage après le rendu du layout
         };
     }
 })();
