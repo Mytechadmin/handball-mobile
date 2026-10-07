@@ -1171,33 +1171,50 @@ summary.tree-summary{
         display:none !important;
     }
 
-    /* MOBILE-READONLY : champs texte en lecture seule (visuel) */
-    .info-field textarea{
-        background:#f8fafc;
-        color:#0f172a;          /* plus foncé (était #334155) */
-        font-size:17px;         /* plus grand (le global donnait 16px) */
-        line-height:1.55;       /* interligne aéré */
-        padding:12px;
-        border:1px solid #94a3b8;  /* cadre plus visible */
-        resize:none;
-        pointer-events:none;
-        overflow:hidden;        /* pas de scroll interne : la hauteur s'adapte au contenu */
-        min-height:48px;
-        height:auto;            /* base pour le calcul JS d'autosize */
-        box-sizing:border-box;
-        white-space:pre-wrap;   /* conserve les retours à la ligne */
-        word-break:break-word;
+    /* MOBILE-READONLY : cadres texte en lecture seule, hauteur = contenu */
+    .right-panel{
+        width:100%;
+        height:auto !important;
+        overflow:visible !important;
+        flex:none !important;
+        display:block !important;
     }
-  /* Titres des champs (MISE EN PLACE, CONSIGNES...) */
+    .info-field{
+        flex:none !important;
+        height:auto !important;
+        overflow:visible !important;
+        margin-bottom:10px;
+        display:block !important;
+    }
     .info-field label{
         font-size:13px;
         color:#1e293b;
         margin-bottom:5px;
+        display:block;
     }
-
-     .info-field{
-        flex:none;
-        margin-bottom:4px;
+    .info-field textarea{
+        display:block;
+        width:100%;
+        background:#f8fafc;
+        color:#0f172a;
+        font-size:17px;
+        line-height:1.55;
+        padding:12px;
+        border:1px solid #94a3b8;
+        border-radius:7px;
+        resize:none;
+        pointer-events:none;
+        overflow:hidden !important;
+        min-height:48px;
+        height:auto !important;
+        max-height:none !important;
+        flex:none !important;
+        box-sizing:border-box;
+        white-space:pre-wrap;
+        word-break:break-word;
+        /* Chrome Android / desktop : hauteur native selon le contenu */
+        field-sizing:content;
+        -webkit-field-sizing:content;
     }
 
     /* MOBILE-READONLY : toolbar titre / catégorie / durée non éditables */
@@ -1560,7 +1577,7 @@ summary.tree-summary{
    1. CONFIGURATION / STOCKAGE
 ========================================================= */
 
-const APP_VERSION = "V11.8 Mobile";
+const APP_VERSION = "V11.8.1 Mobile";
 
 const EXERCISES_KEY = "handcoach_v10.3_exercises";
 const SESSIONS_KEY = "handcoach_v10.3_sessions";
@@ -5321,23 +5338,33 @@ function autosizeInfoFields(){
     document.querySelectorAll(".info-field textarea").forEach(ta => {
         if (!mobile) {
             ta.style.height = "";
+            ta.style.maxHeight = "";
             return;
         }
-        /* Forcer un recalcul fiable de scrollHeight */
+        /* Android Chrome : forcer un vrai recalcul */
+        ta.style.maxHeight = "none";
+        ta.style.overflow = "hidden";
+        ta.style.height = "auto";
         ta.style.height = "0px";
-        const needed = Math.max(ta.scrollHeight, 48);
+        /* forcer reflow */
+        void ta.offsetHeight;
+        const needed = Math.max(ta.scrollHeight + 4, 48);
         ta.style.height = needed + "px";
     });
 }
 window.addEventListener("resize", autosizeInfoFields);
-window.addEventListener("orientationchange", () => setTimeout(autosizeInfoFields, 200));
+window.addEventListener("orientationchange", () => setTimeout(autosizeInfoFields, 250));
 window.addEventListener("load", () => {
     autosizeInfoFields();
-    setTimeout(autosizeInfoFields, 100);
-    setTimeout(autosizeInfoFields, 400);
+    setTimeout(autosizeInfoFields, 80);
+    setTimeout(autosizeInfoFields, 250);
+    setTimeout(autosizeInfoFields, 600);
 });
 if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(autosizeInfoFields);
+    document.fonts.ready.then(() => {
+        autosizeInfoFields();
+        setTimeout(autosizeInfoFields, 100);
+    });
 }
 (function setupPaletteMoreMenu(){
     const btn = document.getElementById("paletteMoreBtn");
@@ -5520,10 +5547,10 @@ function stopIdleWatcher() {
 ========================================================= */
 const CHANGELOG = [
     {
-        version: "V11.8",
+        version: "V11.8.1",
         date: "07/10/2026",
         items: [
-            "Cadres consignes / mise en place / variantes / objectifs : hauteur auto fiable sur mobile (tout le texte visible)"
+            "Cadres consignes : hauteur auto renforcée Android Chrome (tout le texte visible sans coupure)"
         ]
     },
     {
