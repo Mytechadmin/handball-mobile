@@ -1181,8 +1181,12 @@ summary.tree-summary{
         border:1px solid #94a3b8;  /* cadre plus visible */
         resize:none;
         pointer-events:none;
-        overflow:hidden;
-        min-height:0;     
+        overflow:hidden;        /* pas de scroll interne : la hauteur s'adapte au contenu */
+        min-height:48px;
+        height:auto;            /* base pour le calcul JS d'autosize */
+        box-sizing:border-box;
+        white-space:pre-wrap;   /* conserve les retours à la ligne */
+        word-break:break-word;
     }
   /* Titres des champs (MISE EN PLACE, CONSIGNES...) */
     .info-field label{
@@ -1193,6 +1197,7 @@ summary.tree-summary{
 
      .info-field{
         flex:none;
+        margin-bottom:4px;
     }
 
     /* MOBILE-READONLY : toolbar titre / catégorie / durée non éditables */
@@ -1555,7 +1560,7 @@ summary.tree-summary{
    1. CONFIGURATION / STOCKAGE
 ========================================================= */
 
-const APP_VERSION = "V11.6 Mobile";
+const APP_VERSION = "V11.8 Mobile";
 
 const EXERCISES_KEY = "handcoach_v10.3_exercises";
 const SESSIONS_KEY = "handcoach_v10.3_sessions";
@@ -5314,18 +5319,26 @@ async function createInviteCodeFromUI(teamId, permission) {
 function autosizeInfoFields(){
     const mobile = window.innerWidth <= 900;
     document.querySelectorAll(".info-field textarea").forEach(ta => {
-        ta.style.height = "auto";                    // reset pour mesurer
-        if(mobile) ta.style.height = (ta.scrollHeight + 2) + "px";  // +2 = bordures
-        else ta.style.height = "";                   // desktop : inchangé
+        if (!mobile) {
+            ta.style.height = "";
+            return;
+        }
+        /* Forcer un recalcul fiable de scrollHeight */
+        ta.style.height = "0px";
+        const needed = Math.max(ta.scrollHeight, 48);
+        ta.style.height = needed + "px";
     });
 }
 window.addEventListener("resize", autosizeInfoFields);
 window.addEventListener("orientationchange", () => setTimeout(autosizeInfoFields, 200));
-window.addEventListener("load", autosizeInfoFields);
+window.addEventListener("load", () => {
+    autosizeInfoFields();
+    setTimeout(autosizeInfoFields, 100);
+    setTimeout(autosizeInfoFields, 400);
+});
 if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(autosizeInfoFields);   // après chargement des polices
+    document.fonts.ready.then(autosizeInfoFields);
 }
-window.addEventListener("resize", autosizeInfoFields);
 (function setupPaletteMoreMenu(){
     const btn = document.getElementById("paletteMoreBtn");
     const panel = document.getElementById("paletteMorePanel");
@@ -5403,8 +5416,10 @@ function isMobileReadOnly(){
         loadExercise = function(exercise){
             originalLoadExercise(exercise);
             if(window.innerWidth <= 900) closeMobileSidebar();
-              autosizeInfoFields();
-            requestAnimationFrame(autosizeInfoFields);  // 2e passage après le rendu du layout
+            autosizeInfoFields();
+            requestAnimationFrame(autosizeInfoFields);
+            setTimeout(autosizeInfoFields, 50);
+            setTimeout(autosizeInfoFields, 200);
         };
     }
 })();
@@ -5504,6 +5519,13 @@ function stopIdleWatcher() {
    une fois pour chaque utilisateur.
 ========================================================= */
 const CHANGELOG = [
+    {
+        version: "V11.8",
+        date: "07/10/2026",
+        items: [
+            "Cadres consignes / mise en place / variantes / objectifs : hauteur auto fiable sur mobile (tout le texte visible)"
+        ]
+    },
     {
         version: "V11.7",
         date: "07/10/2026",
