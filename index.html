@@ -1201,6 +1201,25 @@ summary.tree-summary{
         cursor:default !important;
         pointer-events:none !important;
     }
+	 :root{ --mobile-obj-scale:.6; }
+
+    /* Joueurs, plots, ballon */
+    .object{
+        transform:translate(-50%,-50%) scale(var(--mobile-obj-scale));
+    }
+
+    /* Formes : on garde la rotation, on ajoute le scale */
+    .object.shape-square,
+    .object.shape-rectangle,
+    .object.shape-triangle,
+    .object.shape-circle{
+        transform:translate(-50%,-50%) rotate(var(--rotation, 0deg)) scale(var(--mobile-obj-scale));
+    }
+
+    /* Textes sur le terrain */
+    .text-object{
+        transform:translate(-50%,-50%) scale(var(--mobile-obj-scale));
+    }
     .shape-resize-handle,
     .shape-rotate-handle{
         display:none !important;
